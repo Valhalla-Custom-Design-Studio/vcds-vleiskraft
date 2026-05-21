@@ -1,43 +1,35 @@
 {
+  "app": {
+    "name": "VleisKraft™",
+    "tagline": "Suid-Afrika se Vleis Intelligensie Platform"
+  },
+  "vleisai": {
+    "title": "VleisAI™",
+    "subtitle": "KI-aangedrewe vleis intelligensie",
+    "placeholder": "Vra VleisAI™ enigiets oor vleis...",
+    "thinking": "VleisAI™ dink...",
+    "error": "VleisAI™ is nie beskikbaar nie. Probeer asseblief weer."
+  },
+  "tiers": {
+    "free": "Gratis",
+    "starter": "Beginners",
+    "pro": "Pro",
+    "enterprise": "Onderneming"
+  },
+  "payment": {
+    "checkout": "Gaan na Betaling",
+    "processing": "Verwerk...",
+    "success": "Betaling Suksesvol",
+    "cancel": "Betaling Gekanselleer",
+    "error": "Betaling misluk. Probeer asseblief weer."
+  },
   "common": {
-    "loading": "Laai tans...",
-    "error": "Iets het verkeerd gegaan. Probeer asseblief weer.",
-    "retry": "Probeer weer",
+    "loading": "Laai...",
+    "error": "Iets het verkeerd gegaan",
+    "retry": "Probeer Weer",
     "cancel": "Kanselleer",
     "confirm": "Bevestig",
     "save": "Stoor",
-    "close": "Sluit",
-    "back": "Terug",
-    "next": "Volgende",
-    "submit": "Dien in",
-    "currency": "ZAR",
-    "dateFormat": "DD/MM/JJJJ",
-    "units": "metriek"
-  },
-  "auth": {
-    "login": "Teken In",
-    "logout": "Teken Uit",
-    "register": "Registreer",
-    "email": "E-posadres",
-    "password": "Wagwoord",
-    "forgotPassword": "Wagwoord vergeet?",
-    "resetPassword": "Stel Wagwoord Terug"
-  },
-  "payment": {
-    "subscribe": "Teken Nou In",
-    "changePlan": "Verander Plan",
-    "cancelSubscription": "Kanselleer Intekening",
-    "payWith": "Betaal met PayFast",
-    "eft": "EFT / Bankoordrag",
-    "invoiceReady": "Jou SARS-voldoenende faktuur is gereed",
-    "paymentSuccess": "Betaling suksesvol!",
-    "paymentFailed": "Betaling het misluk. Probeer asseblief weer.",
-    "freeTrial": "Begin 7-Dag Gratis Proeftydperk"
-  },
-  "accessibility": {
-    "skipToMain": "Spring na hoofinhoud",
-    "langToggle": "Skakel na Engels",
-    "closeModal": "Sluit venster",
-    "loading": "Inhoud laai tans, wag asseblief"
+    "back": "Terug"
   }
 }
