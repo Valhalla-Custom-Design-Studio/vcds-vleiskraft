@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "VleisKraft",
+    "slug": "vleiskraft",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#8B0000"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "co.za.vcds.vleiskraft",
+      "buildNumber": "1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#8B0000"
+      },
+      "package": "co.za.vcds.vleiskraft",
+      "versionCode": 1,
+      "permissions": [
+        "INTERNET"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "name": "VleisKraft",
+      "themeColor": "#8B0000"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "vcds-vleiskraft"
+      },
+      "subdomain": "vleiskraft.vcds.co.za",
+      "payfastMerchantId": "11910323"
+    }
+  }
+}
