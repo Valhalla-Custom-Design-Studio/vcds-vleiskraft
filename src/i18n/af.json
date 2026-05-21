@@ -1,35 +1,155 @@
 {
-  "app": {
-    "name": "VleisKraft™",
-    "tagline": "Suid-Afrika se Vleis Intelligensie Platform"
+  "appName": "VleisAI",
+  "tagline": "Jou KI-Slaghuis Gesel",
+
+  "nav": {
+    "home": "Tuis",
+    "shop": "Winkel",
+    "ai": "VleisAI",
+    "orders": "Bestellings",
+    "profile": "Profiel",
+    "admin": "Admin",
+    "logout": "Uitteken"
   },
-  "vleisai": {
-    "title": "VleisAI™",
-    "subtitle": "KI-aangedrewe vleis intelligensie",
-    "placeholder": "Vra VleisAI™ enigiets oor vleis...",
-    "thinking": "VleisAI™ dink...",
-    "error": "VleisAI™ is nie beskikbaar nie. Probeer asseblief weer."
+
+  "auth": {
+    "welcome": "Welkom by VleisAI",
+    "subtitle": "Premium vleis, afgelewer by jou deur",
+    "login": "Aanmeld",
+    "register": "Restraseer",
+    "email": "E-posadres",
+    "password": "Wagwoord",
+    "confirmPassword": "Bestigp wagwoord",
+    "forgotPassword": "Wagwoord vergeet?",
+    "noAccount": "Het nog nie 'n rekening nie?",
+    "hasAccount": "Het al 'n rekening?",
+    "loginHere": "Meld hier aan",
+    "registerHere": "Registreer hier"
   },
-  "tiers": {
-    "free": "Gratis",
-    "starter": "Beginners",
-    "pro": "Pro",
-    "enterprise": "Onderneming"
+
+  "register": {
+    "step1Title": "Wie is ji?",
+    "consumer": "Verbruiker",
+    "consumerDesc": "Koop premium vleis van plaaslike slaghuise",
+    "butchery": "Slaghuis",
+    "butcheryDesc": "Verkoop ju vleis op VleisAI",
+    "step2Title": "Jou Besonderhede",
+    "firstName": "Voornaam",
+    "lastName": "Van naam",
+    "phone": "Selfoonommer",
+    "address": "Afleweringsadres",
+    "searchAddress": "Soek jou adres...",
+    "nearbyButcheries": "Slaghuise naby jou",
+    "selectButchery": "Kies ju slaghuis",
+    "butcheryName": "Slaghuis naam",
+    "regNumber": "Registrasienommer",
+    "step3Title": "Kies Jou Plan",
+    "freePlan": "Gratis",
+    "freeDesc": "Blaaier en koop vleis",
+    "starterPlan": "Beginner",
+    "starterDesc": "Tot 50 produkte, basiese analitieke",
+    "proPlan": "Pro",
+    "proDesc": "Onbeperke produkte, gevorderde analitieke",
+    "premiumPlan": "Premium",
+    "premiumDesc": "Wite-etiket, API-toegang, toegewyde ondersteuning",
+    "payNow": "Betaal Nou",
+    "paymentRequired": "Betaling vereis voor toegang",
+    "next": "Volgende",
+    "back": "Terug",
+    "submit": "Skep Rekening"
   },
-  "payment": {
-    "checkout": "Gaan na Betaling",
-    "processing": "Verwerk...",
-    "success": "Betaling Suksesvol",
-    "cancel": "Betaling Gekanselleer",
-    "error": "Betaling misluk. Probeer asseblief weer."
+
+  "shop": {
+    "title": "Winkel",
+    "search": "Soek vleis...",
+    "filterAll": "Alles",
+    "filterBeef": "Rundvleis",
+    "filterLamb": "Skapvleis",
+    "filterPork": "Varkvleis",
+    "filterChicken": "Hoendervleis",
+    "filterGame": "Wildvleis",
+    "addToCart": "Voeg by Kart",
+    "outOfStock": "Uit Voorraad",
+    "perKg": "per kg",
+    "perUnit": "per eenheed",
+    "from": "vanaf"
   },
+
+  "cart": {
+    "title": "Jou Kart",
+    "empty": "Jou kart is leeg",
+    "subtotal": "Subtotaal",
+    "delivery": "Aflewering",
+    "total": "Totaal",
+    "checkout": "Gaan na Afrekening",
+    "remove": "Verwyder"
+  },
+
+  "aiChat": {
+    "title": "VleisAI Assistent",
+    "placeholder": "Vra my iets oor vleis...",
+    "suggestion1": "Wat moet ek braai?",
+    "suggestion2": "Beste snye vir potjiekos",
+    "suggestion3": "Hoe marineer ek skapvleis",
+    "suggestion4": "Wat is in seisoen?",
+    "send": "Stuur",
+    "typing": "VleisAI dink na..."
+  },
+
+  "orders": {
+    "title": "My Bestellings",
+    "empty": "Nog geen bestellings nie",
+    "statusPending": "Augtende",
+    "statusConfirmed": "Bestig",
+    "statusPreparing": "Voorberei",
+    "statusOutForDelivery": "Onderweg",
+    "statusDelivered": "Afgelewer",
+    "statusCancelled": "Gekanselleer",
+    "viewDetails": "Besonderhede",
+    "reorder": "Herbestel"
+  },
+
+  "profile": {
+    "title": "My Profiel",
+    "edit": "Wysig Profiel",
+    "save": "Stoor Wysigings",
+    "language": "Taal",
+    "languageEn": "Engels",
+    "languageAf": "Afrikaans",
+    "notifications": "Kennisgewings",
+    "subscription": "My Inskrywing",
+    "logout": "Uitteken"
+  },
+
+  "admin": {
+    "title": "Slaghuis Dashbord",
+    "products": "Produkte",
+    "addProduct": "Voeg Produk By",
+    "orders": "Bestellings",
+    "analytics": "Analitieke",
+    "branding": "MerQysiging",
+    "subscription":"Inskrywing",
+    "saveBranding": "Stoor Merkwysiging",
+    "primaryColor": "Hooffleur",
+    "secondaryColor": "Sekondêre Kleur",
+    "uploadLogo": "-Laai Logo Op",
+    "uploadBanner": "Laai Bannier Op",
+    "livePreview": "Leonde Voorsiening",
+    "saved": "Merkwysiging stoor gestel"
+  },
+
   "common": {
     "loading": "Laai...",
     "error": "Iets het verkeerd gegaan",
     "retry": "Probeer Weer",
     "cancel": "Kanselleer",
-    "confirm": "Bevestig",
+    "confirm": "Bestig",
     "save": "Stoor",
-    "back": "Terug"
+    "delete": "Verwyder",
+    "edit": "Wysig",
+    "close": "Toemake",
+    "search": "Soek",
+    "noResults": "Geen resultate gevind nie",
+    "rand": "R"
   }
 }
