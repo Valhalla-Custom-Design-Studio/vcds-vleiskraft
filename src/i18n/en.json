@@ -1,28 +1,143 @@
 {
-  "app": {
-    "name": "VleisKraft™",
-    "tagline": "South Africa\'s Meat Intelligence Platform"
+  "appName": "VleisAI",
+  "tagline": "Your AI Butchery Companion",
+
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "ai": "VleisAI",
+    "orders": "Orders",
+    "profile": "Profile",
+    "admin": "Admin",
+    "logout": "Log Out"
   },
-  "vleisai": {
-    "title": "VleisAI™",
-    "subtitle": "AI-powered meat intelligence",
-    "placeholder": "Ask VleisAI™ anything about meat...",
-    "thinking": "VleisAI™ is thinking...",
-    "error": "VleisAI™ is unavailable. Please try again."
+
+  "auth": {
+    "welcome": "Welcome to VleisAI",
+    "subtitle": "Premium meat, delivered to your door",
+    "login": "Log In",
+    "register": "Register",
+    "email": "Email Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loginHere": "Log in here",
+    "registerHere": "Register here"
   },
-  "tiers": {
-    "free": "Free",
-    "starter": "Starter",
-    "pro": "Pro",
-    "enterprise": "Enterprise"
+
+  "register": {
+    "step1Title": "Who are you?",
+    "consumer": "Consumer",
+    "consumerDesc": "Buy premium meat from local butcheries",
+    "butchery": "Butchery",
+    "butcheryDesc": "Sell your meat on VleisAI",
+    "step2Title": "Your Details",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone Number",
+    "address": "Delivery Address",
+    "searchAddress": "Search your address...",
+    "nearbyButcheries": "Butcheries near you",
+    "selectButchery": "Select your butchery",
+    "butcheryName": "Butchery Name",
+    "regNumber": "Registration Number",
+    "step3Title": "Choose Your Plan",
+    "freePlan": "Free",
+    "freeDesc": "Browse and buy meat",
+    "starterPlan": "Starter",
+    "starterDesc": "Up to 50 products, basic analytics",
+    "proPlan": "Pro",
+    "proDesc": "Unlimited products, advanced analytics",
+    "premiumPlan": "Premium",
+    "premiumDesc": "White-label, API access, dedicated support",
+    "payNow": "Pay Now",
+    "paymentRequired": "Payment required before access",
+    "next": "Next",
+    "back": "Back",
+    "submit": "Create Account"
   },
-  "payment": {
-    "checkout": "Proceed to Payment",
-    "processing": "Processing...",
-    "success": "Payment Successful",
-    "cancel": "Payment Cancelled",
-    "error": "Payment failed. Please try again."
+
+  "shop": {
+    "title": "Shop",
+    "search": "Search meat...",
+    "filterAll": "All",
+    "filterBeef": "Beef",
+    "filterLamb": "Lamb",
+    "filterPork": "Pork",
+    "filterChicken": "Chicken",
+    "filterGame": "Game",
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock",
+    "perKg": "per kg",
+    "perUnit": "per unit",
+    "from": "from"
   },
+
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "subtotal": "Subtotal",
+    "delivery": "Delivery",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "remove": "Remove"
+  },
+
+  "aiChat": {
+    "title": "VleisAI Assistant",
+    "placeholder": "Ask me anything about meat...",
+    "suggestion1": "What should I braai?",
+    "suggestion2": "Bet cuts for potjiekos",
+    "suggestion3": "How to marinate lamb",
+    "suggestion4": "What is in season?",
+    "send": "Send",
+    "typing": "VleisAI is thinking..."
+  },
+
+  "orders": {
+    "title": "My Orders",
+    "empty": "No orders yet",
+    "statusPending": "Pending",
+    "statusConfirmed": "Confirmed",
+    "statusPreparing": "Preparing",
+    "statusOutForDelivery": "Out for Delivery",
+    "statusDelivered": "Delivered",
+    "statusCancelled": "Cancelled",
+    "viewDetails": "View Details",
+    "reorder": "Reorder"
+  },
+
+  "profile": {
+    "title": "My Profile",
+    "edit": "Edit Profile",
+    "save": "Save Changes",
+    "language": "Language",
+    "languageEn": "English",
+    "languageAf": "Afrikaans",
+    "notifications": "Notifications",
+    "subscription": "My Subscription",
+    "logout": "Log Out"
+  },
+
+  "admin": {
+    "title": "Butchery Dashboard",
+    "products": "Products",
+    "addProduct": "Add Product",
+    "orders": "Orders",
+    "analytics": "Analytics",
+    "branding": "Branding",
+    "subscription": "Subscription",
+    "saveBranding": "Save Branding",
+    "primaryColor": "Primary Color",
+    "secondaryColor": "Secondary Color",
+    "uploadLogo": "Upload Logo",
+    "uploadBanner": "Upload Banner",
+    "livePreview": "Live Preview",
+    "saved": "Branding saved successfully"
+  },
+
   "common": {
     "loading": "Loading...",
     "error": "Something went wrong",
@@ -30,6 +145,11 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "save": "Save",
-    "back": "Back"
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "search": "Search",
+    "noResults": "No results found",
+    "rand": "R"
   }
 }
