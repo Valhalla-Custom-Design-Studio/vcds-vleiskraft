@@ -1,170 +1,183 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, Pressable, KeyboardAvoidingView, Platform, ActivityIndicator, Linking, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
-import { useAuth } from '../../src/contexts/AuthContext';
-import { useLanguage } from '../../src/i18n/LanguageContext';
-import api from '../../src/services/api';
-import { Colors, Spacing, FontSize, Radius } from '../../src/constants/theme';
-import ScreenContainer from '../../src/components/ScreenContainer';
-import GlassCard from '../../src/components/GlassCard';
+import React, { useState, useRef } from 'react';
+import {
+  View, Text, TextInput, TouchableOpacity, FlatList,
+  StyleSheet, KeyboardAvoidingView, Platform, Switch, ActivityIndicator
+} from 'react-native';
+import { useI18n } from '../../../src/i18n';
 
-interface Message { role: string; content: string; suggestedProducts?: any[] }
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  text: string;
+}
 
 export default function VleisAIScreen() {
-  const { user } = useAuth();
-  const { t, lang } = useLanguage();
-  const router = useRouter();
-  const [messages, setMessages] = useState<Message[]>([{
-    role: 'assistant',
-    content: lang === 'AF'
-      ? 'Hallo! Ek is VleisAI™ — jou slim slaghuisassistent. Vra my enigiets oor vleis, braai, resepte of bestellings! 🥩'
-      : 'Hello! I am VleisAI™ — your smart butchery assistant. Ask me anything about meat, braai, recipes or orders! 🥩'
-  }]);
+  const { t, lang, toggleLang } = useI18n();
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '0',
+      role: 'assistant',
+      text: lang === 'af'
+        ? 'Hallo! Ek is VleisAI™. Vra my enigiets oor vleis, snitte, resepte of pryse. 🥩'
+        : 'Hello! I am VleisAI™. Ask me anything about meat, cuts, recipes or prices. 🥩',
+    },
+  ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const flatListRef = useRef<FlatList>(null);
+  const listRef = useRef<FlatList>(null);
 
-  const send = useCallback(async () => {
-    if (!input.trim() || loading) return;
-    const msg = input.trim();
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+    const userMsg: Message = { id: Date.now().toString(), role: 'user', text: input.trim() };
+    setMessages(prev => [...prev, userMsg]);
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: msg }]);
     setLoading(true);
+
     try {
-      if (Platform.OS !== 'web') Haptics.impactAsync?.(Haptics.ImpactFeedbackStyle.Light)?.catch?.(() => {});
-      const res = await api.post('/api/chat', { message: msg });
-      const data = res?.data;
-      setMessages(prev => [...prev, {
+      const res = await fetch('/api/vleisgpt/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMsg.text, lang }),
+      });
+      const data = await res.json();
+      const aiMsg: Message = {
+        id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data?.reply ?? (lang === 'AF' ? 'Jammer, ek kon nie antwoord nie. Probeer weer.' : 'Sorry, I could not respond. Please try again.'),
-        suggestedProducts: data?.suggestedProducts ?? []
-      }]);
+        text: data.reply ?? (lang === 'af' ? 'Fout — probeer weer.' : 'Error — please try again.'),
+      };
+      setMessages(prev => [...prev, aiMsg]);
     } catch {
       setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: lang === 'AF' ? 'Verbindingsfout. Probeer asseblief weer.' : 'Connection error. Please try again.'
+        text: lang === 'af' ? 'Verbindingsfout. Probeer weer.' : 'Connection error. Please try again.',
       }]);
     } finally {
       setLoading(false);
-      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
-    }
-  }, [input, loading, lang]);
-
-  const handleProductPress = (product: any) => {
-    if (product?.id) {
-      router.push(`/shop/product/${product.id}` as never);
+      setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
     }
   };
 
-  const renderMsg = ({ item }: { item: Message }) => (
-    <View style={[styles.bubble, item.role === 'user' ? styles.userBubble : styles.aiBubble]}>
-      {item.role === 'assistant' && (
-        <View style={styles.botHeader}>
-          <Text style={styles.botIcon}>🥩</Text>
-          <Text style={styles.botLabel}>VleisAI™</Text>
-        </View>
-      )}
-      <Text style={[styles.msgText, item.role === 'user' && styles.userMsgText]}>
-        {item?.content ?? ''}
-      </Text>
-      {/* Product suggestions — tappable, navigate to product screen */}
-      {(item?.suggestedProducts?.length ?? 0) > 0 && (
-        <View style={styles.suggestions}>
-          <Text style={styles.suggestionsLabel}>
-            {lang === 'AF' ? '🛒 Aanbevole produkte:' : '🛒 Suggested products:'}
-          </Text>
-          {item.suggestedProducts!.map((p: any, i: number) => (
-            <Pressable
-              key={i}
-              style={styles.sugPill}
-              onPress={() => handleProductPress(p)}
-              accessibilityRole="button"
-              accessibilityLabel={`View product: ${lang === 'AF' ? p?.nameAf : p?.nameEn ?? p?.nameAf}`}
-            >
-              <Text style={styles.sugText}>
-                {lang === 'AF' ? p?.nameAf : p?.nameEn ?? p?.nameAf ?? p?.name ?? ''}
-              </Text>
-              {p?.price && <Text style={styles.sugPrice}>R{p.price}</Text>}
-              <Ionicons name="chevron-forward" size={14} color={Colors.secondary} />
-            </Pressable>
-          ))}
-        </View>
-      )}
-    </View>
-  );
-
   return (
-    <ScreenContainer title="VleisAI™" showBack>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={100}
-      >
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={(_, i) => String(i)}
-          renderItem={renderMsg}
-          contentContainerStyle={styles.list}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={
-            loading ? (
-              <View style={styles.typingIndicator}>
-                <ActivityIndicator size="small" color={Colors.secondary} />
-                <Text style={styles.typingText}>VleisAI™ {lang === 'AF' ? 'dink...' : 'is thinking...'}</Text>
-              </View>
-            ) : null
-          }
-        />
-        <View style={styles.inputRow}>
-          <TextInput
-            style={styles.input}
-            value={input}
-            onChangeText={setInput}
-            placeholder={lang === 'AF' ? 'Vra VleisAI™ iets...' : 'Ask VleisAI™ something...'}
-            placeholderTextColor={Colors.textSecondary ?? '#888'}
-            onSubmitEditing={send}
-            returnKeyType="send"
-            multiline={false}
-            accessibilityLabel="Chat input"
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      {/* ── Header with Language Toggle ── */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>VleisAI™</Text>
+        <View style={styles.langRow} accessibilityRole="switch">
+          <Text style={styles.langLabel}>EN</Text>
+          <Switch
+            value={lang === 'af'}
+            onValueChange={toggleLang}
+            trackColor={{ false: '#555', true: '#B22222' }}
+            thumbColor="#fff"
+            accessibilityLabel={lang === 'en' ? 'Switch to Afrikaans' : 'Skakel na Engels'}
           />
-          <Pressable
-            style={[styles.sendBtn, (!input.trim() || loading) && styles.sendBtnDisabled]}
-            onPress={send}
-            disabled={!input.trim() || loading}
-            accessibilityRole="button"
-            accessibilityLabel="Send message"
-          >
-            <Ionicons name="send" size={20} color={!input.trim() || loading ? '#555' : '#fff'} />
-          </Pressable>
+          <Text style={styles.langLabel}>AF</Text>
         </View>
-      </KeyboardAvoidingView>
-    </ScreenContainer>
+      </View>
+
+      {/* ── Chat Messages ── */}
+      <FlatList
+        ref={listRef}
+        data={messages}
+        keyExtractor={m => m.id}
+        contentContainerStyle={styles.chatContent}
+        renderItem={({ item }) => (
+          <View style={[
+            styles.bubble,
+            item.role === 'user' ? styles.userBubble : styles.aiBubble,
+          ]}>
+            <Text style={[
+              styles.bubbleText,
+              item.role === 'user' ? styles.userText : styles.aiText,
+            ]}>
+              {item.text}
+            </Text>
+          </View>
+        )}
+      />
+
+      {loading && (
+        <View style={styles.typingRow}>
+          <ActivityIndicator size="small" color="#B22222" />
+          <Text style={styles.typingText}>
+            {lang === 'af' ? 'VleisAI™ tik...' : 'VleisAI™ is typing...'}
+          </Text>
+        </View>
+      )}
+
+      {/* ── Input Bar ── */}
+      <View style={styles.inputRow}>
+        <TextInput
+          style={styles.input}
+          value={input}
+          onChangeText={setInput}
+          placeholder={
+            lang === 'af'
+              ? 'Vra oor vleis, snitte, resepte...'
+              : 'Ask about meat, cuts, recipes...'
+          }
+          placeholderTextColor="#666"
+          onSubmitEditing={sendMessage}
+          returnKeyType="send"
+          accessibilityLabel={lang === 'af' ? 'Tik jou vraag' : 'Type your question'}
+        />
+        <TouchableOpacity
+          style={[styles.sendBtn, !input.trim() && styles.sendBtnDisabled]}
+          onPress={sendMessage}
+          disabled={!input.trim()}
+          accessibilityRole="button"
+          accessibilityLabel={lang === 'af' ? 'Stuur boodskap' : 'Send message'}
+        >
+          <Text style={styles.sendText}>
+            {lang === 'af' ? 'Stuur' : 'Send'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { padding: 16, paddingBottom: 8 },
-  bubble: { maxWidth: '88%', borderRadius: 18, padding: 14, marginBottom: 10 },
-  aiBubble: { backgroundColor: 'rgba(200,16,46,0.08)', alignSelf: 'flex-start', borderWidth: 1, borderColor: 'rgba(200,16,46,0.15)' },
-  userBubble: { backgroundColor: Colors.primary ?? '#C8102E', alignSelf: 'flex-end' },
-  botHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
-  botIcon: { fontSize: 16 },
-  botLabel: { color: Colors.secondary ?? '#D4A56A', fontWeight: '700', fontSize: 13 },
-  msgText: { color: Colors.textPrimary ?? '#F0F0F0', fontSize: 15, lineHeight: 22 },
-  userMsgText: { color: '#fff' },
-  suggestions: { marginTop: 10, gap: 6 },
-  suggestionsLabel: { color: Colors.secondary ?? '#D4A56A', fontSize: 12, fontWeight: '600', marginBottom: 4 },
-  sugPill: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'rgba(212,165,106,0.12)', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderColor: 'rgba(212,165,106,0.25)' },
-  sugText: { color: Colors.secondary ?? '#D4A56A', fontSize: 13, fontWeight: '600', flex: 1 },
-  sugPrice: { color: Colors.textSecondary ?? '#888', fontSize: 12, marginRight: 4 },
-  typingIndicator: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12 },
-  typingText: { color: Colors.textSecondary ?? '#888', fontSize: 13 },
-  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.08)' },
-  input: { flex: 1, backgroundColor: 'rgba(255,255,255,0.06)', color: Colors.textPrimary ?? '#F0F0F0', borderRadius: 24, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  sendBtn: { width: 46, height: 46, borderRadius: 23, backgroundColor: Colors.primary ?? '#C8102E', alignItems: 'center', justifyContent: 'center' },
-  sendBtnDisabled: { backgroundColor: 'rgba(255,255,255,0.08)' },
+  container: { flex: 1, backgroundColor: '#1a1a1a' },
+  header: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 16, paddingVertical: 12,
+    backgroundColor: '#111', borderBottomWidth: 1, borderBottomColor: '#333',
+  },
+  headerTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  langRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  langLabel: { color: '#aaa', fontSize: 12, fontWeight: '600' },
+  chatContent: { padding: 16, paddingBottom: 8 },
+  bubble: {
+    maxWidth: '80%', borderRadius: 16, padding: 12, marginBottom: 10,
+  },
+  userBubble: { backgroundColor: '#B22222', alignSelf: 'flex-end', borderBottomRightRadius: 4 },
+  aiBubble: { backgroundColor: '#2a2a2a', alignSelf: 'flex-start', borderBottomLeftRadius: 4 },
+  bubbleText: { fontSize: 15, lineHeight: 22 },
+  userText: { color: '#fff' },
+  aiText: { color: '#eee' },
+  typingRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    paddingHorizontal: 16, paddingBottom: 8,
+  },
+  typingText: { color: '#888', fontSize: 13 },
+  inputRow: {
+    flexDirection: 'row', padding: 12, gap: 8,
+    backgroundColor: '#111', borderTopWidth: 1, borderTopColor: '#333',
+  },
+  input: {
+    flex: 1, backgroundColor: '#2a2a2a', borderRadius: 24,
+    paddingHorizontal: 16, paddingVertical: 10,
+    color: '#fff', fontSize: 15,
+  },
+  sendBtn: {
+    backgroundColor: '#B22222', borderRadius: 24,
+    paddingHorizontal: 18, justifyContent: 'center',
+  },
+  sendBtnDisabled: { backgroundColor: '#555' },
+  sendText: { color: '#fff', fontWeight: '700', fontSize: 14 },
 });
