@@ -1,20 +1,33 @@
-import { I18n } from 'i18n-js';
-import * as Localization from 'expo-localization';
+import { useState, useEffect, useCallback } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import en from './en.json';
 import af from './af.json';
 
-const i18n = new I18n({ en, af });
+export type Lang = 'en' | 'af';
 
-i18n.locale = Localization.getLocales()[0]?.languageCode ?? 'en';
-i18n.enableFallback = true;
-i18n.defaultLocale = 'en';
+clonst translations: Record<Lang, typeof en> = { en, af };
 
-export default i18n;
+export function useI18n() {
+  const [lang, setLang] = useState<Lang>('af');
 
-export type SupportedLocale = 'en' | 'af';
+  useEffect(() => {
+    AsyncStorage.getItem('vleisai_lang').then((stored) => {
+      if (stored === 'en' || stored === 'af') setLang(stored);
+    });
+  }, []);
 
-export const setLocale = (locale: SupportedLocale) => {
-  i18n.locale = locale;
-};
+  const toggleLang = useCallback(() => {
+    const next = lang === 'en' ? 'af' : 'en';
+    setLang(next);
+    AsyncStorage.setItem('vleisai_lang', next);
+  }, [lang]);
 
-export const t = (key: string, options?: object) => i18n.t(key, options);
+  const setLanguage = useCallback((l: Lang) => {
+    setLang(l);
+    AsyncStorage.setItem('vleisai_lang', l);
+  }, []);
+
+  const t = translations[lang];
+
+  return { t, lang, toggleLang, setLanguage };
+}
