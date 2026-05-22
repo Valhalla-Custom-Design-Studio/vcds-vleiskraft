@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import crypto from "crypto";
-import { authenticateToken } from "../middleware/auth";
+import { authenticate } from "../middleware/auth";
 
 const router = Router();
 
@@ -19,7 +19,7 @@ function generateSignature(data: Record<string, string>, passphrase: string): st
 }
 
 // KAN-32: Returns PayFast redirect URL so frontend can open it
-router.post("/checkout", authenticateToken, async (req: Request, res: Response) => {
+router.post("/checkout", authenticate, async (req: Request, res: Response) => {
   try {
     const { amount, item_name, email, first_name, last_name } = req.body;
     if (!amount || !item_name) {
@@ -66,7 +66,7 @@ router.post("/itn", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/status/:id", authenticateToken, async (req: Request, res: Response) => {
+router.get("/status/:id", authenticate, async (req: Request, res: Response) => {
   res.json({ payment_id: req.params.id, status: "pending", message: "Check PayFast dashboard" });
 });
 

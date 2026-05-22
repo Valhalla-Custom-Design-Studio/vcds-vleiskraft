@@ -1,10 +1,10 @@
 import { Router, Request, Response } from "express";
-import { authenticateToken } from "../middleware/auth";
+import { authenticate } from "../middleware/auth";
 
 const router = Router();
 
 // KAN-32: /api/orders now returns PayFast redirect URL
-router.post("/", authenticateToken, async (req: Request, res: Response) => {
+router.post("/", authenticate, async (req: Request, res: Response) => {
   try {
     const { items, total, email } = req.body;
     if (!items || !total) {
@@ -22,7 +22,7 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
   }
 });
 
-router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
+router.get("/:id", authenticate, async (req: Request, res: Response) => {
   res.json({ order_id: req.params.id, status: "pending", message: "Order lookup coming soon" });
 });
 

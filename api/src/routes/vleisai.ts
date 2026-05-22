@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { authenticateToken } from "../middleware/auth";
+import { authenticate } from "../middleware/auth";
 
 const router = Router();
 
@@ -7,7 +7,7 @@ const router = Router();
  * VleisAI™ — AI-powered meat intelligence
  * KAN-33: Renamed from VleisGPT (OpenAI trademark risk)
  */
-router.post("/chat", authenticateToken, async (req: Request, res: Response) => {
+router.post("/chat", authenticate, async (req: Request, res: Response) => {
   try {
     const { message, context } = req.body;
     if (!message) return res.status(400).json({ error: "message required" });
