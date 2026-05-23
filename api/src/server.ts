@@ -14,7 +14,29 @@ import orderRoutes from "./routes/orders";
 
 dotenv.config();
 
+import * as Sentry from '@sentry/node';
+
+// ─── Sentry Error Monitoring ───────────────────────────────
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV || 'production',
+  release: 'vleiskraft@' + (process.env.npm_package_version || '1.0.0'),
+  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0,
+  integrations: [
+    Sentry.httpIntegration(),
+    Sentry.expressIntegration(),
+  ],
+});
+// ──────────────────────────────────────────────────────────
+
+
+
 const app = express();
+
+  // Sentry request handler (must be first middleware)
+  app.use(Sentry.requestHandler());
+  app.use(Sentry.tracingHandler());
+
 const PORT = process.env.PORT || 3000;
 
 // KAN-38: Restrict CORS to production origins only
@@ -50,6 +72,10 @@ app.use("/api/meat", meatRoutes);
 app.use("/api/orders", orderRoutes);
 
 app.use(errorHandler);
+
+
+  // Sentry error handler (must be before any other error handler)
+  app.use(Sentry.errorHandler());
 
 app.listen(PORT, () => {
   console.log(`VleisKraft™ API running on port ${PORT}`);
