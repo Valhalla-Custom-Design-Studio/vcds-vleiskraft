@@ -15,6 +15,7 @@ import orderRoutes from "./routes/orders";
 dotenv.config();
 
 import * as Sentry from '@sentry/node';
+import { uploadRouter } from './routes/upload';
 
 // ─── Sentry Error Monitoring ───────────────────────────────
 Sentry.init({
@@ -76,6 +77,8 @@ app.use(errorHandler);
 
   // Sentry error handler (must be before any other error handler)
   app.use(Sentry.errorHandler());
+
+app.use('/api/upload', uploadRouter);
 
 app.listen(PORT, () => {
   console.log(`VleisKraft™ API running on port ${PORT}`);
