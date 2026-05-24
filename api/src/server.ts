@@ -1,3 +1,4 @@
+import { runMigrations } from './db/migrate';
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -88,6 +89,7 @@ if (SENTRY_DSN) {
 app.use(errorHandler);
 
 // ─── Start ────────────────────────────────────────────────
+runMigrations().catch(console.error);
 app.listen(PORT, () => {
   console.log(`VleisKraft™ API running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
