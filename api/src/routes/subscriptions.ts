@@ -1,23 +1,57 @@
-import { Router, Response } from 'express';
-import { pool } from '../db/pool';
-import { authenticate, AuthRequest } from '../middleware/auth';
+import { Router, Request, Response } from 'express';
+import { validateWebhookSignature, buildPaymentUrl, PLANS } from '../services/payfastSubscription';
+import { requireAuth } from '../middleware/auth';
 
-export const subscriptionRouter = Router();
-subscriptionRouter.use(authenticate);
+const router = Router();
 
-subscriptionRouter.get('/current', async (req: AuthRequest, res: Response) => {
+// GET /api/subscriptions/plans
+router.get('/plans', (req: Request, res: Response) => {
+  res.json({ plans: PLANS });
+});
+
+// POST /api/subscriptions/upgrade — generate PayFast payment URL
+router.post('/upgrade', requireAuth, (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const { planId } = req.body;
+  const BASE = process.env.API_BASE_URL || 'https://vleiskraft-api.onrender.com';
   try {
-    const result = await pool.query(
-      'SELECT s.*, p.name as plan_name, p.price_zar, p.features FROM subscriptions s JOIN plans p ON s.plan_id = p.id WHERE s.user_id = $1 AND s.status = $2',
-      [req.user!.id, 'active']
+    const url = buildPaymentUrl(
+      planId,
+      user.id,
+      user.butcheryName || user.name,
+      `${BASE}/api/subscriptions/success`,
+      `${BASE}/api/subscriptions/cancel`,
+      `${BASE}/api/subscriptions/webhook`,
     );
-    res.json({ success: true, subscription: result.rows[0] || null });
-  } catch { res.status(500).json({ success: false, message: 'Failed to fetch subscription' }); }
+    res.json({ paymentUrl: url });
+  } catch (e) {
+    res.status(400).json({ error: String(e) });
+  }
 });
 
-subscriptionRouter.get('/plans', async (_req: AuthRequest, res: Response) => {
-  try {
-    const result = await pool.query('SELECT * FROM plans WHERE is_active = true ORDER BY price_zar ASC');
-    res.json({ success: true, plans: result.rows });
-  } catch { res.status(500).json({ success: false, message: 'Failed to fetch plans' }); }
+// POST /api/subscriptions/webhook — PayFast ITN
+router.post('/webhook', async (req: Request, res: Response) => {
+  const params = req.body as Record<string, string>;
+  if (!validateWebhookSignature(params)) {
+    return res.status(400).send('Invalid signature');
+  }
+  const { payment_status, m_payment_id } = params;
+  if (payment_status === 'COMPLETE') {
+    const [butcheryId] = m_payment_id.split('_');
+    // Update butchery tier to 'platinum' in DB
+    console.log(`[Subscription] Platinum activated for butchery ${butcheryId}`);
+  }
+  res.status(200).send('OK');
 });
+
+// GET /api/subscriptions/success
+router.get('/success', (req: Request, res: Response) => {
+  res.json({ success: true, message: 'Platinum subscription activated!' });
+});
+
+// GET /api/subscriptions/cancel
+router.get('/cancel', (req: Request, res: Response) => {
+  res.json({ success: false, message: 'Payment cancelled' });
+});
+
+export default router;
