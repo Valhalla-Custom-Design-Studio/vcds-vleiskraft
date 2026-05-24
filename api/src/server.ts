@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
+dotenv.config();
+
+import * as Sentry from "@sentry/node";
 import { requestLogger } from "./middleware/requestLogger";
 import { errorHandler } from "./middleware/errorHandler";
 import { authRouter as authRoutes } from "./routes/auth";
@@ -19,17 +22,20 @@ import streamRoutes from "./routes/stream";
 import vleisaiIdentifyRoutes from "./routes/vleisaiIdentify";
 import { startCronJobs } from "./cron";
 
-dotenv.config();
-
-import * as Sentry from "@sentry/node";
-
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.NODE_ENV || "production",
-  release: "vleiskraft@" + (process.env.npm_package_version || "1.0.0"),
-  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.2 : 1.0,
-  integrations: [Sentry.httpIntegration(), Sentry.expressIntegration()],
-});
+// ─── Sentry (must init before routes) ─────────────────────
+const SENTRY_DSN = process.env.SENTRY_DSN_BACKEND || process.env.SENTRY_DSN || "";
+if (SENTRY_DSN) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    environment: process.env.NODE_ENV || "production",
+    release: "vleiskraft@" + (process.env.npm_package_version || "1.0.0"),
+    tracesSampleRate: process.env.NODE_ENV === "production" ? 0.2 : 1.0,
+    integrations: [Sentry.httpIntegration(), Sentry.expressIntegration()],
+  });
+  console.log("[Sentry] Backend error tracking initialised");
+} else {
+  console.warn("[Sentry] No DSN — backend error tracking disabled");
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -74,6 +80,10 @@ app.use("/api/challenges", challengeRoutes);
 app.use("/api/stream", streamRoutes);
 app.use("/api/identify", vleisaiIdentifyRoutes);
 
+// ─── Sentry error handler (must be last) ──────────────────
+if (SENTRY_DSN) {
+  app.use(Sentry.expressErrorHandler());
+}
 app.use(errorHandler);
 
 // ─── Start ────────────────────────────────────────────────
