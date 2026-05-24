@@ -18,6 +18,8 @@ jobs:
   eas-build:
     name: Build APK VleisKraft™
     runs-on: ubuntu-latest
+    env:
+      BUILD_PROFILE: ${{ github.event.inputs.profile || 'preview' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,7 +43,7 @@ jobs:
 
       - name: Build APK
         working-directory: react_native_space
-        run: eas build --platform android --profile ${{ github.event.inputs.profile || \'preview\' }} --non-interactive
+        run: eas build --platform android --profile ${{ env.BUILD_PROFILE }} --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
@@ -52,7 +54,7 @@ jobs:
           payload: |
             {
               "channel": "#vcds-ops",
-              "text": "${{ job.status == \'success\' && \'✅\' || \'❌\' }} *VleisKraft™ APK Build* — profile: `${{ github.event.inputs.profile || \'preview\' }}`\nTriggered by: ${{ github.actor }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              "text": "*VleisKraft™ APK Build* — `${{ env.BUILD_PROFILE }}` — ${{ job.status }}\nTriggered by: ${{ github.actor }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
