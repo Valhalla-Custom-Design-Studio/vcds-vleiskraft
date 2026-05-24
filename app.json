@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "VleisKraft\u2122",
+    "slug": "vleiskraft",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0D0D0D"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "co.za.vcds.vleiskraft",
+      "infoPlist": {
+        "NSCameraUsageDescription": "VleisKraft uses your camera for Braai Brain coal and meat analysis.",
+        "NSMicrophoneUsageDescription": "VleisKraft uses your microphone for Voice Ordering.",
+        "NSPhotoLibraryUsageDescription": "VleisKraft accesses your photos for Braai Brain and social posts."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0D0D0D"
+      },
+      "package": "co.za.vcds.vleiskraft",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-camera",
+      "expo-notifications",
+      "expo-image-picker"
+    ],
+    "scheme": "vleiskraft",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "vleiskraft-vcds"
+      }
+    }
+  }
+}
