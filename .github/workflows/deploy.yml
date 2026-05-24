@@ -1,4 +1,4 @@
-name: Deploy to Vercel
+name: Deploy VleisKraft™ API
 
 on:
   push:
@@ -15,28 +15,28 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
+      - name: Install dependencies
+        working-directory: api
+        run: npm ci
 
-      - name: Deploy to Vercel
-        run: vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          ANTHROPIC_API_KEY: ${ secrets.ANTHROPIC_API_KEY }
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Build API
+        working-directory: api
+        run: npm run build
+
+      - name: Deploy to Railway
+        uses: bervProject/railway-deploy@main
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: vleiskraft
 
       - name: Notify Slack on Deploy
         if: always()
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: |
-            ${ job.status == 'success' && '✅ DEPLOYED' || '❌ DEPLOY FAILED' } *Vleiskraft™*
-            Repo: `${ github.repository }`
-            Branch: `${ github.ref_name }`
-            Commit: `${ github.sha }`
-            Actor: ${ github.actor }
-            <${ github.server_url }/${ github.repository }/actions/runs/${ github.run_id }|View Run>
+          payload: |
+            {
+              "channel": "#vcds-ops",
+              "text": "${{ job.status == \'success\' && \'✅\' || \'❌\' }} *VleisKraft™ API Deploy* — `${{ github.ref_name }}` by ${{ github.actor }}\nCommit: ${{ github.event.head_commit.message }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
         env:
-          SLACK_BOT_TOKEN: ${ secrets.SLACK_BOT_TOKEN }
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
