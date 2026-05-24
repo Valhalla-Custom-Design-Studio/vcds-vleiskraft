@@ -69,6 +69,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/health", healthRoutes);
+app.use("/health", healthRoutes); // Render health check alias
 app.use("/api/vleisai", vleisaiRoutes);
 app.use("/api/vleisgpt", vleisaiRoutes);          // backward compat
 app.use("/api/meat", meatRoutes);
