@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "VleisKraft\u2122",
+    "slug": "vleiskraft",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "scheme": "vleiskraft",
+    "owner": "valhalla-custom-design-studios",
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a1a1a"
+      },
+      "package": "com.vcds.vleiskraft"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
