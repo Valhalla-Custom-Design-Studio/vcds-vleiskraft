@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "VleisKraft",
+    "slug": "vcds-vleiskraft",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "splash": { "backgroundColor": "#7F1D1D" },
+    "scheme": "vleiskraft",
+    "android": { "package": "co.za.vcds.vleiskraft", "adaptiveIcon": { "backgroundColor": "#7F1D1D" } },
+    "ios": { "bundleIdentifier": "co.za.vcds.vleiskraft" },
+    "plugins": ["expo-router", "expo-notifications"],
+    "extra": { "eas": { "projectId": "vleiskraft-vcds" } }
+  }
+}

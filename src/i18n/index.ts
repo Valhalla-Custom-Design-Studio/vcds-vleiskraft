@@ -1,33 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import en from './en.json';
-import af from './af.json';
-
-export type Lang = 'en' | 'af';
-
-clonst translations: Record<Lang, typeof en> = { en, af };
-
+import { useState, useCallback } from "react";
+import en from "./en.json";
+import af from "./af.json";
+type Lang = "en" | "af";
+const translations = { en, af };
 export function useI18n() {
-  const [lang, setLang] = useState<Lang>('af');
-
-  useEffect(() => {
-    AsyncStorage.getItem('vleisai_lang').then((stored) => {
-      if (stored === 'en' || stored === 'af') setLang(stored);
-    });
-  }, []);
-
-  const toggleLang = useCallback(() => {
-    const next = lang === 'en' ? 'af' : 'en';
-    setLang(next);
-    AsyncStorage.setItem('vleisai_lang', next);
+  const [lang, setLang] = useState<Lang>("en");
+  const toggleLang = useCallback(() => setLang(l => l === "en" ? "af" : "en"), []);
+  const t = useCallback((key: string): string => {
+    const parts = key.split(".");
+    let val: any = translations[lang];
+    for (const p of parts) val = val?.[p];
+    return val ?? key;
   }, [lang]);
-
-  const setLanguage = useCallback((l: Lang) => {
-    setLang(l);
-    AsyncStorage.setItem('vleisai_lang', l);
-  }, []);
-
-  const t = translations[lang];
-
-  return { t, lang, toggleLang, setLanguage };
+  return { t, lang, toggleLang };
 }
