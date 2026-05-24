@@ -22,12 +22,24 @@ jobs:
       - name: Build API
         working-directory: api
         run: npm run build
+        env:
+          SENTRY_DSN_BACKEND: ${{ secrets.SENTRY_DSN_BACKEND }}
+          NODE_ENV: production
 
       - name: Deploy to Railway
         uses: bervProject/railway-deploy@main
         with:
           railway_token: ${{ secrets.RAILWAY_TOKEN }}
           service: vleiskraft
+
+      - name: Health check
+        id: health
+        run: |
+          sleep 20
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://vleiskraft-api.onrender.com/api/health || echo "000")
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "Health check: $STATUS"
+        continue-on-error: true
 
       - name: Notify Slack on Deploy
         if: always()
@@ -36,7 +48,7 @@ jobs:
           payload: |
             {
               "channel": "#vcds-ops",
-              "text": "${{ job.status == \'success\' && \'✅\' || \'❌\' }} *VleisKraft™ API Deploy* — `${{ github.ref_name }}` by ${{ github.actor }}\nCommit: ${{ github.event.head_commit.message }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              "text": "${{ job.status == 'success' && '✅' || '❌' }} *VleisKraft™ API Deploy* — `${{ github.ref_name }}` by ${{ github.actor }}\nHealth: ${{ steps.health.outputs.status }}\nCommit: ${{ github.event.head_commit.message }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

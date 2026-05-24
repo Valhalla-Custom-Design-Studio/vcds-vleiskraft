@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "VleisKraft\u2122",
+    "name": "VleisKraft™",
     "slug": "vleiskraft",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,10 +13,22 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1a1a1a"
       },
-      "package": "com.vcds.vleiskraft"
+      "package": "com.vcds.vleiskraft",
+      "googleServicesFile": "./google-services.json"
+    },
+    "ios": {
+      "bundleIdentifier": "com.vcds.vleiskraft",
+      "supportsTablet": false
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "valhalla-custom-design-studios",
+          "project": "vleiskraft-react-native"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
