@@ -11,6 +11,9 @@ import { healthRouter as healthRoutes } from "./routes/health";
 import vleisaiRoutes from "./routes/vleisai";
 import meatRoutes from "./routes/meat";
 import orderRoutes from "./routes/orders";
+import woocommerceRoutes from "./routes/woocommerce";
+import brandingRoutes from "./routes/branding";
+
 
 dotenv.config();
 
@@ -64,9 +67,13 @@ app.use("/api/auth", authRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/health", healthRoutes);
-app.use("/api/vleisai", vleisaiRoutes);       // KAN-33: VleisAI (was vleisgpt)
+app.use("/api/vleisai", vleisaiRoutes);
+app.use("/api/vleisgpt", vleisaiRoutes);  // backward compat alias       // KAN-33: VleisAI (was vleisgpt)
 app.use("/api/meat", meatRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/admin/woocommerce", woocommerceRoutes);
+app.use("/api/tenant", brandingRoutes);
+
 
 app.use(errorHandler);
 
