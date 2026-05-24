@@ -38,7 +38,7 @@ router.post('/chat', authenticate, async (req: Request, res: Response) => {
           : 'Current SA meat prices (May 2026): Beef fillet R280-320/kg, Sirloin R180-220/kg, Lamb chops R160-200/kg. Prices vary by region and grade.';
       } else if (lower.includes('recipe') || lower.includes('resep')) {
         reply = lang === 'af'
-          ? 'Watter vleis soek jy 'n resep vir? Ek het resepte vir biltong, boerewors, potjie, braai, kerrie en meer.'
+          ? "Watter vleis soek jy 'n resep vir? Ek het resepte vir biltong, boerewors, potjie, braai, kerrie en meer."
           : 'Which meat are you looking for a recipe for? I have recipes for biltong, boerewors, potjie, braai, curry and more.';
       } else {
         reply = lang === 'af'

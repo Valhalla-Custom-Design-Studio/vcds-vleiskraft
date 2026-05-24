@@ -4,10 +4,10 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import { requestLogger } from "./middleware/requestLogger";
 import { errorHandler } from "./middleware/errorHandler";
-import authRoutes from "./routes/auth";
-import subscriptionRoutes from "./routes/subscriptions";
+import { authRouter as authRoutes } from "./routes/auth";
+import { subscriptionRouter as subscriptionRoutes } from "./routes/subscriptions";
 import paymentRoutes from "./routes/payments";
-import healthRoutes from "./routes/health";
+import { healthRouter as healthRoutes } from "./routes/health";
 import vleisaiRoutes from "./routes/vleisai";
 import meatRoutes from "./routes/meat";
 import orderRoutes from "./routes/orders";
@@ -33,9 +33,6 @@ Sentry.init({
 
 const app = express();
 
-  // Sentry request handler (must be first middleware)
-  app.use(Sentry.requestHandler());
-  app.use(Sentry.tracingHandler());
 
 const PORT = process.env.PORT || 3000;
 
@@ -74,8 +71,6 @@ app.use("/api/orders", orderRoutes);
 app.use(errorHandler);
 
 
-  // Sentry error handler (must be before any other error handler)
-  app.use(Sentry.errorHandler());
 
 app.listen(PORT, () => {
   console.log(`VleisKraft™ API running on port ${PORT}`);
