@@ -1,15 +1,32 @@
 {
   "expo": {
     "name": "VleisKraft",
-    "slug": "vcds-vleiskraft",
+    "slug": "vleiskraft",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
-    "splash": { "backgroundColor": "#7F1D1D" },
+    "splash": {
+      "backgroundColor": "#7F1D1D"
+    },
     "scheme": "vleiskraft",
-    "android": { "package": "co.za.vcds.vleiskraft", "adaptiveIcon": { "backgroundColor": "#7F1D1D" } },
-    "ios": { "bundleIdentifier": "co.za.vcds.vleiskraft" },
-    "plugins": ["expo-router", "expo-notifications"],
-    "extra": { "eas": { "projectId": "vleiskraft-vcds" } }
+    "android": {
+      "package": "co.za.vcds.vleiskraft",
+      "adaptiveIcon": {
+        "backgroundColor": "#7F1D1D"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "co.za.vcds.vleiskraft"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-notifications"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "f840d301-510c-4f3f-8ec2-c0d52c263431"
+      }
+    },
+    "owner": "valhalla-custom-design-studios-org"
   }
 }
