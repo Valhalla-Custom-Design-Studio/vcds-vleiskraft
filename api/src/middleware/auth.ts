@@ -7,3 +7,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
   try { req.user = jwt.verify(token, process.env.JWT_SECRET!) as AuthRequest['user']; next(); }
   catch { res.status(401).json({ success: false, message: 'Invalid token' }); }
 };
+
+// Aliases for route compatibility
+export const requireAuth = authenticate;
+export const requireAdmin = authenticate;
