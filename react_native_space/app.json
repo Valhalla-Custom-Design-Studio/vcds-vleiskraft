@@ -7,14 +7,13 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "scheme": "vleiskraft",
-    "owner": "valhalla-custom-design-studios",
+    "owner": "valhalla-custom-design-studios-org",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1a1a1a"
       },
-      "package": "com.vcds.vleiskraft",
-      "googleServicesFile": "./google-services.json"
+      "package": "com.vcds.vleiskraft"
     },
     "ios": {
       "bundleIdentifier": "com.vcds.vleiskraft",
