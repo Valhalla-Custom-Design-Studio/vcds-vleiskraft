@@ -2,9 +2,9 @@
 // KAN-31: LIVE endpoint. KAN-32: APP_ORIGIN from env.
 
 export const PAYFAST_CONFIG = {
-  merchantId: process.env.PAYFAST_MERCHANT_ID || '11910323',
-  merchantKey: process.env.PAYFAST_MERCHANT_KEY || 'f61uspt7vtdta',
-  passPhrase: process.env.PAYFAST_PASSPHRASE || 'ValhallaCustoms1986',
+  merchantId: process.env.PAYFAST_MERCHANT_ID || '',
+  merchantKey: process.env.PAYFAST_MERCHANT_KEY || '',
+  passPhrase: process.env.PAYFAST_PASSPHRASE || '',
   // ✅ KAN-31: LIVE endpoint
   paymentUrl: 'https://www.payfast.co.za/eng/process',
   notifyUrl: process.env.PAYFAST_NOTIFY_URL || 'https://vleiskraft.vcds.co.za/api/payments/itn',
