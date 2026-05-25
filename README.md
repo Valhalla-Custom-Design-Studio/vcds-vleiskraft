@@ -31,3 +31,18 @@
  2026 Valhalla Custom Design Studios. All rights reserved.
 Private and confidential. Unauthorised access is prohibited.
 <!-- ODIN build trigger: 2026-05-24 15:53:09 UTC -->
+
+## 💰 Pricing / Pryse
+
+| Tier (EN) | Tier (AF) | Monthly / Maandeliks | Trial / Proeftyd | Branches / Takke |
+|---|---|---|---|---|
+| Consumer | Verbruiker | **Free / Gratis** | — | 1 |
+| Starter | Beginner | **R3,500/mo** | 30 days free / 30 dae gratis | 1 |
+| Pro | Groei | **R5,000/mo** | — | 1 |
+| Business | Besigheid | **R7,500/mo** | — | 3 |
+| Enterprise | Onderneming | **R15,000/mo** | — | Unlimited / Onbeperk |
+
+> Consumers / public members pay **nothing**.  
+> All butchery tiers are billed monthly via PayFast.  
+> Starter includes a **30-day free trial** with limited add-ons.
+

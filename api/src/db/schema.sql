@@ -24,11 +24,14 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS plans (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name VARCHAR(50) UNIQUE NOT NULL,              -- consumer, starter, pro, business, enterprise
-  display_name VARCHAR(100) NOT NULL,
+  display_name_en VARCHAR(100) NOT NULL,         -- English name
+  display_name_af VARCHAR(100),                  -- Afrikaans name
   price_zar DECIMAL(10,2) NOT NULL DEFAULT 0,
   billing_interval VARCHAR(20) DEFAULT 'monthly',
+  trial_days INTEGER DEFAULT 0,                  -- 30 for Starter, 0 others
   max_branches INTEGER DEFAULT 1,
-  features JSONB NOT NULL DEFAULT '[]',
+  features_en JSONB NOT NULL DEFAULT '[]',
+  features_af JSONB NOT NULL DEFAULT '[]',
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
