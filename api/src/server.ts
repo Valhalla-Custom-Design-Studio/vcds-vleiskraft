@@ -20,6 +20,10 @@ import voiceOrderRoutes from "./routes/voiceOrder";
 import streamRoutes from "./routes/stream";
 import challengesRoutes from "./routes/challenges";
 import { startCronJobs } from "./cron";
+import stockvelRoutes from "./routes/stockvel";
+import laybyRoutes from "./routes/layby";
+import spitbraaiRoutes from "./routes/spitbraai";
+import mealPlannerRoutes from "./routes/mealPlanner";
 
 dotenv.config();
 
@@ -77,6 +81,10 @@ app.use("/api/butcheries", butcheriesRoutes);  // KAN-40: Butchery selector
 app.use("/api/voice-order", voiceOrderRoutes); // Voice Ordering™
 app.use("/api/stream", streamRoutes);          // Stream.io chat
 app.use("/api/challenges", challengesRoutes);  // Community Challenges
+app.use("/api/stockvel", stockvelRoutes);        // Stockvel Savings Groups
+app.use("/api/layby", laybyRoutes);              // Lay-By System
+app.use("/api/spitbraai", spitbraaiRoutes);      // SpitBraai Bookings
+app.use("/api/meal-planner", mealPlannerRoutes); // AI Meal Planner
 
 // ─── Sentry error handler (must be last) ──────────────────
 if (SENTRY_DSN) {
