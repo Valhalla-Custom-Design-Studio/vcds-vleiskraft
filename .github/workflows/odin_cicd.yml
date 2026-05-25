@@ -1,0 +1,193 @@
+name: ODIN Autonomous CI/CD
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  SLACK_CHANNEL: "#vcds-ops"
+  WORKDIR: api
+
+jobs:
+  build:
+    name: 🔨 Build & Dependency Audit
+    runs-on: ubuntu-latest
+    outputs:
+      build_status: ${{ steps.build_result.outputs.status }}
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect working directory
+        id: detect_workdir
+        run: |
+          if [ -f "api/package.json" ]; then
+            echo "workdir=api" >> $GITHUB_OUTPUT
+          elif [ -f "package.json" ]; then
+            echo "workdir=." >> $GITHUB_OUTPUT
+          else
+            echo "workdir=api" >> $GITHUB_OUTPUT
+          fi
+        working-directory: ${{ github.workspace }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        id: install
+        run: npm install
+        continue-on-error: true
+
+      - name: Security Audit
+        id: audit
+        run: npm audit --audit-level=high --json > ../audit_report.json 2>&1 || true
+
+      - name: Build Application
+        id: build
+        run: npm run build 2>&1 | tee ../build_log.txt
+        continue-on-error: true
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            audit_report.json
+            build_log.txt
+
+      - name: Set Build Status
+        id: build_result
+        run: echo "status=${{ steps.build.outcome }}" >> $GITHUB_OUTPUT
+        working-directory: ${{ github.workspace }}
+
+      - name: Notify Slack - Build Failure
+        if: steps.build.outcome == 'failure'
+        uses: slackapi/slack-github-action@v1.26.0
+        continue-on-error: true
+        with:
+          channel-id: ${{ env.SLACK_CHANNEL }}
+          slack-message: |
+            🔴 *BUILD FAILED* — ${{ github.repository }}
+            Branch: `${{ github.ref_name }}` | Actor: ${{ github.actor }}
+            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Logs>
+        env:
+          SLACK_BOT_TOKEN: ${{ env.SLACK_BOT_TOKEN }}
+
+  test:
+    name: 🧪 QA Test Suite
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.outputs.build_status == 'success'
+    outputs:
+      test_status: ${{ steps.test_result.outputs.status }}
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Dependencies
+        run: npm install
+      - name: Run Tests
+        id: unit_tests
+        run: npm test 2>&1 | tee ../test_log.txt
+        continue-on-error: true
+      - name: Upload Test Log
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test_log.txt
+      - name: Set Test Status
+        id: test_result
+        run: echo "status=${{ steps.unit_tests.outcome }}" >> $GITHUB_OUTPUT
+        working-directory: ${{ github.workspace }}
+      - name: Notify Slack - Test Results
+        uses: slackapi/slack-github-action@v1.26.0
+        continue-on-error: true
+        with:
+          channel-id: ${{ env.SLACK_CHANNEL }}
+          slack-message: |
+            ${{ steps.unit_tests.outcome == 'success' && '🟢 QA PASSED' || '🔴 QA FAILED' }} — ${{ github.repository }}
+            Branch: `${{ github.ref_name }}`
+            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Report>
+        env:
+          SLACK_BOT_TOKEN: ${{ env.SLACK_BOT_TOKEN }}
+
+  fault-analysis:
+    name: 🔍 Fault Log Analysis
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    if: always() && (needs.build.outputs.build_status == 'failure' || needs.test.outputs.test_status == 'failure')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+        continue-on-error: true
+      - name: Analyze & Report Faults
+        run: |
+          echo "=== ODIN FAULT REPORT ===" > fault_report.txt
+          echo "Repo: ${{ github.repository }}" >> fault_report.txt
+          echo "Branch: ${{ github.ref_name }}" >> fault_report.txt
+          echo "Build: ${{ needs.build.outputs.build_status }}" >> fault_report.txt
+          echo "Tests: ${{ needs.test.outputs.test_status }}" >> fault_report.txt
+          echo "" >> fault_report.txt
+          if [ -f build_log.txt ]; then
+            echo "=== BUILD ERRORS ===" >> fault_report.txt
+            grep -i "error\|failed\|cannot find\|module not found" build_log.txt | head -20 >> fault_report.txt || true
+          fi
+          cat fault_report.txt
+      - name: Notify Slack - Fault Report
+        uses: slackapi/slack-github-action@v1.26.0
+        continue-on-error: true
+        with:
+          channel-id: ${{ env.SLACK_CHANNEL }}
+          slack-message: |
+            🔍 *FAULT DETECTED* — ${{ github.repository }}
+            Build: `${{ needs.build.outputs.build_status }}` | Tests: `${{ needs.test.outputs.test_status }}`
+            Branch: `${{ github.ref_name }}`
+            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Full Fault Report>
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+  deploy:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    if: |
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
+      needs.build.outputs.build_status == 'success' &&
+      needs.test.outputs.test_status == 'success'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Post-Deploy Health Check
+        id: health_check
+        run: |
+          if [ -n "${{ secrets.DEPLOY_URL }}" ]; then
+            sleep 30
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.DEPLOY_URL }}/health || echo "000")
+            echo "health_status=$STATUS" >> $GITHUB_OUTPUT
+          else
+            echo "health_status=SKIPPED" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+      - name: Notify Slack - Deploy
+        uses: slackapi/slack-github-action@v1.26.0
+        continue-on-error: true
+        with:
+          channel-id: ${{ env.SLACK_CHANNEL }}
+          slack-message: |
+            🚀 *DEPLOYED* — ${{ github.repository }}
+            Branch: `${{ github.ref_name }}` | Health: ${{ steps.health_check.outputs.health_status }}
+            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Deploy>
+        env:
+          SLACK_BOT_TOKEN: ${{ env.SLACK_BOT_TOKEN }}

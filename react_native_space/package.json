@@ -1,0 +1,11 @@
+{
+  "name": "vleiskraft",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo 'No tests' && exit 0",
+    "lint": "echo 'No lint' && exit 0"
+  },
+  "dependencies": {
+    "@sentry/react-native": "^5.22.0"
+  }
+}

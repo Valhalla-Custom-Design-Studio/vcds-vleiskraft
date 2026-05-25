@@ -1,0 +1,66 @@
+services:
+  - type: web
+    name: vcds-vleiskraft
+    runtime: docker
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: ./api
+    branch: main
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: DATABASE_URL
+        sync: false
+      - key: PAYFAST_MERCHANT_ID
+        value: "11910323"
+      - key: PAYFAST_MERCHANT_KEY
+        sync: false
+      - key: PAYFAST_PASSPHRASE
+        sync: false
+      - key: PAYFAST_SANDBOX
+        value: "false"
+      - key: PAYFAST_URL
+        value: https://www.payfast.co.za/eng/process
+      - key: PAYFAST_NOTIFY_URL
+        value: https://vcds-vleiskraft.onrender.com/api/payments/itn
+      - key: PAYFAST_RETURN_URL
+        value: https://vcds-vleiskraft.onrender.com/payment/success
+      - key: PAYFAST_CANCEL_URL
+        value: https://vcds-vleiskraft.onrender.com/payment/cancel
+      - key: APP_URL
+        value: https://vcds-vleiskraft.onrender.com
+      - key: CORS_ORIGIN
+        value: https://vcds-vleiskraft.onrender.com
+      - key: CLOUDFLARE_ACCOUNT_ID
+        value: 5aad73a7b1178f7db26f220ec21ac13e
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET
+        value: lingering-glade-2094
+      - key: R2_ENDPOINT
+        value: https://5aad73a7b1178f7db26f220ec21ac13e.r2.cloudflarestorage.com
+      - key: SENTRY_DSN_BACKEND
+        value: https://e7d025286e3d2750e0de7aa9950af0b4@o4511432712650752.ingest.de.sentry.io/4511439264612432
+      - key: SENTRY_DSN
+        value: https://e7d025286e3d2750e0de7aa9950af0b4@o4511432712650752.ingest.de.sentry.io/4511439264612432
+      - key: STREAM_API_KEY
+        value: xdpp6ngtjmpz
+      - key: STREAM_API_SECRET
+        sync: false
+      - key: SLACK_BOT_TOKEN
+        sync: false
+      - key: BCRYPT_ROUNDS
+        value: "12"
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: RATE_LIMIT_MAX
+        value: "100"

@@ -1,9 +1,7 @@
-name: Deploy to Vercel
+name: Deploy VleisKraft™ API
 
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
 
 jobs:
@@ -16,21 +14,41 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
 
       - name: Install dependencies
+        working-directory: api
         run: npm ci
 
-      - name: Run tests
-        run: npm test --if-present
+      - name: Build API
+        working-directory: api
+        run: npm run build
+        env:
+          SENTRY_DSN_BACKEND: ${{ secrets.SENTRY_DSN_BACKEND }}
+          NODE_ENV: production
 
-      - name: Build
-        run: npm run build --if-present
-
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
+      - name: Deploy to Railway
+        uses: bervProject/railway-deploy@main
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: "--prod"
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: vleiskraft
+
+      - name: Health check
+        id: health
+        run: |
+          sleep 20
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://vleiskraft-api.onrender.com/api/health || echo "000")
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "Health check: $STATUS"
+        continue-on-error: true
+
+      - name: Notify Slack on Deploy
+        if: always()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "channel": "#vcds-ops",
+              "text": "${{ job.status == 'success' && '✅' || '❌' }} *VleisKraft™ API Deploy* — `${{ github.ref_name }}` by ${{ github.actor }}\nHealth: ${{ steps.health.outputs.status }}\nCommit: ${{ github.event.head_commit.message }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
