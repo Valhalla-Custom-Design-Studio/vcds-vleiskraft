@@ -2,14 +2,18 @@ import { Router, Request, Response } from "express";
 import crypto from "crypto";
 import { pool } from "../db/pool";
 import { authenticate } from "../middleware/auth";
+import * as Sentry from "@sentry/node";
 
 const router = Router();
 
-const PAYFAST_LIVE_URL = "https://www.payfast.co.za/eng/process";
+const PAYFAST_LIVE_URL = process.env.PAYFAST_URL || "https://www.payfast.co.za/eng/process";
 const MERCHANT_ID = process.env.PAYFAST_MERCHANT_ID || "11910323";
 const MERCHANT_KEY = process.env.PAYFAST_MERCHANT_KEY || "f61uspt7vtdta";
 const PASSPHRASE = process.env.PAYFAST_PASSPHRASE || "ValhallaCustoms1986";
 const APP_ORIGIN = process.env.APP_ORIGIN || "https://vleiskraft.vcds.co.za";
+const NOTIFY_URL = process.env.PAYFAST_NOTIFY_URL || `${APP_ORIGIN}/api/payments/itn`;
+const RETURN_URL = process.env.PAYFAST_RETURN_URL || `${APP_ORIGIN}/payment/success`;
+const CANCEL_URL = process.env.PAYFAST_CANCEL_URL || `${APP_ORIGIN}/payment/cancel`;
 
 function generateSignature(data: Record<string, string>, passphrase: string): string {
   const str = Object.entries(data)
@@ -60,6 +64,7 @@ router.post("/checkout", authenticate, async (req: Request, res: Response) => {
 
     res.json({ redirectUrl: `${PAYFAST_LIVE_URL}?${queryString}`, paymentData });
   } catch (err) {
+    Sentry.captureException(err);
     res.status(500).json({ error: "Payment initiation failed" });
   }
 });

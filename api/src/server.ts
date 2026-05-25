@@ -1,3 +1,4 @@
+import { runMigrations } from './db/migrate';
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -38,7 +39,6 @@ Sentry.init({
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// KAN-38: Restrict CORS to production origins only
 const allowedOrigins = [
   process.env.APP_ORIGIN || "https://vleiskraft.vcds.co.za",
   "https://vleiskraft.co.za",
@@ -78,6 +78,10 @@ app.use("/api/voice-order", voiceOrderRoutes); // Voice Ordering™
 app.use("/api/stream", streamRoutes);          // Stream.io chat
 app.use("/api/challenges", challengesRoutes);  // Community Challenges
 
+// ─── Sentry error handler (must be last) ──────────────────
+if (SENTRY_DSN) {
+  app.use(Sentry.expressErrorHandler());
+}
 app.use(errorHandler);
 
 // ─── Start server ─────────────────────────────────────────────
