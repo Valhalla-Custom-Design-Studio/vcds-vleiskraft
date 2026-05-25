@@ -33,7 +33,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: react_native_space
-        run: npm ci
+        run: npm install
 
       - name: Setup EAS
         uses: expo/expo-github-action@v8
@@ -57,6 +57,7 @@ jobs:
         if: always()
         uses: slackapi/slack-github-action@v1.26.0
         with:
+          channel-id: "vcds-ops"
           payload: |
             {
               "channel": "#vcds-ops",
