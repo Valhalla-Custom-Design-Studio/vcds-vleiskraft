@@ -4,65 +4,52 @@ import { pool } from "../db/pool";
 
 const router = Router();
 
-// Ensure table exists
-async function ensureChallengesTable() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS challenges (
-      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-      title VARCHAR(200) NOT NULL,
-      description TEXT,
-      prize VARCHAR(200),
-      ends_at TIMESTAMP,
-      category VARCHAR(50) DEFAULT 'braai',
-      is_active BOOLEAN DEFAULT true,
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `);
-  // Seed initial challenges if empty
-  const check = await pool.query("SELECT COUNT(*) FROM challenges");
-  if (parseInt(check.rows[0].count) === 0) {
-    await pool.query(`INSERT INTO challenges (title, description, prize, ends_at, category) VALUES
-      ('Beste Braai Foto™', 'Deel jou beste braai foto en wen!', 'R500 VleisKraft™ voucher', NOW() + INTERVAL '30 days', 'braai'),
-      ('Boerewors Meester', 'Maak die beste tuisgemaakte boerewors.', 'Gratis vleis vir 1 maand', NOW() + INTERVAL '45 days', 'boerewors'),
-      ('Braai Meester', 'Wys jou braai vaardighede!', 'Platinum VleisKraft™ lid vir 6 maande', NOW() + INTERVAL '60 days', 'braai')
-    `);
-  }
-}
-
 // GET /api/challenges
 router.get("/", requireAuth, async (req: Request, res: Response) => {
   try {
-    await ensureChallengesTable();
     const { rows } = await pool.query(
-      "SELECT * FROM challenges WHERE is_active=true AND ends_at > NOW() ORDER BY ends_at ASC"
+      `SELECT c.*, COUNT(ce.id)::int as entry_count
+       FROM challenges c
+       LEFT JOIN challenge_entries ce ON ce.challenge_id = c.id
+       WHERE c.is_active=true AND (c.ends_at IS NULL OR c.ends_at > NOW())
+       GROUP BY c.id ORDER BY c.ends_at ASC`
     );
     res.json({ success: true, challenges: rows });
-  } catch (error: any) {
-    res.status(500).json({ error: "Failed to fetch challenges", details: error.message });
-  }
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
 // POST /api/challenges/:id/enter
 router.post("/:id/enter", requireAuth, async (req: Request, res: Response) => {
   try {
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS challenge_entries (
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        challenge_id UUID REFERENCES challenges(id),
-        user_id UUID,
-        entry_data JSONB,
-        entered_at TIMESTAMP DEFAULT NOW()
-      )
-    `);
     const userId = (req as any).user.id;
-    await pool.query(
-      "INSERT INTO challenge_entries (challenge_id, user_id, entry_data) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING",
-      [req.params.id, userId, req.body]
+    const { entry_data, photo_url } = req.body;
+    // Check challenge exists and is active
+    const { rows: ch } = await pool.query(
+      `SELECT id FROM challenges WHERE id=$1 AND is_active=true AND (ends_at IS NULL OR ends_at > NOW())`,
+      [req.params.id]
     );
-    res.json({ success: true, message: "Challenge entry submitted!" });
-  } catch (error: any) {
-    res.status(500).json({ error: "Entry failed", details: error.message });
-  }
+    if (!ch.length) return res.status(404).json({ error: "Challenge not found or expired" });
+    const { rows } = await pool.query(
+      `INSERT INTO challenge_entries (challenge_id,user_id,entry_data,photo_url)
+       VALUES ($1,$2,$3,$4)
+       ON CONFLICT DO NOTHING RETURNING *`,
+      [req.params.id, userId, JSON.stringify(entry_data || {}), photo_url]
+    );
+    res.status(201).json({ success: true, entry: rows[0] || { message: "Already entered" } });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/challenges/:id/entries — leaderboard
+router.get("/:id/entries", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT ce.*, u.first_name, u.last_name FROM challenge_entries ce
+       LEFT JOIN users u ON u.id = ce.user_id
+       WHERE ce.challenge_id=$1 ORDER BY ce.votes DESC, ce.entered_at ASC LIMIT 50`,
+      [req.params.id]
+    );
+    res.json({ success: true, entries: rows });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
 export default router;
