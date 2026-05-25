@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator, Alert, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import api from '../../src/services/api';
-import { useLanguage } from '../../src/i18n/LanguageContext';
-import { Colors, Spacing, FontSize, Radius } from '../../src/constants/theme';
+import { api } from '../../src/services/api';
+import { t } from '../../src/i18n';
+import { Colors, Spacing, Radius } from '../../src/constants/theme';
 import ScreenContainer from '../../src/components/ScreenContainer';
 import GlassCard from '../../src/components/GlassCard';
 import GradientButton from '../../src/components/GradientButton';
-import ProductImage from '../../src/components/ProductImage';
+// ProductImage replaced with standard Image
 
 interface TenantBranding {
   name?: string; logoUrl?: string; bannerUrl?: string;
@@ -27,7 +27,7 @@ const COLOR_PRESETS = [
 ];
 
 export default function AdminBrandingScreen() {
-  const { lang } = useLanguage();
+  const lang = 'en'; // auto-detected via i18n
   const router = useRouter();
   const [form, setForm] = useState<TenantBranding>({});
   const [loading, setLoading] = useState(true);
@@ -118,7 +118,7 @@ export default function AdminBrandingScreen() {
             <Text style={s.sectionTitle}>{lang === 'AF' ? '👁️ Voorskou / Preview' : '👁️ Preview'}</Text>
             <View style={[s.previewHeader, { backgroundColor: form.primaryColor ?? '#C8102E' }]}>
               {form.logoUrl ? (
-                <ProductImage uri={form.logoUrl} style={s.previewLogo} />
+                <Image source={{ uri: form.logoUrl }} style={s.previewLogo} />
               ) : (
                 <View style={s.previewLogoPlaceholder}>
                   <Ionicons name="storefront-outline" size={32} color="#fff" />
