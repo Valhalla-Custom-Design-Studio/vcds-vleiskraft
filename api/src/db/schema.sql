@@ -1,4 +1,6 @@
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -11,6 +13,9 @@ CREATE TABLE IF NOT EXISTS users (
   phone VARCHAR(20),
   preferred_locale VARCHAR(5) DEFAULT 'en',
   tier VARCHAR(20) DEFAULT 'free',
+  business_name VARCHAR(100),
+  business_type VARCHAR(50), -- butcher, restaurant, wholesaler, farmer, consumer
+  vat_number VARCHAR(20),
   is_active BOOLEAN DEFAULT true,
   trial_ends_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),

@@ -1,4 +1,4 @@
-name: VCDS Wave 1 CI
+name: VCDS Wave 1 CI — VleisKraft™
 
 on:
   push:
@@ -83,9 +83,11 @@ jobs:
         env:
           DATABASE_URL: postgresql://vcds:vcds_test@localhost:5432/vcds_test
           JWT_SECRET: ci_test_secret
-          PAYFAST_MERCHANT_ID: test
+          PAYFAST_MERCHANT_ID: "11910323"
           PAYFAST_MERCHANT_KEY: test
           PAYFAST_PASSPHRASE: test
+          PAYFAST_URL: https://www.payfast.co.za/eng/process
+          SENTRY_DSN_BACKEND: ${{ secrets.SENTRY_DSN_BACKEND }}
           NODE_ENV: test
         run: npm test -- --passWithNoTests || true
 

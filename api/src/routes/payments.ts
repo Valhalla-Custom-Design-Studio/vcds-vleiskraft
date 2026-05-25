@@ -1,14 +1,18 @@
 import { Router, Request, Response } from "express";
 import crypto from "crypto";
 import { authenticate } from "../middleware/auth";
+import * as Sentry from "@sentry/node";
 
 const router = Router();
 
-const PAYFAST_LIVE_URL = "https://www.payfast.co.za/eng/process";
+const PAYFAST_LIVE_URL = process.env.PAYFAST_URL || "https://www.payfast.co.za/eng/process";
 const MERCHANT_ID = process.env.PAYFAST_MERCHANT_ID || "11910323";
 const MERCHANT_KEY = process.env.PAYFAST_MERCHANT_KEY || "f61uspt7vtdta";
 const PASSPHRASE = process.env.PAYFAST_PASSPHRASE || "ValhallaCustoms1986";
 const APP_ORIGIN = process.env.APP_ORIGIN || "https://vleiskraft.vcds.co.za";
+const NOTIFY_URL = process.env.PAYFAST_NOTIFY_URL || `${APP_ORIGIN}/api/payments/itn`;
+const RETURN_URL = process.env.PAYFAST_RETURN_URL || `${APP_ORIGIN}/payment/success`;
+const CANCEL_URL = process.env.PAYFAST_CANCEL_URL || `${APP_ORIGIN}/payment/cancel`;
 
 function generateSignature(data: Record<string, string>, passphrase: string): string {
   const str = Object.entries(data)
@@ -29,9 +33,9 @@ router.post("/checkout", authenticate, async (req: Request, res: Response) => {
     const paymentData: Record<string, string> = {
       merchant_id: MERCHANT_ID,
       merchant_key: MERCHANT_KEY,
-      return_url: `${APP_ORIGIN}/payment/success`,
-      cancel_url: `${APP_ORIGIN}/payment/cancel`,
-      notify_url: `${APP_ORIGIN}/api/payments/itn`,
+      return_url: RETURN_URL,
+      cancel_url: CANCEL_URL,
+      notify_url: NOTIFY_URL,
       name_first: first_name || "",
       name_last: last_name || "",
       email_address: email || "",
@@ -45,23 +49,23 @@ router.post("/checkout", authenticate, async (req: Request, res: Response) => {
       .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
       .join("&");
 
-    // KAN-31: Live PayFast URL
     const redirectUrl = `${PAYFAST_LIVE_URL}?${queryString}`;
-
     res.json({ redirectUrl, paymentData });
   } catch (err) {
+    Sentry.captureException(err);
     res.status(500).json({ error: "Payment initiation failed" });
   }
 });
 
-// ITN handler
+// ITN handler — PayFast Instant Transaction Notification
 router.post("/itn", async (req: Request, res: Response) => {
   try {
-    const { payment_status, pf_payment_id, amount_gross, item_name } = req.body;
-    console.log("PayFast ITN received:", { payment_status, pf_payment_id, amount_gross, item_name });
+    const { payment_status, pf_payment_id, amount_gross, item_name, custom_str1 } = req.body;
+    console.log("[PayFast ITN]", { payment_status, pf_payment_id, amount_gross, item_name, user_id: custom_str1 });
     // TODO: verify signature, update subscription status in DB
     res.status(200).send("OK");
   } catch (err) {
+    Sentry.captureException(err);
     res.status(500).send("ITN error");
   }
 });
