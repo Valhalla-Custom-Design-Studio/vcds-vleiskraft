@@ -1,67 +1,53 @@
-name: EAS APK Build — VleisKraft™
+name: EAS Build VleisKraft™ - APK + AAB
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      profile:
-        description: Build profile
-        required: false
-        default: preview
-        type: choice
-        options:
-          - preview
-          - production
 
 jobs:
-  eas-build:
-    name: Build APK VleisKraft™
+  build-apk:
+    name: Build APK (preview)
     runs-on: ubuntu-latest
-    env:
-      BUILD_PROFILE: ${{ github.event.inputs.profile || 'preview' }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node 20
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
           cache: npm
           cache-dependency-path: react_native_space/package-lock.json
-
       - name: Install dependencies
         working-directory: react_native_space
-        run: npm install
-
-      - name: Setup EAS
-        uses: expo/expo-github-action@v8
+        run: npm install --legacy-peer-deps
+      - uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
-
       - name: Build APK
         working-directory: react_native_space
-        run: eas build --platform android --profile ${{ env.BUILD_PROFILE }} --non-interactive
+        run: eas build --platform android --profile preview --non-interactive --no-wait
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-          EXPO_PUBLIC_SENTRY_DSN: ${{ secrets.SENTRY_DSN_FRONTEND }}
-          EXPO_PUBLIC_SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
-          EXPO_PUBLIC_SENTRY_DSN_IOS: ${{ secrets.SENTRY_DSN_IOS }}
-          EXPO_PUBLIC_SENTRY_DSN_REACT: ${{ secrets.SENTRY_DSN_REACT }}
-          EXPO_PUBLIC_SENTRY_DSN_FLUTTER: ${{ secrets.SENTRY_DSN_FLUTTER }}
-          EXPO_PUBLIC_ENV: production
 
-      - name: Notify Slack on Build
-        if: always()
-        uses: slackapi/slack-github-action@v1.26.0
+  build-aab:
+    name: Build AAB (production)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          channel-id: "vcds-ops"
-          payload: |
-            {
-              "channel": "#vcds-ops",
-              "text": "${{ job.status == 'success' && '✅' || '❌' }} *VleisKraft™ APK Build* — `${{ env.BUILD_PROFILE }}` — ${{ job.status }}\nTriggered by: ${{ github.actor }}\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            }
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: react_native_space/package-lock.json
+      - name: Install dependencies
+        working-directory: react_native_space
+        run: npm install --legacy-peer-deps
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Build AAB
+        working-directory: react_native_space
+        run: eas build --platform android --profile production --non-interactive --no-wait
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
