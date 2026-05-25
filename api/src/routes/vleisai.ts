@@ -1,3 +1,4 @@
+import { logVleisAIConversation } from "../services/datamoat";
 import { Router, Request, Response } from 'express';
 import { authenticate } from '../middleware/auth';
 import Anthropic from '@anthropic-ai/sdk';
@@ -42,6 +43,14 @@ router.post('/chat', authenticate, async (req: Request, res: Response) => {
     });
 
     const reply = (response.content[0] as { type: string; text: string }).text;
+
+    // TIER 1: Log for SA Meat LLM training dataset
+    await logVleisAIConversation({
+      userId: (req as any).user?.id || "anonymous",
+      userMessage: message || "",
+      aiResponse: reply,
+      consentGiven: true
+    });
 
     res.json({ 
       success: true, 

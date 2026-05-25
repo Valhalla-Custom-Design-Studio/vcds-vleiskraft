@@ -7,7 +7,7 @@ import * as Sentry from "@sentry/node";
 import { requestLogger } from "./middleware/requestLogger";
 import { errorHandler } from "./middleware/errorHandler";
 import { authRouter as authRoutes } from "./routes/auth";
-import { subscriptionRouter as subscriptionRoutes } from "./routes/subscriptions";
+import subscriptionRoutes from "./routes/subscriptions";
 import paymentRoutes from "./routes/payments";
 import { healthRouter as healthRoutes } from "./routes/health";
 import vleisaiRoutes from "./routes/vleisai";
