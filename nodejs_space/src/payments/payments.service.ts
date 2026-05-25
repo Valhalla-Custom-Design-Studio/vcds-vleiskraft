@@ -32,9 +32,9 @@ export class PaymentsService {
 
   async createCheckout(dto: any, userId: string, tenantId: string) {
     const PAYFAST_LIVE = 'https://www.payfast.co.za/eng/process';
-    const MERCHANT_ID = process.env.PAYFAST_MERCHANT_ID ?? '11910323';
-    const MERCHANT_KEY = process.env.PAYFAST_MERCHANT_KEY ?? 'f61uspt7vtdta';
-    const PASSPHRASE = process.env.PAYFAST_PASSPHRASE ?? 'ValhallaCustoms1986';
+    const MERCHANT_ID = process.env.PAYFAST_MERCHANT_ID ?? '';
+    const MERCHANT_KEY = process.env.PAYFAST_MERCHANT_KEY ?? '';
+    const PASSPHRASE = process.env.PAYFAST_PASSPHRASE ?? '';
     const APP_ORIGIN = process.env.APP_ORIGIN ?? 'https://vleiskraft-api.abacusai.app';
 
     const paymentData: Record<string, string> = {

@@ -7,9 +7,9 @@ import * as Sentry from "@sentry/node";
 const router = Router();
 
 const PAYFAST_LIVE_URL = process.env.PAYFAST_URL || "https://www.payfast.co.za/eng/process";
-const MERCHANT_ID = process.env.PAYFAST_MERCHANT_ID || "11910323";
-const MERCHANT_KEY = process.env.PAYFAST_MERCHANT_KEY || "f61uspt7vtdta";
-const PASSPHRASE = process.env.PAYFAST_PASSPHRASE || "ValhallaCustoms1986";
+const MERCHANT_ID = process.env.PAYFAST_MERCHANT_ID || "";
+const MERCHANT_KEY = process.env.PAYFAST_MERCHANT_KEY || "";
+const PASSPHRASE = process.env.PAYFAST_PASSPHRASE || "";
 const APP_ORIGIN = process.env.APP_ORIGIN || "https://vleiskraft.vcds.co.za";
 const NOTIFY_URL = process.env.PAYFAST_NOTIFY_URL || `${APP_ORIGIN}/api/payments/itn`;
 const RETURN_URL = process.env.PAYFAST_RETURN_URL || `${APP_ORIGIN}/payment/success`;

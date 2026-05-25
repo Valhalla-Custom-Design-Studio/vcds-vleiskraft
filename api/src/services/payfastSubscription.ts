@@ -4,7 +4,7 @@
  */
 import crypto from 'crypto';
 
-const PAYFAST_MERCHANT_ID = process.env.PAYFAST_MERCHANT_ID || '11910323';
+const PAYFAST_MERCHANT_ID = process.env.PAYFAST_MERCHANT_ID || '';
 const PAYFAST_MERCHANT_KEY = process.env.PAYFAST_MERCHANT_KEY || '';
 const PAYFAST_PASSPHRASE = process.env.PAYFAST_PASSPHRASE || '';
 const PAYFAST_URL = 'https://www.payfast.co.za/eng/process';
