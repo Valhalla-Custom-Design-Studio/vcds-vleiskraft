@@ -7,8 +7,8 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @ApiTags('VleisAI™')
 @Controller('api/chat')
-export class VleisgptController {
-  private readonly logger = new Logger(VleisgptController.name);
+export class VleisAIController {
+  private readonly logger = new Logger(VleisAIController.name);
   constructor(private readonly llm: LlmService, private readonly prisma: PrismaService) {}
 
   @Post()
