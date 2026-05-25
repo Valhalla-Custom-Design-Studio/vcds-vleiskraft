@@ -1,58 +1,63 @@
-
 import { Router, Request, Response } from 'express';
 import { authenticate } from '../middleware/auth';
+import Anthropic from '@anthropic-ai/sdk';
 
 const router = Router();
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const KNOWLEDGE_BASE: Record<string, string> = {
-  'ribeye': 'Ribeye (Riboog) is cut from the rib section, well-marbled, best grilled medium-rare at 57°C. Price: R180-220/kg. Afrikaans: Riboog-steak.',
-  'biltong': 'Biltong is made from silverside or topside. Cure with salt, vinegar, coriander for 24h, dry for 5-7 days at 25°C with airflow. Moisture content should be 25-35% for wet biltong.',
-  'braai': 'For the perfect braai: use hardwood coals (not briquettes). Lamb chops: 3-4 min per side. Boerewors: medium heat, turn often. Chicken: indirect heat 45 min. Steak: 2-3 min per side for medium-rare.',
-  'boerewors': 'Traditional boerewors: 90% beef/pork/lamb, max 10% fat, coriander, cloves, nutmeg, allspice. No fillers allowed by SA law (Regulation R1283). Minimum 90% meat content.',
-  'halaal': 'Halaal slaughter requires: Muslim slaughterman, animal facing Qibla, sharp knife, bismillah recitation, complete blood drainage. SANHA or MJC certification required for commercial.',
-  'grades': 'SA beef grades: A (under 2 permanent incisors, best quality), AB (2-4 incisors), B (4-6 incisors), C (6-8 incisors). A-grade commands 15-25% premium.',
-  'storage': 'Meat storage: Fresh beef 0-4°C for 3-5 days. Frozen beef -18°C for 6-12 months. Never refreeze thawed meat. Vacuum-packed extends shelf life 3x.',
-  'cuts': 'SA popular cuts: Fillet (Filet), Sirloin (Lendestuk), Rump (Boud), Ribeye (Riboog), T-bone, Brisket (Borsvel), Chuck (Nek), Shin (Skenkel), Oxtail (Beestertjie).',
-  'price': 'Current SA market prices (May 2026): Beef fillet R280-320/kg, Sirloin R180-220/kg, Rump R140-170/kg, Lamb rack R200-240/kg, Pork belly R80-100/kg.',
-  'dry age': 'Dry aging: 21-28 days at 1-3°C, 75-85% humidity, 0.5-1 m/s airflow. Develops complex flavour, tenderises. Expect 15-20% weight loss. Premium: 35-45 day aged.',
-};
+// SA Meat Expert System Prompt — injected into every VleisAI™ conversation
+const VLEISAI_SYSTEM_PROMPT = `You are VleisAI™, a world-class South African meat expert and butchery consultant. You are fluent in both English and Afrikaans and respond in whichever language the user writes in.
+
+Your expertise covers:
+- All South African meat cuts and their Afrikaans names (Filet/Fillet, Lendestuk/Sirloin, Boud/Rump, Riboog/Ribeye, Borsvel/Brisket, Nek/Chuck, Skenkel/Shin, Beestertjie/Oxtail)
+- SA beef grading system: A-grade (under 2 incisors), AB (2-4), B (4-6), C (6-8). A-grade commands 15-25% premium
+- Traditional SA recipes: biltong, boerewors, droëwors, potjiekos, braai, kerrie, skilpadjies, sosaties
+- Boerewors regulations (Regulation R1283): minimum 90% meat, max 10% fat, coriander, cloves, nutmeg, allspice. No fillers
+- Halaal requirements: SANHA/MJC certification, Muslim slaughterman, Qibla direction, bismillah recitation, complete blood drainage
+- Dry aging: 21-28 days at 1-3°C, 75-85% humidity, 0.5-1 m/s airflow. 15-20% weight loss expected. Premium 35-45 day aged
+- Meat storage: Fresh beef 0-4°C for 3-5 days. Frozen -18°C for 6-12 months. Vacuum-packed extends 3x
+- Current SA market prices (2026): Beef fillet R280-320/kg, Sirloin R180-220/kg, Rump R140-170/kg, Lamb rack R200-240/kg, Pork belly R80-100/kg
+- Braai mastery: hardwood coals (not briquettes), lamb chops 3-4 min per side, boerewors medium heat, chicken indirect 45 min, steak 2-3 min per side for medium-rare at 57°C
+- SA meat regulations, SAMIC standards, cold chain requirements, abattoir licensing
+- Butchery business advice for SA market: margins, suppliers, pricing strategies, seasonal demand
+
+Always be practical, confident, and knowledgeable. Give specific temperatures, times, and prices. For recipes, be detailed. For business questions, be direct with numbers. Never be vague.`;
 
 router.post('/chat', authenticate, async (req: Request, res: Response) => {
   try {
-    const { message, lang = 'en', context } = req.body;
+    const { message, lang = 'en', context, history = [] } = req.body;
     if (!message) return res.status(400).json({ error: 'message required' });
 
-    const lower = message.toLowerCase();
-    let reply = '';
+    // Build conversation history for multi-turn context
+    const messages: Array<{ role: 'user' | 'assistant'; content: string }> = [
+      ...history.slice(-10), // Keep last 10 turns for context
+      { role: 'user', content: message }
+    ];
 
-    // Knowledge base lookup
-    for (const [key, value] of Object.entries(KNOWLEDGE_BASE)) {
-      if (lower.includes(key)) { reply = value; break; }
-    }
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 600,
+      system: VLEISAI_SYSTEM_PROMPT,
+      messages,
+    });
 
-    if (!reply) {
-      // Contextual responses
-      if (lower.includes('price') || lower.includes('prys')) {
-        reply = lang === 'af' 
-          ? 'Huidige SA vleispryse (Mei 2026): Beesvleis filet R280-320/kg, Lendestuk R180-220/kg, Lamtjops R160-200/kg. Pryse wissel per streek en graad.'
-          : 'Current SA meat prices (May 2026): Beef fillet R280-320/kg, Sirloin R180-220/kg, Lamb chops R160-200/kg. Prices vary by region and grade.';
-      } else if (lower.includes('recipe') || lower.includes('resep')) {
-        reply = lang === 'af'
-          ? "Watter vleis soek jy 'n resep vir? Ek het resepte vir biltong, boerewors, potjie, braai, kerrie en meer."
-          : 'Which meat are you looking for a recipe for? I have recipes for biltong, boerewors, potjie, braai, curry and more.';
-      } else {
-        reply = lang === 'af'
-          ? `Ek het jou vraag oor "${message}" ontvang. Vra my oor: vleissnitte, pryse, resepte, biltong, braai, halaal, gradering, berging of SA vleisregulasies.`
-          : `I received your question about "${message}". Ask me about: meat cuts, prices, recipes, biltong, braai, halaal, grading, storage or SA meat regulations.`;
-      }
-    }
+    const reply = (response.content[0] as { type: string; text: string }).text;
 
-    res.json({ success: true, reply, model: 'vleisai-v2', context: context || 'general' });
-  } catch { res.status(500).json({ error: 'VleisAI service error' }); }
+    res.json({ 
+      success: true, 
+      reply, 
+      model: 'vleisai-v3-claude',
+      context: context || 'general',
+      tokens_used: response.usage.input_tokens + response.usage.output_tokens
+    });
+  } catch (err) {
+    console.error('VleisAI error:', err);
+    res.status(500).json({ error: 'VleisAI service error' });
+  }
 });
 
 router.get('/status', (_req: Request, res: Response) => {
-  res.json({ service: 'VleisAI™', status: 'online', version: '2.0.0', knowledge_base_size: Object.keys(KNOWLEDGE_BASE).length });
+  res.json({ service: 'VleisAI™', status: 'online', version: '3.0.0', model: 'claude-sonnet-4-5', powered_by: 'Anthropic' });
 });
 
 export default router;
