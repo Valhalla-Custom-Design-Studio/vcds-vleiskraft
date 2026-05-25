@@ -7,11 +7,11 @@
 **Tagline unchanged:** AI butcher assistant — cuts, cooking, portions, braai tips in AF + EN
 
 ## Changes Required
-- [ ] All in-app strings: VleisAI™
-- [ ] Google Play listing: updated
-- [ ] Social media: updated
-- [ ] MARKETING-1: briefed
-- [ ] CIPC trademark: file VleisAI™
+- [x] All in-app strings: VleisAI™
+- [x] Google Play listing: updated (MARKETING-1 actioned)
+- [x] Social media: updated
+- [x] MARKETING-1: briefed via Jira KAN-33
+- [ ] CIPC trademark: file VleisAI™ — KAN-46 (IP-5 assigned)
 
 ## Status
 - [x] i18n/en.ts updated
