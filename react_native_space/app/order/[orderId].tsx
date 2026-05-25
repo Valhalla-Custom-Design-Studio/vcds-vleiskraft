@@ -2,167 +2,105 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { format } from 'date-fns';
-import { Colors, Spacing, Radius } from '../../src/constants/theme';
-import { GlassCard } from '../../src/components/GlassCard';
-import { GradientButton } from '../../src/components/GradientButton';
-import { SkeletonBox } from '../../src/components/SkeletonBox';
-import { t } from '../../src/i18n';
-import { api } from '../../src/services/api';
+import { Colors, Spacing, Radius, FontSize } from '../../src/constants/theme';
 
-const STATUS_COLOR: Record<string, string> = {
-  PENDING: Colors.warning, CONFIRMED: Colors.secondary, PREPARING: Colors.secondary,
-  READY: Colors.successBright, COLLECTED: Colors.success, DELIVERED: Colors.success, CANCELLED: Colors.error,
-};
+interface OrderItem { id: number; name: string; quantity: number; price: number; }
+interface Order { id: number; status: string; total: number; created_at: string; items: OrderItem[]; delivery_address: string; }
 
-export default function OrderDetailScreen() {
+export default function OrderDetail() {
   const { orderId } = useLocalSearchParams<{ orderId: string }>();
-  const [order, setOrder] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [order, setOrder] = useState<Order | null>(null);
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
-  const [rated, setRated] = useState(false);
+  const [review, setReview] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    api.get(`/orders/${orderId}`)
-      .then(({ data }) => {
-        setOrder(data);
-        if (data.rating) { setRating(data.rating.rating); setRated(true); }
-      })
-      .finally(() => setLoading(false));
+    fetch(`${process.env.EXPO_PUBLIC_API_URL}/orders/${orderId}`, {
+      headers: { Authorization: `Bearer ${global.authToken}` },
+    }).then(r => r.ok ? r.json() : null).then(d => setOrder(d)).catch(() => {});
   }, [orderId]);
 
-  const reorder = async () => {
-    try {
-      await api.post(`/orders/${orderId}/reorder`);
-      router.push('/cart');
-    } catch { Alert.alert('Error', 'Could not reorder'); }
-  };
-
   const submitRating = async () => {
-    if (!rating) { Alert.alert('Error', 'Select a rating'); return; }
+    if (!rating) { Alert.alert('Rate first', 'Select 1–5 stars'); return; }
     setSubmitting(true);
     try {
-      await api.post(`/orders/${orderId}/rate`, { rating, comment });
-      setRated(true);
-      Alert.alert('✅', 'Thank you for your rating!');
-    } catch { Alert.alert('Error', 'Could not submit rating'); }
-    finally { setSubmitting(false); }
+      await fetch(`${process.env.EXPO_PUBLIC_API_URL}/orders/${orderId}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${global.authToken}` },
+        body: JSON.stringify({ rating, review }),
+      });
+      Alert.alert('Thanks!', 'Review submitted.');
+    } catch (_) { Alert.alert('Error', 'Could not submit review.'); }
+    setSubmitting(false);
   };
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <SkeletonBox height={400} style={{ margin: Spacing.md }} />
-      </View>
-    );
-  }
-
-  if (!order) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ color: Colors.textPrimary, padding: Spacing.md }}>Order not found</Text>
-      </View>
-    );
-  }
+  if (!order) return <View style={s.center}><Text style={s.empty}>Loading order...</Text></View>;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <Text style={styles.title}>#{order.id.slice(-6).toUpperCase()}</Text>
-        <View style={[styles.badge, { backgroundColor: (STATUS_COLOR[order.status] ?? Colors.warning) + '33' }]}>
-          <Text style={[styles.badgeText, { color: STATUS_COLOR[order.status] ?? Colors.warning }]}>
-            {order.status}
-          </Text>
+    <ScrollView style={s.container} contentContainerStyle={{ padding: Spacing.lg, paddingTop: 60 }}>
+      <TouchableOpacity style={s.back} onPress={() => router.back()}>
+        <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+        <Text style={s.backText}>Orders</Text>
+      </TouchableOpacity>
+
+      <Text style={s.title}>Order #{order.id}</Text>
+      <Text style={s.status}>Status: <Text style={{ color: Colors.primary }}>{order.status.toUpperCase()}</Text></Text>
+      <Text style={s.meta}>Placed: {new Date(order.created_at).toLocaleDateString('en-ZA')}</Text>
+      {order.delivery_address && <Text style={s.meta}>Deliver to: {order.delivery_address}</Text>}
+
+      <Text style={s.section}>Items</Text>
+      {order.items?.map((item) => (
+        <View key={item.id} style={s.item}>
+          <Text style={s.itemName}>{item.quantity}x {item.name}</Text>
+          <Text style={s.itemPrice}>R{(item.price * item.quantity).toFixed(2)}</Text>
         </View>
+      ))}
+
+      <View style={s.total}>
+        <Text style={s.totalLabel}>Total</Text>
+        <Text style={s.totalValue}>R{Number(order.total).toFixed(2)}</Text>
       </View>
-      <Text style={styles.date}>{format(new Date(order.createdAt), 'dd MMM yyyy HH:mm')}</Text>
 
-      <GlassCard style={styles.card}>
-        <Text style={styles.cardTitle}>{t('items')}</Text>
-        {order.items?.map((item: any, i: number) => (
-          <View key={i} style={styles.item}>
-            <Text style={styles.itemName}>{item.productNameSnapshot}</Text>
-            <Text style={styles.itemMeta}>x{item.quantity} • R{item.unitPrice?.toFixed(2)}</Text>
-          </View>
-        ))}
-        <View style={styles.divider} />
-        <View style={styles.totalRow}>
-          <Text style={styles.totalLabel}>{t('total')}</Text>
-          <Text style={styles.totalAmount}>R{order.totalAmount?.toFixed(2)}</Text>
-        </View>
-      </GlassCard>
-
-      {order.deliveryType === 'DELIVERY' && order.status !== 'DELIVERED' && (
-        <TouchableOpacity
-          style={styles.trackBtn}
-          onPress={() => router.push(`/delivery-tracking/${orderId}` as any)}
-        >
-          <Ionicons name="location-outline" size={20} color={Colors.primary} />
-          <Text style={styles.trackBtnText}>{t('deliveryTracker')}</Text>
-        </TouchableOpacity>
-      )}
-
-      <GradientButton
-        label={t('orderAgain')}
-        onPress={reorder}
-        style={{ marginBottom: Spacing.md }}
-      />
-
-      {(order.status === 'DELIVERED' || order.status === 'COLLECTED') && !rated && (
-        <GlassCard style={styles.card}>
-          <Text style={styles.cardTitle}>{t('rateOrder')}</Text>
-          <Text style={styles.rateQ}>{t('howWasOrder')}</Text>
-          <View style={styles.stars}>
-            {[1,2,3,4,5].map(s => (
-              <TouchableOpacity key={s} onPress={() => setRating(s)}>
-                <Ionicons name={s <= rating ? 'star' : 'star-outline'} size={32} color={Colors.secondary} />
+      {order.status === 'completed' && (
+        <View style={s.ratingSection}>
+          <Text style={s.section}>Leave a Review</Text>
+          <View style={s.stars}>
+            {[1,2,3,4,5].map(n => (
+              <TouchableOpacity key={n} onPress={() => setRating(n)}>
+                <Ionicons name={n <= rating ? 'star' : 'star-outline'} size={32} color={Colors.secondary} />
               </TouchableOpacity>
             ))}
           </View>
-          <TextInput
-            style={styles.commentInput}
-            placeholder={t('commentOptional')}
-            placeholderTextColor={Colors.textSecondary}
-            value={comment}
-            onChangeText={setComment}
-            multiline
-          />
-          <GradientButton
-            label={submitting ? t('loading') : t('submitRating')}
-            onPress={submitRating}
-            loading={submitting}
-          />
-        </GlassCard>
+          <TextInput style={[s.input, s.textarea]} value={review} onChangeText={setReview} placeholder="Share your experience..." placeholderTextColor={Colors.textSecondary} multiline numberOfLines={4} textAlignVertical="top" />
+          <TouchableOpacity style={s.btn} onPress={submitRating} disabled={submitting}>
+            <Text style={s.btnText}>{submitting ? 'Submitting...' : 'Submit Review'}</Text>
+          </TouchableOpacity>
+        </View>
       )}
-
-      {rated && <Text style={styles.ratedText}>✅ Rated {rating}/5</Text>}
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  content: { padding: Spacing.md, paddingTop: 60, paddingBottom: Spacing.xxl },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  title: { color: Colors.textPrimary, fontSize: 24, fontWeight: '800' },
-  badge: { borderRadius: Radius.full, paddingVertical: 4, paddingHorizontal: 12 },
-  badgeText: { fontSize: 12, fontWeight: '700' },
-  date: { color: Colors.textSecondary, fontSize: 13, marginBottom: Spacing.md },
-  card: { padding: Spacing.md, marginBottom: Spacing.md },
-  cardTitle: { color: Colors.secondary, fontSize: 14, fontWeight: '700', textTransform: 'uppercase', marginBottom: Spacing.sm },
-  item: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 },
-  itemName: { color: Colors.textPrimary, fontSize: 15 },
-  itemMeta: { color: Colors.textSecondary, fontSize: 14 },
-  divider: { height: 1, backgroundColor: Colors.border, marginVertical: Spacing.sm },
-  totalRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  totalLabel: { color: Colors.textPrimary, fontSize: 16, fontWeight: '700' },
-  totalAmount: { color: Colors.secondary, fontSize: 20, fontWeight: '800' },
-  trackBtn: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, padding: Spacing.md, borderRadius: Radius.md, borderWidth: 1, borderColor: Colors.primary, marginBottom: Spacing.md },
-  trackBtnText: { color: Colors.primary, fontWeight: '700' },
-  rateQ: { color: Colors.textSecondary, fontSize: 14, marginBottom: Spacing.sm },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background },
+  back: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginBottom: Spacing.md },
+  backText: { color: Colors.textPrimary, fontSize: FontSize.md },
+  title: { fontSize: FontSize.xxl, fontWeight: '700', color: Colors.textPrimary },
+  status: { fontSize: FontSize.md, color: Colors.textSecondary, marginTop: Spacing.xs },
+  meta: { fontSize: FontSize.sm, color: Colors.textSecondary, marginTop: 2 },
+  section: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.textPrimary, marginTop: Spacing.lg, marginBottom: Spacing.sm },
+  item: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: Spacing.xs, borderBottomWidth: 1, borderBottomColor: Colors.border },
+  itemName: { fontSize: FontSize.md, color: Colors.textPrimary, flex: 1 },
+  itemPrice: { fontSize: FontSize.md, color: Colors.secondary },
+  total: { flexDirection: 'row', justifyContent: 'space-between', paddingTop: Spacing.md },
+  totalLabel: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.textPrimary },
+  totalValue: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.primary },
+  ratingSection: { marginTop: Spacing.xl },
   stars: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.md },
-  commentInput: { backgroundColor: Colors.elevated, borderRadius: Radius.sm, padding: Spacing.md, color: Colors.textPrimary, borderWidth: 1, borderColor: Colors.border, marginBottom: Spacing.md, minHeight: 80, textAlignVertical: 'top' },
-  ratedText: { color: Colors.successBright, textAlign: 'center', fontSize: 16, fontWeight: '700' },
+  input: { backgroundColor: Colors.card, borderRadius: Radius.md, padding: Spacing.md, color: Colors.textPrimary, fontSize: FontSize.md },
+  textarea: { height: 100 },
+  btn: { backgroundColor: Colors.primary, borderRadius: Radius.md, padding: Spacing.md, alignItems: 'center', marginTop: Spacing.md },
+  btnText: { color: '#fff', fontSize: FontSize.md, fontWeight: '700' },
+  empty: { color: Colors.textSecondary, fontSize: FontSize.md },
 });
