@@ -20,14 +20,7 @@
       "supportsTablet": false
     },
     "plugins": [
-      "expo-router",
-      [
-        "@sentry/react-native/expo",
-        {
-          "organization": "valhalla-custom-design-studios",
-          "project": "vleiskraft-react-native"
-        }
-      ]
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
