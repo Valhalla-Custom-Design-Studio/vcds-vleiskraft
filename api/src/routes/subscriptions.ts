@@ -54,5 +54,4 @@ router.get('/cancel', (req: Request, res: Response) => {
   res.json({ success: false, message: 'Payment cancelled' });
 });
 
-export const subscriptionRouter = router;
 export default router;

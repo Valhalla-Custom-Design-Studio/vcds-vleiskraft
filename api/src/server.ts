@@ -3,8 +3,6 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
-dotenv.config();
-
 import * as Sentry from "@sentry/node";
 import { requestLogger } from "./middleware/requestLogger";
 import { errorHandler } from "./middleware/errorHandler";
@@ -17,26 +15,26 @@ import meatRoutes from "./routes/meat";
 import orderRoutes from "./routes/orders";
 import woocommerceRoutes from "./routes/woocommerce";
 import brandingRoutes from "./routes/branding";
+import butcheriesRoutes from "./routes/butcheries";
 import voiceOrderRoutes from "./routes/voiceOrder";
-import challengeRoutes from "./routes/challenges";
 import streamRoutes from "./routes/stream";
-import vleisaiIdentifyRoutes from "./routes/vleisaiIdentify";
+import challengesRoutes from "./routes/challenges";
 import { startCronJobs } from "./cron";
 
-// ─── Sentry (must init before routes) ─────────────────────
-const SENTRY_DSN = process.env.SENTRY_DSN_BACKEND || process.env.SENTRY_DSN || "";
-if (SENTRY_DSN) {
-  Sentry.init({
-    dsn: SENTRY_DSN,
-    environment: process.env.NODE_ENV || "production",
-    release: "vleiskraft@" + (process.env.npm_package_version || "1.0.0"),
-    tracesSampleRate: process.env.NODE_ENV === "production" ? 0.2 : 1.0,
-    integrations: [Sentry.httpIntegration(), Sentry.expressIntegration()],
-  });
-  console.log("[Sentry] Backend error tracking initialised");
-} else {
-  console.warn("[Sentry] No DSN — backend error tracking disabled");
-}
+dotenv.config();
+
+// ─── Sentry Error Monitoring ───────────────────────────────────
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV || "production",
+  release: "vleiskraft@" + (process.env.npm_package_version || "1.0.0"),
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.2 : 1.0,
+  integrations: [
+    Sentry.httpIntegration(),
+    Sentry.expressIntegration(),
+  ],
+});
+// ──────────────────────────────────────────────────────────────
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -48,39 +46,37 @@ const allowedOrigins = [
   "http://localhost:8081",
 ];
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error(`CORS blocked: ${origin}`));
-      }
-    },
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked: ${origin}`));
+    }
+  },
+  credentials: true,
+}));
 
 app.use(helmet());
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(requestLogger);
 
-// ─── Routes ───────────────────────────────────────────────
+// ─── Routes ───────────────────────────────────────────────────
 app.use("/api/auth", authRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/health", healthRoutes);
-app.use("/health", healthRoutes); // Render health check alias
 app.use("/api/vleisai", vleisaiRoutes);
-app.use("/api/vleisgpt", vleisaiRoutes);          // backward compat
+app.use("/api/vleisgpt", vleisaiRoutes);       // KAN-33: backward compat alias
 app.use("/api/meat", meatRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin/woocommerce", woocommerceRoutes);
 app.use("/api/tenant", brandingRoutes);
-app.use("/api/voice-order", voiceOrderRoutes);
-app.use("/api/challenges", challengeRoutes);
-app.use("/api/stream", streamRoutes);
-app.use("/api/identify", vleisaiIdentifyRoutes);
+app.use("/api/butcheries", butcheriesRoutes);  // KAN-40: Butchery selector
+app.use("/api/voice-order", voiceOrderRoutes); // Voice Ordering™
+app.use("/api/stream", streamRoutes);          // Stream.io chat
+app.use("/api/challenges", challengesRoutes);  // Community Challenges
 
 // ─── Sentry error handler (must be last) ──────────────────
 if (SENTRY_DSN) {
@@ -88,12 +84,13 @@ if (SENTRY_DSN) {
 }
 app.use(errorHandler);
 
-// ─── Start ────────────────────────────────────────────────
-runMigrations().catch(console.error);
+// ─── Start server ─────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`VleisKraft™ API running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
   console.log(`PayFast: ${process.env.PAYFAST_URL || "https://www.payfast.co.za/eng/process"}`);
+
+  // Start all 5 cron jobs
   startCronJobs();
 });
 

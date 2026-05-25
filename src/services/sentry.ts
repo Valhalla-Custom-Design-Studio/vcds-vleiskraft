@@ -1,23 +1,17 @@
 import * as Sentry from '@sentry/react-native';
 
-const SENTRY_DSN =
-  process.env.EXPO_PUBLIC_SENTRY_DSN_REACT ||
-  process.env.EXPO_PUBLIC_SENTRY_DSN ||
-  '';
+const SENTRY_DSN = process.env.EXPO_PUBLIC_SENTRY_DSN || '';
 
 export function initSentry() {
-  if (!SENTRY_DSN) {
-    console.warn('[Sentry] No DSN — error tracking disabled');
-    return;
-  }
+  if (!SENTRY_DSN) return;
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: process.env.EXPO_PUBLIC_ENV || 'production',
-    release: 'vleiskraft@1.0.0',
-    tracesSampleRate: process.env.EXPO_PUBLIC_ENV === 'production' ? 0.2 : 1.0,
+    tracesSampleRate: 0.2,
     enableNative: true,
     attachStacktrace: true,
     beforeSend(event) {
+      // Strip PII
       if (event.user) delete event.user.email;
       return event;
     },
