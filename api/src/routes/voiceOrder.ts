@@ -21,7 +21,7 @@ router.post('/transcribe', requireAuth, upload.single('audio'), async (req: Requ
     if (ABACUS_API_KEY) {
       // Real Abacus AI Whisper transcription
       const formData = new FormData();
-      const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
+      const blob = new Blob([req.file.buffer as unknown as ArrayBuffer], { type: req.file.mimetype });
       formData.append('audio', blob, req.file.originalname || 'audio.m4a');
       formData.append('language', 'af'); // Afrikaans first, falls back to EN
 

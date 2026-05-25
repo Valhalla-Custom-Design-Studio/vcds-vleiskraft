@@ -1,6 +1,7 @@
+import { logOrderEvent } from "../services/datamoat";
 import { Router, Request, Response } from "express";
 import { authenticate } from "../middleware/auth";
-import pool from "../db/pool";
+import { pool } from "../db/pool";
 
 const router = Router();
 
