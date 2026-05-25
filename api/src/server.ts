@@ -24,6 +24,8 @@ import stockvelRoutes from "./routes/stockvel";
 import laybyRoutes from "./routes/layby";
 import spitbraaiRoutes from "./routes/spitbraai";
 import mealPlannerRoutes from "./routes/mealPlanner";
+import demandIntelligenceRoutes from "./routes/demandIntelligence";
+import whatsappCommerceRoutes from "./routes/whatsappCommerce";
 
 dotenv.config();
 
@@ -85,9 +87,11 @@ app.use("/api/stockvel", stockvelRoutes);        // Stockvel Savings Groups
 app.use("/api/layby", laybyRoutes);              // Lay-By System
 app.use("/api/spitbraai", spitbraaiRoutes);      // SpitBraai Bookings
 app.use("/api/meal-planner", mealPlannerRoutes); // AI Meal Planner
+app.use("/api/demand-intelligence", demandIntelligenceRoutes);
+app.use("/api/whatsapp", whatsappCommerceRoutes);
 
 // ─── Sentry error handler (must be last) ──────────────────
-if (SENTRY_DSN) {
+if (process.env.SENTRY_DSN) {
   app.use(Sentry.expressErrorHandler());
 }
 app.use(errorHandler);
