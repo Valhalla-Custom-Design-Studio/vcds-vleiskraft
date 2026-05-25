@@ -13,7 +13,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="index" options={{ title: t('home'), tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} /> }} />
       <Tabs.Screen name="shop" options={{ title: t('shop'), tabBarIcon: ({ color, size }) => <Ionicons name="storefront" size={size} color={color} /> }} />
       <Tabs.Screen name="orders" options={{ title: t('orders'), tabBarIcon: ({ color, size }) => <Ionicons name="receipt" size={size} color={color} /> }} />
-      <Tabs.Screen name="vleisgpt" options={{ title: 'VleisGPT', tabBarIcon: ({ color, size }) => <Ionicons name="chatbubble-ellipses" size={size} color={color} /> }} />
+      <Tabs.Screen name="vleisgpt" options={{ title: 'VleisAI', tabBarIcon: ({ color, size }) => <Ionicons name="chatbubble-ellipses" size={size} color={color} /> }} />
       <Tabs.Screen name="profile" options={{ title: t('profile'), tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} /> }} />
     </Tabs>
   );
