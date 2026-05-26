@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { generateQRPayload, verifyBlockchainHash, calculateCarbonFootprint } from "../services/VleisToForkService";
+import { generateQRPayload, verifyBlockchainHash, calculateCarbonFootprint } from "../services/traceability/VleisToForkService";
 
 const router = Router();
 
