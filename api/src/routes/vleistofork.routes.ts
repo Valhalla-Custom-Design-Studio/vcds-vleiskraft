@@ -34,13 +34,18 @@ router.post("/verify", (req: Request, res: Response) => {
 /**
  * GET /api/vleistofork/carbon
  * Calculate carbon footprint
+ * Query: breed, age_months, feed_type (grass|feedlot|mixed)
  */
 router.get("/carbon", (req: Request, res: Response) => {
-  const { feed_type, weight_kg, transport_km } = req.query;
+  const { breed, age_months, feed_type } = req.query;
+  const validFeed: Array<"grass" | "feedlot" | "mixed"> = ["grass", "feedlot", "mixed"];
+  const feedType: "grass" | "feedlot" | "mixed" = validFeed.includes(feed_type as "grass" | "feedlot" | "mixed")
+    ? (feed_type as "grass" | "feedlot" | "mixed")
+    : "mixed";
   const co2 = calculateCarbonFootprint(
-    feed_type as "grass_fed",
-    parseFloat(weight_kg as string),
-    parseFloat(transport_km as string)
+    (breed as string) || "Bonsmara",
+    parseFloat((age_months as string) || "24"),
+    feedType
   );
   return res.json({ success: true, carbon_kg_co2: co2 });
 });
