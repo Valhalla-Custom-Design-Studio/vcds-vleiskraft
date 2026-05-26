@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { AuthProvider, useAuth } from '../src/hooks/useAuth';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { posthog } from '../src/lib/posthog';
+import { initSentry } from '../src/lib/sentry';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,6 +27,9 @@ function RootLayoutNav() {
     </Stack>
   );
 }
+
+initSentry();
+posthog.capture('app_opened');
 
 export default function RootLayout() {
   return (
