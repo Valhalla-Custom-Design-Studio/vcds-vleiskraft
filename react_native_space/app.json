@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "scheme": "vleiskraft",
-    "owner": "valhalla-custom-design-studios",
+    "owner": "valhalla-custom-design-studios-org",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
