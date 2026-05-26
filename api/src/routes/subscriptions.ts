@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { validateWebhookSignature, buildPaymentUrl, PLANS } from '../services/payfastSubscription';
 import { requireAuth } from '../middleware/auth';
-import pool from '../db/pool';
+import { pool } from '../db/pool';
 
 const router = Router();
 

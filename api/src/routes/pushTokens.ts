@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { prisma } from '../lib/prisma';
+import { pool } from '../db/pool';
 import { authenticate } from '../middleware/auth';
 import Expo from 'expo-server-sdk';
 
@@ -14,11 +14,12 @@ router.post('/register', authenticate, async (req: Request, res: Response) => {
     if (!token || !Expo.isExpoPushToken(token)) {
       return res.status(400).json({ error: 'Invalid push token' });
     }
-    await prisma.pushToken.upsert({
-      where: { userId_token: { userId, token } },
-      update: { platform, updatedAt: new Date() },
-      create: { userId, token, platform },
-    });
+    await pool.query(
+      `INSERT INTO push_tokens (user_id, token, platform, updated_at)
+       VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (user_id, token) DO UPDATE SET platform = $3, updated_at = NOW()`,
+      [userId, token, platform]
+    );
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Failed to register token' });
@@ -26,12 +27,20 @@ router.post('/register', authenticate, async (req: Request, res: Response) => {
 });
 
 // Send push notification (internal use)
-export async function sendPushNotification(userId: string, title: string, body: string, data?: Record<string, unknown>) {
+export async function sendPushNotification(
+  userId: string,
+  title: string,
+  body: string,
+  data?: Record<string, unknown>
+) {
   try {
-    const tokens = await prisma.pushToken.findMany({ where: { userId } });
-    const messages = tokens
-      .filter(t => Expo.isExpoPushToken(t.token))
-      .map(t => ({ to: t.token, sound: 'default' as const, title, body, data }));
+    const { rows } = await pool.query<{ token: string }>(
+      'SELECT token FROM push_tokens WHERE user_id = $1',
+      [userId]
+    );
+    const messages = rows
+      .filter((r: { token: string }) => Expo.isExpoPushToken(r.token))
+      .map((r: { token: string }) => ({ to: r.token, sound: 'default' as const, title, body, data }));
     const chunks = expo.chunkPushNotifications(messages);
     for (const chunk of chunks) {
       await expo.sendPushNotificationsAsync(chunk).catch(() => {});
