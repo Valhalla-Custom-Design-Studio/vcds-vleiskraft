@@ -66,7 +66,7 @@ const labels = {
     inProvince: 'Slagteries in Jou Provinsie',
     allButcheries: 'Alle Slagteries',
     noResults: 'Geen slagteries gevind nie',
-    noResultsHint: 'Probeer 'n ander provinsie of soekterm',
+    noResultsHint: "Probeer 'n ander provinsie of soekterm",
     optional: 'Opsioneel — jy kan dit later in jou profiel verander',
     skip: 'Slaan oor vir nou',
     select: 'Kies',

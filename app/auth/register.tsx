@@ -84,7 +84,7 @@ const L = {
     butcheryType: 'Slagtery Tipe',
     regNumber: 'Registrasienommer (opsioneel)',
     selectButchery: 'Kies Jou Slagtery',
-    butcheryHint: 'Kies 'n slagtery naby jou. Jy kan dit later verander.',
+    butcheryHint: "Kies 'n slagtery naby jou. Jy kan dit later verander.",
     next: 'Volgende',
     back: 'Terug',
     submit: 'Skep Rekening',

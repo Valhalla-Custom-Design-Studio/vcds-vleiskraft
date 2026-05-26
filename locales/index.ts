@@ -18,7 +18,7 @@ const strings: Record<string, Record<Lang, string>> = {
   lastName: { af: 'Van', en: 'Last Name' },
   phone: { af: 'Foon', en: 'Phone' },
   noAccount: { af: 'Nog nie geregistreer nie?', en: "Don't have an account?" },
-  haveAccount: { af: 'Het reeds 'n rekening?', en: 'Already have an account?' },
+  haveAccount: { af: "Het reeds 'n rekening?", en: 'Already have an account?' },
   logOut: { af: 'Teken Uit', en: 'Log Out' },
   // Onboarding
   skip: { af: 'Slaan Oor', en: 'Skip' },
