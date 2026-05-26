@@ -63,3 +63,42 @@ export function calculateCarbonFootprint(breed: string, ageMonths: number, feedT
   const multiplier = breedMultiplier[breed] || 1.0;
   return Math.round(base * multiplier * (ageMonths / 24));
 }
+
+// ── Legacy-compatible wrappers (route-facing) ─────────────────────────────
+import crypto from "crypto";
+
+export interface VleisToForkRecord {
+  qr_code: string;
+  product_name: string;
+  cut_type: string;
+  weight_kg: number;
+  animal: { animal_id: string; farm_name: string; breed: string; feed_type: string; antibiotic_free: boolean; hormone_free: boolean; };
+  slaughter: { slaughter_date: string; abattoir_name: string; grade: string; halaal_certified: boolean; };
+  cold_chain: { timestamp: string; location: string; temperature_c: number; }[];
+  carbon_footprint_kg_co2: number;
+  retailer: string;
+  pack_date: string;
+  best_before: string;
+  blockchain_hash: string;
+  ip_watermark: string;
+}
+
+export function generateQRPayload(
+  record: Omit<VleisToForkRecord, "qr_code" | "blockchain_hash" | "ip_watermark">
+): VleisToForkRecord {
+  const payload = JSON.stringify(record);
+  const blockchain_hash = crypto.createHash("sha256").update(payload).digest("hex");
+  const qr_code = `VTF-${record.animal.animal_id}-${Date.now()}`;
+  return {
+    ...record,
+    qr_code,
+    blockchain_hash,
+    ip_watermark: "VCDS™ Vleis-to-Fork™ — Patent Pending",
+  };
+}
+
+export function verifyBlockchainHash(record: VleisToForkRecord): boolean {
+  const { blockchain_hash, qr_code, ip_watermark, ...rest } = record;
+  const recomputed = crypto.createHash("sha256").update(JSON.stringify(rest)).digest("hex");
+  return recomputed === blockchain_hash;
+}

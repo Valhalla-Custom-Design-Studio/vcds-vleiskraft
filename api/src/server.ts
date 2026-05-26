@@ -27,6 +27,8 @@ import spitbraaiRoutes from "./routes/spitbraai";
 import mealPlannerRoutes from "./routes/mealPlanner";
 import demandIntelligenceRoutes from "./routes/demandIntelligence";
 import whatsappCommerceRoutes from "./routes/whatsappCommerce";
+import vleistoForkRoutes from "./routes/vleistofork.routes";
+
 import { startCronJobs } from "./cron";
 
 dotenv.config();
@@ -85,6 +87,7 @@ app.use("/api/meal-planner", mealPlannerRoutes);
 app.use("/api/demand-intelligence", demandIntelligenceRoutes);
 app.use("/api/whatsapp-commerce", whatsappCommerceRoutes);
 
+app.use("/api/vleistofork", vleistoForkRoutes);
 app.use(errorHandler);
 
 async function bootstrap() {
