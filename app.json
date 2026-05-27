@@ -1,18 +1,21 @@
 {
   "expo": {
-    "name": "VleisKraft",
+    "name": "VleisKraft\u2122",
     "slug": "vcds-vleiskraft",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
     "splash": {
-      "backgroundColor": "#7F1D1D"
+      "backgroundColor": "#F5EDD6",
+      "image": "./src/assets/splash.png",
+      "resizeMode": "contain"
     },
     "scheme": "vleiskraft",
     "android": {
       "package": "co.za.vcds.vleiskraft",
       "adaptiveIcon": {
-        "backgroundColor": "#7F1D1D"
+        "backgroundColor": "#7F1D1D",
+        "foregroundImage": "./src/assets/adaptive-icon.png"
       }
     },
     "ios": {
