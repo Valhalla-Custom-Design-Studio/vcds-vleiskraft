@@ -13,10 +13,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1a1a1a"
       },
-      "package": "com.vcds.vleiskraft"
+      "package": "co.za.vcds.vleiskraft"
     },
     "ios": {
-      "bundleIdentifier": "com.vcds.vleiskraft",
+      "bundleIdentifier": "co.za.vcds.vleiskraft",
       "supportsTablet": false
     },
     "plugins": [
