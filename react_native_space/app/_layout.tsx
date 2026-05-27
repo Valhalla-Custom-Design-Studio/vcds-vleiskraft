@@ -3,10 +3,12 @@ import { useEffect } from 'react';
 import { AuthProvider, useAuth } from '../src/hooks/useAuth';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { PostHogProvider } from 'posthog-react-native';
 import { posthog } from '../src/lib/posthog';
-import { initSentry } from '../src/lib/sentry';
+import { initSentry, Sentry } from '../src/lib/sentry';
 
 SplashScreen.preventAutoHideAsync();
+initSentry();
 
 function RootLayoutNav() {
   const { token, loading } = useAuth();
@@ -28,15 +30,16 @@ function RootLayoutNav() {
   );
 }
 
-initSentry();
-posthog.capture('app_opened');
-
-export default function RootLayout() {
+function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <AuthProvider>
-        <RootLayoutNav />
-      </AuthProvider>
+      <PostHogProvider client={posthog}>
+        <AuthProvider>
+          <RootLayoutNav />
+        </AuthProvider>
+      </PostHogProvider>
     </GestureHandlerRootView>
   );
 }
+
+export default Sentry.wrap(App);
