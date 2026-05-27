@@ -73,6 +73,5 @@ export async function runWeatherAlert(): Promise<void> {
     for (const chunk of chunks) {
       await expo.sendPushNotificationsAsync(chunk).catch(console.error);
     }
-    console.log(`[WeatherAlert] Sent ${messages.length} braai weather alerts`);
-  }
+}
 }

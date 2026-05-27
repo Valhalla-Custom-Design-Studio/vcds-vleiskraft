@@ -35,8 +35,7 @@ export async function runPredictions(): Promise<void> {
   `);
 
   if (!rows.length) {
-    console.log('[Predictions] No order data yet — skipping');
-    return;
+return;
   }
 
   // Ensure predictions table exists
@@ -67,6 +66,4 @@ export async function runPredictions(): Promise<void> {
         calculated_at = NOW()
     `, [row.product_id, row.butchery_id, row.avg_daily_orders, predicted7day, confidence]);
   }
-
-  console.log(`[Predictions] Updated predictions for ${rows.length} products`);
 }

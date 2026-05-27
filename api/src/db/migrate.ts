@@ -12,9 +12,7 @@ export async function runMigrations() {
     // 2. Apply bilingual seed (ON CONFLICT DO UPDATE — always up to date)
     const seed = fs.readFileSync(path.join(__dirname, 'seed.sql'), 'utf8');
     await client.query(seed);
-
-    console.log('✅ VleisKraft migrations + bilingual seed complete');
-  } catch (err) {
+} catch (err) {
     console.error('Migration error:', err);
     throw err;
   } finally {

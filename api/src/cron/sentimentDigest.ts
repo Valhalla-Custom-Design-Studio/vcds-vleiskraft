@@ -29,8 +29,7 @@ export async function runSentimentDigest(): Promise<void> {
   `);
 
   if (!tableCheck.rows[0]?.exists) {
-    console.log('[SentimentDigest] vleisai_queries table not yet created — skipping');
-    return;
+return;
   }
 
   const { rows } = await pool.query<DigestRow>(`
@@ -80,6 +79,5 @@ export async function runSentimentDigest(): Promise<void> {
     for (const chunk of chunks) {
       await expo.sendPushNotificationsAsync(chunk).catch(console.error);
     }
-    console.log(`[SentimentDigest] Sent ${messages.length} digests`);
-  }
+}
 }

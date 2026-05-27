@@ -125,9 +125,7 @@ router.post("/itn", async (req: Request, res: Response) => {
               next_billing_date = NOW() + INTERVAL '1 month'
           `, [userId, token, tier]);
         }
-
-        console.log(`[PayFast ITN] User ${userId} upgraded to ${tier}`);
-      }
+}
     } else if (payment_status === "CANCELLED") {
       // Downgrade user to free
       const userResult = await pool.query("SELECT id FROM users WHERE email = $1", [email_address]);

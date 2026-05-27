@@ -69,6 +69,5 @@ export async function runSmartReorder(): Promise<void> {
     for (const chunk of chunks) {
       await expo.sendPushNotificationsAsync(chunk).catch(console.error);
     }
-    console.log(`[SmartReorder] Sent ${messages.length} reorder nudges`);
-  }
+}
 }

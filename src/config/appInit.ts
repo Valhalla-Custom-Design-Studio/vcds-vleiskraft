@@ -8,5 +8,4 @@ import { initPostHog } from '../services/posthog';
 export function initApp() {
   initSentry();
   initPostHog();
-  console.log('[App] Sentry + PostHog initialised');
 }

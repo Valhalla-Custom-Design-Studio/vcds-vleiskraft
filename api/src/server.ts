@@ -93,12 +93,11 @@ app.use(errorHandler);
 async function bootstrap() {
   try {
     await runMigrations();
-    console.log("✅ DB migrations complete");
-  } catch (err) {
+} catch (err) {
     console.error("⚠️  Migration warning (non-fatal):", err);
   }
   startCronJobs();
-  app.listen(PORT, () => console.log(`🥩 VleisKraft API running on port ${PORT}`));
+  app.listen(PORT, () =>
 }
 
 bootstrap();
