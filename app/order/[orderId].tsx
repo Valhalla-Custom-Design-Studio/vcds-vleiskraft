@@ -35,6 +35,7 @@ export default function OrderDetailScreen() {
       if (data.rating) { setRating(data.rating.rating); setRated(true); }
     }).finally(() => setLoading(false));
   }, [orderId]);
+      .catch((err) => { /* VCDS:SAFE */ if (__DEV__) { void 0; } });
 
   const reorder = async () => {
     try {

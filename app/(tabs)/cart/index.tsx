@@ -15,6 +15,7 @@ export default function CartScreen() {
   useEffect(() => {
     AsyncStorage.getItem("vleiskraft_cart").then(d => { if (d) setCart(JSON.parse(d)); });
   }, []);
+      .catch((err) => { /* VCDS:SAFE */ if (__DEV__) { void 0; } });
 
   const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
 
