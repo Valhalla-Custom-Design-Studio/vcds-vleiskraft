@@ -10,7 +10,7 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 // ─── VleisAI™ System Prompt ───────────────────────────────────────────────────
 // RULES: Afrikaans-only, no external links, structured JSON response, real product IDs only
 // Migrated from nodejs_space/src/vleisai/vleisai.controller.ts (NestJS → Express)
-// TODO: Migrate to NestJS + Prisma in Wave 2 refactor
+// WAVE 2: Migrate to NestJS + Prisma — tracked in KAN backlog
 const buildSystemPrompt = (catalogue: string) => `Jy is VleisAI™, 'n vriendelike Afrikaanse slaghuisassistent. Jy help kliënte met vleiskeuses, braai-wenke, resepte en bestellings.
 
 REËLS (MOET VOLG):
