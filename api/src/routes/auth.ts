@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Joi from 'joi';
 import { pool } from '../db/pool';
 
-// TODO: Migrate to NestJS + Prisma in Wave 2 refactor
+// WAVE 2: Migrate to NestJS + Prisma — tracked in KAN backlog
 // Logic ported from nodejs_space/src/auth/auth.service.ts (NestJS → Express)
 
 export const authRouter = Router();
