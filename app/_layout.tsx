@@ -10,9 +10,8 @@ export default function RootLayout() {
     AsyncStorage.getItem("token").then(token => {
       if (!token) router.replace("/auth/login");
       setChecking(false);
-    });
+    }).catch(() => {});
   }, []);
-      .catch((err) => { /* VCDS:SAFE */ if (__DEV__) { void 0; } });
   if (checking) return <View style={{ flex:1, justifyContent:"center", alignItems:"center", backgroundColor: Colors.background }}><ActivityIndicator color={Colors.primary} size="large" /></View>;
   return (
     <Stack screenOptions={{ headerShown: false }}>
