@@ -5,6 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import Joi from 'joi';
 import { pool } from '../db/pool';
 
+// TODO: Migrate to NestJS + Prisma in Wave 2 refactor
+// Logic ported from nodejs_space/src/auth/auth.service.ts (NestJS → Express)
+
 export const authRouter = Router();
 
 const registerSchema = Joi.object({
@@ -13,16 +16,35 @@ const registerSchema = Joi.object({
   firstName: Joi.string().min(1).max(50).required(),
   lastName: Joi.string().min(1).max(50).required(),
   phone: Joi.string().optional().allow(''),
-  preferredLocale: Joi.string().valid('en', 'af').default('en'),
-  userType: Joi.string().valid('consumer', 'butchery').default('consumer'),
+  preferredLocale: Joi.string().valid('en', 'af').default('af'),
+  accountType: Joi.string().valid('consumer', 'butchery').default('consumer'),
   plan: Joi.string().valid('free', 'starter', 'pro', 'platinum').default('free'),
   butcheryId: Joi.string().uuid().optional().allow(null, ''),
-  // Butchery owner fields
   butcheryName: Joi.string().optional().allow(''),
   butcheryType: Joi.string().optional().allow(''),
   regNumber: Joi.string().optional().allow(''),
 });
 
+function formatUser(user: any, butchery?: any) {
+  return {
+    id: user.id,
+    email: user.email,
+    name: `${user.first_name} ${user.last_name}`,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    phone: user.phone,
+    role: user.role ?? (user.business_type === 'butcher' ? 'ADMIN' : 'USER'),
+    language: user.preferred_locale ?? 'af',
+    accountType: user.business_type === 'butcher' ? 'butchery' : 'consumer',
+    tier: user.tier,
+    butcheryId: user.butchery_id,
+    butchery: butchery
+      ? { id: butchery.id, name: butchery.name, slug: butchery.slug, subscriptionStatus: butchery.subscription_status }
+      : undefined,
+  };
+}
+
+// ─── POST /register ───────────────────────────────────────────────────────────
 authRouter.post('/register', async (req: Request, res: Response) => {
   const { error, value } = registerSchema.validate(req.body);
   if (error) {
@@ -32,59 +54,75 @@ authRouter.post('/register', async (req: Request, res: Response) => {
   try {
     const existing = await pool.query('SELECT id FROM users WHERE email = $1', [value.email]);
     if (existing.rows.length > 0) {
-      res.status(409).json({ success: false, message: 'Email already registered' });
+      res.status(409).json({ success: false, message: 'E-posadres reeds geregistreer / Email already registered' });
       return;
     }
 
     const passwordHash = await bcrypt.hash(value.password, 12);
     const userId = uuidv4();
-
-    // Validate butchery_id if provided
     let butcheryId = value.butcheryId || null;
-    if (butcheryId) {
+    let role = 'USER';
+
+    if (value.accountType === 'butchery') {
+      // ── Butchery owner: create new butchery record ──
+      if (!value.butcheryName?.trim()) {
+        res.status(400).json({ success: false, message: 'Slaghuisnaam benodig / Butchery name required' });
+        return;
+      }
+      const slug = value.butcheryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const existingSlug = await pool.query('SELECT id FROM butcheries WHERE slug = $1', [slug]);
+      const finalSlug = existingSlug.rows.length ? `${slug}-${userId.slice(0, 8)}` : slug;
+
+      const butcheryResult = await pool.query(
+        `INSERT INTO butcheries (id, name, slug, province, city, is_active, is_verified, tier, subscription_status)
+         VALUES ($1,$2,$3,'Unknown','Unknown',true,false,$4,'pending_payment') RETURNING id`,
+        [uuidv4(), value.butcheryName.trim(), finalSlug, value.plan]
+      );
+      butcheryId = butcheryResult.rows[0].id;
+      role = 'ADMIN';
+    } else if (butcheryId) {
+      // ── Consumer: validate provided butchery ──
       const bCheck = await pool.query('SELECT id FROM butcheries WHERE id = $1 AND is_active = true', [butcheryId]);
-      if (!bCheck.rows.length) butcheryId = null; // silently ignore invalid
+      if (!bCheck.rows.length) butcheryId = null;
+    } else {
+      // ── Consumer: link to first available butchery ──
+      const defaultButchery = await pool.query('SELECT id FROM butcheries WHERE is_active = true ORDER BY created_at ASC LIMIT 1');
+      if (defaultButchery.rows.length) butcheryId = defaultButchery.rows[0].id;
     }
 
     await pool.query(
-      `INSERT INTO users (id, email, password_hash, first_name, last_name, preferred_locale, tier, business_type, butchery_id)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      `INSERT INTO users (id, email, password_hash, first_name, last_name, phone, preferred_locale, tier, business_type, butchery_id, role)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
       [
         userId, value.email, passwordHash,
-        value.firstName, value.lastName,
+        value.firstName, value.lastName, value.phone || null,
         value.preferredLocale, value.plan,
-        value.userType === 'butchery' ? 'butcher' : 'consumer',
-        butcheryId,
+        value.accountType === 'butchery' ? 'butcher' : 'consumer',
+        butcheryId, role,
       ]
     );
 
-    // If butchery owner, create butchery record
-    if (value.userType === 'butchery' && value.butcheryName) {
-      const slug = value.butcheryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      await pool.query(
-        `INSERT INTO butcheries (name, slug, province, city, is_active, is_verified, tier)
-         VALUES ($1, $2, 'Unknown', 'Unknown', true, false, 'free')
-         ON CONFLICT (slug) DO NOTHING`,
-        [value.butcheryName, `${slug}-${userId.slice(0, 8)}`]
-      );
+    const userRow = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+    let butcheryRow = null;
+    if (butcheryId) {
+      const br = await pool.query('SELECT * FROM butcheries WHERE id = $1', [butcheryId]);
+      butcheryRow = br.rows[0] ?? null;
     }
 
     const token = jwt.sign(
-      { id: userId, email: value.email, tier: value.plan },
+      { id: userId, email: value.email, tier: value.plan, role, butcheryId },
       process.env.JWT_SECRET as string,
       { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any }
     );
 
-    res.status(201).json({
-      success: true, token,
-      user: { id: userId, email: value.email, tier: value.plan, butcheryId },
-    });
+    res.status(201).json({ success: true, token, user: formatUser(userRow.rows[0], butcheryRow) });
   } catch (err) {
     console.error('[Auth] Register error:', err);
     res.status(500).json({ success: false, message: 'Registration failed' });
   }
 });
 
+// ─── POST /login ──────────────────────────────────────────────────────────────
 authRouter.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -92,34 +130,47 @@ authRouter.post('/login', async (req: Request, res: Response) => {
     return;
   }
   try {
-    const result = await pool.query(
-      'SELECT id, email, password_hash, tier, butchery_id FROM users WHERE email = $1',
-      [email]
-    );
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (!result.rows.length) {
-      res.status(401).json({ success: false, message: 'Invalid credentials' });
+      res.status(401).json({ success: false, message: 'Ongeldige aanmeldbesonderhede / Invalid credentials' });
       return;
     }
     const user = result.rows[0];
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) {
-      res.status(401).json({ success: false, message: 'Invalid credentials' });
+      res.status(401).json({ success: false, message: 'Ongeldige aanmeldbesonderhede / Invalid credentials' });
       return;
     }
+
+    // ── Butchery subscription gate (ported from NestJS auth.service.ts) ──
+    let butcheryRow = null;
+    if (user.butchery_id) {
+      const br = await pool.query('SELECT * FROM butcheries WHERE id = $1', [user.butchery_id]);
+      butcheryRow = br.rows[0] ?? null;
+      if (user.business_type === 'butcher' && butcheryRow?.subscription_status === 'pending_payment') {
+        res.status(401).json({
+          success: false,
+          message: 'Betaling uitstaande. Voltooi asb jou betaling om toegang te kry / Payment pending. Please complete payment to access your account.',
+          code: 'PAYMENT_PENDING',
+        });
+        return;
+      }
+    }
+
     const token = jwt.sign(
-      { id: user.id, email: user.email, tier: user.tier },
+      { id: user.id, email: user.email, tier: user.tier, role: user.role, butcheryId: user.butchery_id },
       process.env.JWT_SECRET as string,
       { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any }
     );
-    res.json({
-      success: true, token,
-      user: { id: user.id, email: user.email, tier: user.tier, butcheryId: user.butchery_id },
-    });
-  } catch {
+
+    res.json({ success: true, token, user: formatUser(user, butcheryRow) });
+  } catch (err) {
+    console.error('[Auth] Login error:', err);
     res.status(500).json({ success: false, message: 'Login failed' });
   }
 });
 
+// ─── GET /me ──────────────────────────────────────────────────────────────────
 authRouter.get('/me', async (req: Request, res: Response) => {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
@@ -129,17 +180,18 @@ authRouter.get('/me', async (req: Request, res: Response) => {
   try {
     const token = authHeader.slice(7);
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
-    const result = await pool.query(
-      `SELECT id, email, first_name, last_name, tier, preferred_locale, butchery_id,
-              business_name, business_type, phone
-       FROM users WHERE id = $1`,
-      [decoded.id]
-    );
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.id]);
     if (!result.rows.length) {
       res.status(404).json({ success: false, message: 'User not found' });
       return;
     }
-    res.json({ success: true, user: result.rows[0] });
+    const user = result.rows[0];
+    let butcheryRow = null;
+    if (user.butchery_id) {
+      const br = await pool.query('SELECT * FROM butcheries WHERE id = $1', [user.butchery_id]);
+      butcheryRow = br.rows[0] ?? null;
+    }
+    res.json({ success: true, user: formatUser(user, butcheryRow) });
   } catch {
     res.status(401).json({ success: false, message: 'Invalid token' });
   }
