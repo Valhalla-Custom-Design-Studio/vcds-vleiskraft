@@ -20,7 +20,6 @@ interface UserRow {
 
 export async function runWeatherAlert(): Promise<void> {
   if (!OWM_KEY) {
-    console.warn('[WeatherAlert] No OWM API key — skipping');
     return;
   }
 
@@ -73,6 +72,5 @@ export async function runWeatherAlert(): Promise<void> {
     for (const chunk of chunks) {
       await expo.sendPushNotificationsAsync(chunk).catch(console.error);
     }
-    console.log(`[WeatherAlert] Sent ${messages.length} braai weather alerts`);
   }
 }

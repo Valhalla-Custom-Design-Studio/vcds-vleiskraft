@@ -59,7 +59,6 @@ export function useSubscription(apiBase: string, token: string | null) {
         setActiveApps(status.activeApps);
       }
     } catch (e) {
-      console.warn('[Subscription] Check failed:', e);
     } finally {
       setLoading(false);
     }

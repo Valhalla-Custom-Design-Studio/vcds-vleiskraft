@@ -15,7 +15,6 @@ const getDSN = (): string => {
 export const initSentry = () => {
   const dsn = getDSN();
   if (!dsn) {
-    console.warn('[Sentry] No DSN configured — error tracking disabled');
     return;
   }
   Sentry.init({
