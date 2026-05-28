@@ -44,7 +44,6 @@ export async function fetchVleisKraftFoodData(token: string, search?: string) {
     if (!res.ok) throw new Error(`VleisKraft API ${res.status}`);
     return await res.json();
   } catch (e) {
-    console.warn('[Integration] VleisKraft food fetch failed:', e);
     return null;
   }
 }
@@ -72,7 +71,6 @@ export async function pushMacroProfileToVleisKraft(token: string, macros: {
     });
     return res.ok;
   } catch (e) {
-    console.warn('[Integration] Macro push failed:', e);
     return false;
   }
 }

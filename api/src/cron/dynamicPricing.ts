@@ -54,6 +54,4 @@ export async function runDynamicPricing(): Promise<void> {
       updated++;
     }
   }
-
-  console.log(`[DynamicPricing] Updated ${updated} product prices`);
 }

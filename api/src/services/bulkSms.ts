@@ -13,7 +13,6 @@ interface SmsPayload {
 
 async function sendSms(payload: SmsPayload): Promise<void> {
   if (!BULKSMS_TOKEN) {
-    console.warn('[BulkSMS] No token configured — SMS skipped');
     return;
   }
   const res = await fetch(BULKSMS_URL, {
