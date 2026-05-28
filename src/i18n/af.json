@@ -1,9 +1,73 @@
 {
-  "common": { "loading": "Laai...", "error": "Fout", "save": "Stoor", "cancel": "Kanselleer", "delete": "Verwyder", "edit": "Wysig", "add": "Voeg By", "back": "Terug", "confirm": "Bevestig", "failedToLoad": "Kon nie laai nie", "failedToSave": "Kon nie stoor nie" },
-  "auth": { "login": "Teken In", "register": "Registreer", "email": "E-pos", "password": "Wagwoord", "logout": "Teken Uit", "firstName": "Voornaam", "lastName": "Van" },
-  "shop": { "title": "Winkel", "addToCart": "Voeg by Mandjie", "cart": "Mandjie", "checkout": "Betaal", "total": "Totaal", "empty": "Jou mandjie is leeg" },
-  "orders": { "title": "Bestellings", "status": "Status", "pending": "Hangende", "confirmed": "Bevestig", "delivered": "Afgelewer", "cancelled": "Gekanselleer" },
-  "ai": { "title": "VleisAI™", "placeholder": "Vra oor snitte, resepte, pryse...", "send": "Stuur" },
-  "profile": { "title": "Profiel", "company": "Maatskappy", "vatNumber": "BTW-nommer", "phone": "Telefoon" },
-  "settings": { "title": "Instellings", "language": "Taal", "notifications": "Kennisgewings", "logout": "Teken Uit" }
+  "common": {
+    "loading": "Laai...", "error": "Fout", "save": "Stoor", "cancel": "Kanselleer",
+    "delete": "Verwyder", "edit": "Wysig", "add": "Voeg By", "back": "Terug",
+    "confirm": "Bevestig", "failedToLoad": "Kon nie laai nie", "failedToSave": "Kon nie stoor nie",
+    "search": "Soek", "filter": "Filter", "sort": "Sorteer", "refresh": "Verfris",
+    "noResults": "Geen resultate gevind nie", "tryAgain": "Probeer weer", "submit": "Dien in",
+    "close": "Sluit", "yes": "Ja", "no": "Nee", "ok": "OK", "done": "Klaar",
+    "next": "Volgende", "previous": "Vorige", "viewAll": "Sien alles", "seeMore": "Sien meer"
+  },
+  "auth": {
+    "login": "Teken In", "register": "Registreer", "email": "E-pos", "password": "Wagwoord",
+    "logout": "Teken Uit", "firstName": "Voornaam", "lastName": "Van",
+    "forgotPassword": "Wagwoord vergeet?", "noAccount": "Het jy nie 'n rekening nie?",
+    "haveAccount": "Het jy reeds 'n rekening?", "signUp": "Registreer",
+    "company": "Maatskappynaam", "phone": "Telefoonnommer", "vatNumber": "BTW-nommer",
+    "businessType": "Besigheidstipe", "loginFailed": "Aanmelding misluk. Kontroleer jou besonderhede.",
+    "registerFailed": "Registrasie misluk. Probeer asseblief weer."
+  },
+  "shop": {
+    "title": "Winkel", "addToCart": "Voeg by Mandjie", "cart": "Mandjie", "checkout": "Betaal",
+    "total": "Totaal", "empty": "Jou mandjie is leeg", "products": "Produkte",
+    "categories": "Kategorieë", "beef": "Beesvleis", "lamb": "Lamsvleis", "pork": "Varkvleis",
+    "chicken": "Hoendervleis", "sausage": "Wors", "cured": "Gesoute Vleis",
+    "all": "Alles", "inStock": "In voorraad", "outOfStock": "Uit voorraad",
+    "perKg": "per kg", "addedToCart": "By mandjie gevoeg", "viewCart": "Sien mandjie",
+    "continueShopping": "Gaan voort met inkopies", "quantity": "Hoeveelheid",
+    "unitPrice": "Eenheidsprys", "subtotal": "Subtotaal"
+  },
+  "orders": {
+    "title": "Bestellings", "status": "Status", "pending": "Hangende", "confirmed": "Bevestig",
+    "delivered": "Afgelewer", "cancelled": "Gekanselleer", "processing": "Verwerk",
+    "shipped": "Gestuur", "orderNumber": "Bestelling #", "placedOn": "Geplaas op",
+    "deliverTo": "Lewer aan", "trackOrder": "Volg bestelling", "reorder": "Herbestel",
+    "noOrders": "Nog geen bestellings nie", "orderDetails": "Bestelbesonderhede",
+    "estimatedDelivery": "Geskatte aflewering", "orderConfirmed": "Bestelling bevestig!"
+  },
+  "ai": {
+    "title": "VleisAI™", "placeholder": "Vra oor snitte, resepte, pryse...",
+    "send": "Stuur", "thinking": "VleisAI™ dink...",
+    "identify": "Identifiseer snit", "voiceOrder": "Stembestelling",
+    "suggestions": "Voorstelle", "cutGuide": "Snitgids",
+    "biltongTips": "Biltong wenke", "braaiGuide": "Braaigids"
+  },
+  "profile": {
+    "title": "Profiel", "company": "Maatskappy", "vatNumber": "BTW-nommer",
+    "phone": "Telefoon", "editProfile": "Wysig profiel", "subscription": "Intekening",
+    "tier": "Vlak", "consumer": "Verbruiker", "starter": "Aanvanger",
+    "pro": "Pro", "business": "Besigheid", "enterprise": "Onderneming",
+    "upgradeNow": "Opgradeer nou", "memberSince": "Lid sedert",
+    "savedAddresses": "Gestoorde adresse", "paymentMethods": "Betaalmetodes"
+  },
+  "settings": {
+    "title": "Instellings", "language": "Taal", "notifications": "Kennisgewings",
+    "logout": "Teken Uit", "english": "Engels", "afrikaans": "Afrikaans",
+    "pushNotifications": "Stootkennisgewings", "emailNotifications": "E-poskennisgewings",
+    "privacy": "Privaatheidsbeleid", "terms": "Diensvoorwaardes", "support": "Ondersteuning",
+    "version": "Weergawe", "deleteAccount": "Verwyder rekening"
+  },
+  "subscription": {
+    "title": "Intekeninge", "free": "Gratis", "monthly": "Maandeliks",
+    "annual": "Jaarliks", "upgrade": "Opgradeer", "downgrade": "Afgradeer",
+    "currentPlan": "Huidige plan", "features": "Kenmerke",
+    "perMonth": "/maand", "perYear": "/jaar", "trialDays": "30-dag gratis proeftydperk",
+    "cancelAnytime": "Kanselleer enige tyd", "mostPopular": "Gewildste"
+  },
+  "butchery": {
+    "title": "Slaghuise", "nearYou": "Naby jou", "allButcheries": "Alle slaghuise",
+    "selectButchery": "Kies slaghuis", "hours": "Ure", "contact": "Kontak",
+    "address": "Adres", "rating": "Gradering", "verified": "Geverifieer",
+    "specialOffers": "Spesiale aanbiedinge", "deliveryAvailable": "Aflewering beskikbaar"
+  }
 }

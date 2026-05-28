@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colors } from "../../../src/theme/colors";
 import { useI18n } from "../../../src/i18n";
 
-const API = process.env.EXPO_PUBLIC_API_URL || "https://vcds-vleiskraft.railway.app";
+const API = process.env.EXPO_PUBLIC_API_URL || "https://vcds-vleiskraft.onrender.com";
 
 const STATUS_COLORS: any = { pending: Colors.warning, confirmed: Colors.info, delivered: Colors.success, cancelled: Colors.error };
 

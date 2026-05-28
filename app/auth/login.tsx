@@ -17,7 +17,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../src/theme/colors';
 
-const API = process.env.EXPO_PUBLIC_API_URL || 'https://vleiskraft-api.onrender.com';
+const API = process.env.EXPO_PUBLIC_API_URL || "https://vcds-vleiskraft.onrender.com";
 
 const L = {
   en: {

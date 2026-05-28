@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../../src/theme/colors";
 import { useI18n } from "../../../src/i18n";
 
-const API = process.env.EXPO_PUBLIC_API_URL || "https://vcds-vleiskraft.railway.app";
+const API = process.env.EXPO_PUBLIC_API_URL || "https://vcds-vleiskraft.onrender.com";
 
 export default function CartScreen() {
   const { t } = useI18n();
