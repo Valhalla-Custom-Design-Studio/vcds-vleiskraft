@@ -10,7 +10,11 @@ export default function PaymentsScreen() {
 
   useEffect(() => {
     // PayFast redirects here with ?payment_status=COMPLETE|CANCELLED|FAILED
-    const paymentStatus = params.payment_status as string;
+    const paymentStatus = params.payment_status as string | undefined;
+    if (!paymentStatus) {
+      // Params not yet hydrated — keep spinner
+      return;
+    }
     if (paymentStatus === 'COMPLETE') {
       setStatus('success');
     } else if (paymentStatus === 'CANCELLED') {

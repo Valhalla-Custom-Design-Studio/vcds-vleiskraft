@@ -22,9 +22,12 @@ export default function DeliveryTrackingScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const load = () => api.get(`/api/delivery-tracking/${orderId}`).then(({ data }) => setTracking(data)).finally(() => setLoading(false));
+    const load = () => api
+      .get(`/api/delivery-tracking/${orderId}`)
+      .then(({ data }) => setTracking(data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
     load();
-      .catch((err) => { /* VCDS:SAFE */ if (__DEV__) { void 0; } });
     const interval = setInterval(load, 30000);
     return () => clearInterval(interval);
   }, [orderId]);
