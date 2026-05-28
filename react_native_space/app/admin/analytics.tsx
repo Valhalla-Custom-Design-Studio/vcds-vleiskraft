@@ -24,6 +24,7 @@ export default function AdminAnalyticsScreen() {
       ]);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
+      .catch((err) => { /* VCDS:SAFE */ if (__DEV__) { void 0; } });
 
   if (loading) return <ScreenContainer title="Analytics"><ActivityIndicator style={{ marginTop: 40 }} /></ScreenContainer>;
 

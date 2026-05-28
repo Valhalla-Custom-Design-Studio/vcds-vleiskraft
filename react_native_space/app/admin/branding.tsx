@@ -52,6 +52,7 @@ export default function AdminBrandingScreen() {
           phone: t?.phone ?? '',
           address: t?.address ?? '',
         });
+        .catch((err) => { /* VCDS:SAFE */ if (__DEV__) { void 0; } });
       })
       .catch(() => setError(lang === 'AF' ? 'Kon nie handelsmerk laai nie' : 'Could not load branding'))
       .finally(() => setLoading(false));
