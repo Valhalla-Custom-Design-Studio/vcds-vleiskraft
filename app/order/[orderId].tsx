@@ -30,12 +30,15 @@ export default function OrderDetailScreen() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    api.get(`/api/orders/${orderId}`).then(({ data }) => {
-      setOrder(data);
-      if (data.rating) { setRating(data.rating.rating); setRated(true); }
-    }).finally(() => setLoading(false));
+    api
+      .get(`/api/orders/${orderId}`)
+      .then(({ data }) => {
+        setOrder(data);
+        if (data.rating) { setRating(data.rating.rating); setRated(true); }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [orderId]);
-      .catch((err) => { /* VCDS:SAFE */ if (__DEV__) { void 0; } });
 
   const reorder = async () => {
     try {

@@ -18,9 +18,12 @@ export default function OrderConfirmationScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get(`/api/orders/${orderId}`).then(({ data }) => setOrder(data)).finally(() => setLoading(false));
+    api
+      .get(`/api/orders/${orderId}`)
+      .then(({ data }) => setOrder(data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [orderId]);
-      .catch((err) => { /* VCDS:SAFE */ if (__DEV__) { void 0; } });
 
   const shareOrder = () => {
     Share.share({ message: language === 'af' ? 'Sopas bestel by La Oma™ Slaghuis! 🥩🔥' : 'Just ordered from La Oma™ Slaghuis! 🥩🔥' });
