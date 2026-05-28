@@ -1,9 +1,73 @@
 {
-  "common": { "loading": "Loading...", "error": "Error", "save": "Save", "cancel": "Cancel", "delete": "Delete", "edit": "Edit", "add": "Add", "back": "Back", "confirm": "Confirm", "failedToLoad": "Failed to load", "failedToSave": "Failed to save" },
-  "auth": { "login": "Log In", "register": "Register", "email": "Email", "password": "Password", "logout": "Log Out", "firstName": "First name", "lastName": "Last name" },
-  "shop": { "title": "Shop", "addToCart": "Add to Cart", "cart": "Cart", "checkout": "Checkout", "total": "Total", "empty": "Your cart is empty" },
-  "orders": { "title": "Orders", "status": "Status", "pending": "Pending", "confirmed": "Confirmed", "delivered": "Delivered", "cancelled": "Cancelled" },
-  "ai": { "title": "VleisAI™", "placeholder": "Ask about cuts, recipes, prices...", "send": "Send" },
-  "profile": { "title": "Profile", "company": "Company", "vatNumber": "VAT Number", "phone": "Phone" },
-  "settings": { "title": "Settings", "language": "Language", "notifications": "Notifications", "logout": "Log Out" }
+  "common": {
+    "loading": "Loading...", "error": "Error", "save": "Save", "cancel": "Cancel",
+    "delete": "Delete", "edit": "Edit", "add": "Add", "back": "Back",
+    "confirm": "Confirm", "failedToLoad": "Failed to load", "failedToSave": "Failed to save",
+    "search": "Search", "filter": "Filter", "sort": "Sort", "refresh": "Refresh",
+    "noResults": "No results found", "tryAgain": "Try again", "submit": "Submit",
+    "close": "Close", "yes": "Yes", "no": "No", "ok": "OK", "done": "Done",
+    "next": "Next", "previous": "Previous", "viewAll": "View all", "seeMore": "See more"
+  },
+  "auth": {
+    "login": "Log In", "register": "Register", "email": "Email", "password": "Password",
+    "logout": "Log Out", "firstName": "First name", "lastName": "Last name",
+    "forgotPassword": "Forgot password?", "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?", "signUp": "Sign up",
+    "company": "Company name", "phone": "Phone number", "vatNumber": "VAT number",
+    "businessType": "Business type", "loginFailed": "Login failed. Check your credentials.",
+    "registerFailed": "Registration failed. Please try again."
+  },
+  "shop": {
+    "title": "Shop", "addToCart": "Add to Cart", "cart": "Cart", "checkout": "Checkout",
+    "total": "Total", "empty": "Your cart is empty", "products": "Products",
+    "categories": "Categories", "beef": "Beef", "lamb": "Lamb", "pork": "Pork",
+    "chicken": "Chicken", "sausage": "Sausage", "cured": "Cured Meats",
+    "all": "All", "inStock": "In stock", "outOfStock": "Out of stock",
+    "perKg": "per kg", "addedToCart": "Added to cart", "viewCart": "View cart",
+    "continueShopping": "Continue shopping", "quantity": "Quantity",
+    "unitPrice": "Unit price", "subtotal": "Subtotal"
+  },
+  "orders": {
+    "title": "Orders", "status": "Status", "pending": "Pending", "confirmed": "Confirmed",
+    "delivered": "Delivered", "cancelled": "Cancelled", "processing": "Processing",
+    "shipped": "Shipped", "orderNumber": "Order #", "placedOn": "Placed on",
+    "deliverTo": "Deliver to", "trackOrder": "Track order", "reorder": "Reorder",
+    "noOrders": "No orders yet", "orderDetails": "Order details",
+    "estimatedDelivery": "Estimated delivery", "orderConfirmed": "Order confirmed!"
+  },
+  "ai": {
+    "title": "VleisAI™", "placeholder": "Ask about cuts, recipes, prices...",
+    "send": "Send", "thinking": "VleisAI™ is thinking...",
+    "identify": "Identify cut", "voiceOrder": "Voice order",
+    "suggestions": "Suggestions", "cutGuide": "Cut guide",
+    "biltongTips": "Biltong tips", "braaiGuide": "Braai guide"
+  },
+  "profile": {
+    "title": "Profile", "company": "Company", "vatNumber": "VAT Number",
+    "phone": "Phone", "editProfile": "Edit profile", "subscription": "Subscription",
+    "tier": "Tier", "consumer": "Consumer", "starter": "Starter",
+    "pro": "Pro", "business": "Business", "enterprise": "Enterprise",
+    "upgradeNow": "Upgrade now", "memberSince": "Member since",
+    "savedAddresses": "Saved addresses", "paymentMethods": "Payment methods"
+  },
+  "settings": {
+    "title": "Settings", "language": "Language", "notifications": "Notifications",
+    "logout": "Log Out", "english": "English", "afrikaans": "Afrikaans",
+    "pushNotifications": "Push notifications", "emailNotifications": "Email notifications",
+    "privacy": "Privacy policy", "terms": "Terms of service", "support": "Support",
+    "version": "Version", "deleteAccount": "Delete account"
+  },
+  "subscription": {
+    "title": "Subscriptions", "free": "Free", "monthly": "Monthly",
+    "annual": "Annual", "upgrade": "Upgrade", "downgrade": "Downgrade",
+    "currentPlan": "Current plan", "features": "Features",
+    "perMonth": "/month", "perYear": "/year", "trialDays": "30-day free trial",
+    "cancelAnytime": "Cancel anytime", "mostPopular": "Most popular"
+  },
+  "butchery": {
+    "title": "Butcheries", "nearYou": "Near you", "allButcheries": "All butcheries",
+    "selectButchery": "Select butchery", "hours": "Hours", "contact": "Contact",
+    "address": "Address", "rating": "Rating", "verified": "Verified",
+    "specialOffers": "Special offers", "deliveryAvailable": "Delivery available"
+  }
 }
