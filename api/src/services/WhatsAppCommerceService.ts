@@ -111,7 +111,6 @@ export async function persistWhatsAppOrder(
     );
   } catch {
     // Table may not exist yet — non-fatal
-:", orderId);
   }
   return orderId;
 }

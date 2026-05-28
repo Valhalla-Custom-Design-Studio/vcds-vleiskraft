@@ -97,8 +97,9 @@ async function bootstrap() {
     console.error("⚠️  Migration warning (non-fatal):", err);
   }
   startCronJobs();
-  app.listen(PORT, () =>
-);
+  app.listen(PORT, () => {
+    // server started
+  });
 }
 
 bootstrap();

@@ -83,7 +83,6 @@ router.post('/webhook', async (req: Request, res: Response) => {
          WHERE id = $3`,
         [plan.tier, trialEndsAt, butcheryId]
       );
-' : ''}`);
     } catch (err) {
       console.error('[Subscription] DB update failed:', err);
       return res.status(500).send('DB error');
