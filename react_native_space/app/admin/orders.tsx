@@ -29,7 +29,7 @@ export default function AdminOrders() {
         headers: { Authorization: `Bearer ${global.authToken}` },
       });
       if (res.ok) setOrders(await res.json());
-    } catch (_) {}
+    } catch (_) { console.error("[VleisKraft]", _); }
   }, []);
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);

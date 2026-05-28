@@ -22,7 +22,7 @@ export async function logOrderEvent(data: {
       [data.butcheryId, data.productId, data.productName, data.quantity,
        data.priceZar, data.city ?? null, data.dayOfWeek, data.hour]
     );
-  } catch (_) {}
+  } catch (_) { console.error("[VleisKraft]", _); }
 }
 
 /**
@@ -36,7 +36,7 @@ export async function logPriceChange(butcheryId: string, productId: string, oldP
        VALUES ($1,$2,$3,$4,$5,NOW())`,
       [butcheryId, productId, oldPrice, newPrice, reason]
     );
-  } catch (_) {}
+  } catch (_) { console.error("[VleisKraft]", _); }
 }
 
 /**
@@ -56,5 +56,5 @@ export async function logVleisAIConversation(data: {
        VALUES ($1,$2,$3,NOW())`,
       [data.userId, data.userMessage, data.aiResponse]
     );
-  } catch (_) {}
+  } catch (_) { console.error("[VleisKraft]", _); }
 }

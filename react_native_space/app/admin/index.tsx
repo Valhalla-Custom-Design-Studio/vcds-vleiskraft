@@ -21,7 +21,7 @@ export default function AdminDashboard() {
         headers: { Authorization: `Bearer ${global.authToken}` },
       });
       if (res.ok) setStats(await res.json());
-    } catch (_) {}
+    } catch (_) { console.error("[VleisKraft]", _); }
   };
 
   useEffect(() => { fetchStats(); }, []);
