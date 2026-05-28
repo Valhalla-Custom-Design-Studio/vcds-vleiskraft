@@ -22,7 +22,7 @@ export function requirePlatinum(req: Request, res: Response, next: NextFunction)
       requiredTier: 'platinum',
       upgradeUrl: 'https://vleiskraft.co.za/upgrade',
       message: user.locale === 'af'
-        ? 'Hierdie funksie vereis 'n Platinum-intekening (R15,000/maand).'
+        ? "Hierdie funksie vereis 'n Platinum-intekening (R15,000/maand)."
         : 'This feature requires a Platinum subscription (R15,000/month).',
     });
     return;
