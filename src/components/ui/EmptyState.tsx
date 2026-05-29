@@ -1,39 +1,46 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing } from '@/constants/colors';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-interface Props {
-  icon?: keyof typeof Ionicons.glyphMap;
+interface EmptyStateProps {
+  icon?: React.ReactNode;
   title: string;
   subtitle?: string;
   ctaLabel?: string;
   onCta?: () => void;
+  accentColor?: string;
 }
 
-function EmptyStateComponent({ icon, title, subtitle, ctaLabel, onCta }: Props) {
-  return (
-    <View style={styles.container}>
-      {icon && <Ionicons name={icon} size={48} color={Colors.textSecondary} style={styles.icon} />}
-      <Text style={styles.title}>{title}</Text>
-      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-      {ctaLabel && onCta ? (
-        <TouchableOpacity style={styles.cta} onPress={onCta}>
-          <Text style={styles.ctaText}>{ctaLabel}</Text>
-        </TouchableOpacity>
-      ) : null}
-    </View>
-  );
-}
+export const EmptyState: React.FC<EmptyStateProps> = ({
+  icon, title, subtitle, ctaLabel, onCta, accentColor = '#C9A84C',
+}) => (
+  <View style={styles.container}>
+    {icon && <View style={styles.iconWrap}>{icon}</View>}
+    <Text style={styles.title}>{title}</Text>
+    {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+    {ctaLabel && onCta && (
+      <TouchableOpacity
+        style={[styles.btn, { borderColor: accentColor }]}
+        onPress={onCta}
+        activeOpacity={0.75}
+      >
+        <Text style={[styles.btnText, { color: accentColor }]}>{ctaLabel}</Text>
+      </TouchableOpacity>
+    )}
+  </View>
+);
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl },
-  icon: { marginBottom: Spacing.md },
-  title: { color: Colors.textSecondary, fontSize: 16, fontWeight: '600', textAlign: 'center' },
-  subtitle: { color: Colors.textSecondary, fontSize: 13, textAlign: 'center', marginTop: Spacing.sm },
-  cta: { marginTop: Spacing.lg, backgroundColor: Colors.primary, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, borderRadius: 8 },
-  ctaText: { color: Colors.white, fontWeight: '600', fontSize: 14 },
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
+  iconWrap: {
+    width: 72, height: 72, borderRadius: 36,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    alignItems: 'center', justifyContent: 'center', marginBottom: 16,
+  },
+  title: { fontSize: 18, fontWeight: '700', color: '#FFFFFF', textAlign: 'center', marginBottom: 8 },
+  subtitle: { fontSize: 14, color: '#888888', textAlign: 'center', marginBottom: 24, lineHeight: 20 },
+  btn: {
+    paddingHorizontal: 24, paddingVertical: 12,
+    borderRadius: 24, borderWidth: 1,
+  },
+  btnText: { fontSize: 14, fontWeight: '600' },
 });
-
-export { EmptyStateComponent as EmptyState };
-export default EmptyStateComponent;
