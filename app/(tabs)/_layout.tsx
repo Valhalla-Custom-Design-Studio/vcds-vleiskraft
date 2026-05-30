@@ -1,81 +1,64 @@
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useI18n } from "../../src/i18n";
 
-const GOLD = '#C9A84C';
-const RED = '#C0392B';
+const GOLD = "#C9A84C";
+const BG = "#0A0A0A";
+const SURFACE = "#111111";
+const MUTED = "#555555";
 
 export default function TabLayout() {
-  const [userType, setUserType] = useState<string | null>(null);
-
-  useEffect(() => {
-    AsyncStorage.getItem('userType').then(setUserType);
-  }, []);
-
-  const isButcher = userType === 'butcher';
-
+  const { t } = useI18n();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: GOLD,
-        tabBarInactiveTintColor: '#555555',
         tabBarStyle: {
-          backgroundColor: '#0D0D0D',
-          borderTopColor: 'rgba(255,255,255,0.06)',
+          backgroundColor: SURFACE,
+          borderTopColor: "rgba(201,168,76,0.15)",
           borderTopWidth: 1,
-          height: 60,
+          height: 64,
           paddingBottom: 8,
+          paddingTop: 6,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+        tabBarActiveTintColor: GOLD,
+        tabBarInactiveTintColor: MUTED,
+        tabBarLabelStyle: { fontSize: 10, fontWeight: "700", letterSpacing: 0.3 },
       }}
     >
-      {/* Home: Shop (consumer) | Dashboard (butcher) */}
       <Tabs.Screen
         name="index"
         options={{
-          title: isButcher ? 'Dashboard' : 'Winkel',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name={isButcher ? 'grid' : 'storefront'} size={size} color={color} />
-          ),
+          title: t("nav.shop"),
+          tabBarIcon: ({ color, size }) => <Ionicons name="storefront-outline" size={size} color={color} />,
         }}
       />
-
-      {/* Consumer only: Cart */}
-      <Tabs.Screen
-        name="cart/index"
-        options={{
-          title: 'Mandjie',
-          tabBarIcon: ({ color, size }) => <Ionicons name="cart" size={size} color={color} />,
-          href: isButcher ? null : undefined,
-        }}
-      />
-
-      {/* Orders — both, different label */}
-      <Tabs.Screen
-        name="orders/index"
-        options={{
-          title: isButcher ? 'Bestellings' : 'My Bestellings',
-          tabBarIcon: ({ color, size }) => <Ionicons name="receipt" size={size} color={color} />,
-        }}
-      />
-
-      {/* VleisAI — both */}
       <Tabs.Screen
         name="vleisgpt/index"
         options={{
-          title: 'VleisAI™',
-          tabBarIcon: ({ color, size }) => <Ionicons name="chatbubble-ellipses" size={size} color={color} />,
+          title: t("nav.vleisgpt"),
+          tabBarIcon: ({ color, size }) => <Ionicons name="chatbubble-ellipses-outline" size={size} color={color} />,
         }}
       />
-
-      {/* Profile — both */}
+      <Tabs.Screen
+        name="orders/index"
+        options={{
+          title: t("nav.orders"),
+          tabBarIcon: ({ color, size }) => <Ionicons name="receipt-outline" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="cart/index"
+        options={{
+          title: t("nav.cart"),
+          tabBarIcon: ({ color, size }) => <Ionicons name="cart-outline" size={size} color={color} />,
+        }}
+      />
       <Tabs.Screen
         name="profile/index"
         options={{
-          title: 'Profiel',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
+          title: t("nav.profile"),
+          tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
         }}
       />
     </Tabs>

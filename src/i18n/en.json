@@ -6,16 +6,28 @@
     "search": "Search", "filter": "Filter", "sort": "Sort", "refresh": "Refresh",
     "noResults": "No results found", "tryAgain": "Try again", "submit": "Submit",
     "close": "Close", "yes": "Yes", "no": "No", "ok": "OK", "done": "Done",
-    "next": "Next", "previous": "Previous", "viewAll": "View all", "seeMore": "See more"
+    "next": "Next", "previous": "Previous", "viewAll": "View all", "seeMore": "See more",
+    "skip": "Skip", "letsBraai": "Let's Braai!"
+  },
+  "nav": {
+    "home": "Home", "shop": "Shop", "braai": "Braai Brain", "orders": "Orders",
+    "profile": "Profile", "vleisgpt": "VleisGPT™", "cart": "Cart"
   },
   "auth": {
     "login": "Log In", "register": "Register", "email": "Email", "password": "Password",
-    "logout": "Log Out", "firstName": "First name", "lastName": "Last name",
+    "logout": "Log Out", "firstName": "First Name", "lastName": "Last Name",
     "forgotPassword": "Forgot password?", "noAccount": "Don't have an account?",
-    "haveAccount": "Already have an account?", "signUp": "Sign up",
+    "haveAccount": "Already have an account?", "signUp": "Sign Up",
     "company": "Company name", "phone": "Phone number", "vatNumber": "VAT number",
     "businessType": "Business type", "loginFailed": "Login failed. Check your credentials.",
-    "registerFailed": "Registration failed. Please try again."
+    "registerFailed": "Registration failed. Please try again.",
+    "confirmPassword": "Confirm Password",
+    "whoAreYou": "Who are you?", "chooseType": "Choose your account type to get started",
+    "consumer": "Consumer", "consumerDesc": "Browse & buy premium meat — free forever",
+    "butcher": "Butchery / Slagtery", "butcherDesc": "Sell your meat on VleisKraft™",
+    "yourDetails": "Your Details", "choosePlan": "Choose Your Plan",
+    "startFreeUpgrade": "Start free, upgrade anytime",
+    "createAccount": "Create Account", "creating": "Creating account..."
   },
   "shop": {
     "title": "Shop", "addToCart": "Add to Cart", "cart": "Cart", "checkout": "Checkout",
@@ -25,30 +37,40 @@
     "all": "All", "inStock": "In stock", "outOfStock": "Out of stock",
     "perKg": "per kg", "addedToCart": "Added to cart", "viewCart": "View cart",
     "continueShopping": "Continue shopping", "quantity": "Quantity",
-    "unitPrice": "Unit price", "subtotal": "Subtotal"
+    "unitPrice": "Unit price", "subtotal": "Subtotal",
+    "meatOfWeek": "Meat of the Week", "todaysPick": "Today's Pick",
+    "yourUsual": "Your Usual", "orderAgain": "Order Again", "specials": "Specials",
+    "smartTools": "Smart Tools", "community": "Community"
   },
   "orders": {
     "title": "Orders", "status": "Status", "pending": "Pending", "confirmed": "Confirmed",
     "delivered": "Delivered", "cancelled": "Cancelled", "processing": "Processing",
     "shipped": "Shipped", "orderNumber": "Order #", "placedOn": "Placed on",
     "deliverTo": "Deliver to", "trackOrder": "Track order", "reorder": "Reorder",
-    "noOrders": "No orders yet", "orderDetails": "Order details",
-    "estimatedDelivery": "Estimated delivery", "orderConfirmed": "Order confirmed!"
+    "noOrders": "No orders yet", "orderDetails": "Order Details",
+    "estimatedDelivery": "Estimated delivery", "orderConfirmed": "Order confirmed!",
+    "rateOrder": "Rate this order", "submitRating": "Submit Rating",
+    "deliveryTracker": "Delivery Tracking", "preparing": "Preparing",
+    "onTheWay": "On the Way", "arrived": "Arrived"
   },
   "ai": {
-    "title": "VleisAI™", "placeholder": "Ask about cuts, recipes, prices...",
-    "send": "Send", "thinking": "VleisAI™ is thinking...",
+    "title": "VleisGPT™", "placeholder": "Ask about cuts, recipes, prices...",
+    "send": "Send", "thinking": "VleisGPT™ is thinking...",
     "identify": "Identify cut", "voiceOrder": "Voice order",
     "suggestions": "Suggestions", "cutGuide": "Cut guide",
-    "biltongTips": "Biltong tips", "braaiGuide": "Braai guide"
+    "biltongTips": "Biltong tips", "braaiGuide": "Braai guide",
+    "braai": "Braai Brain", "meatAcademy": "Meat Academy",
+    "noArticles": "No articles yet"
   },
   "profile": {
-    "title": "Profile", "company": "Company", "vatNumber": "VAT Number",
+    "title": "Profile", "company": "Company", "vatNumber": "VAT number",
     "phone": "Phone", "editProfile": "Edit profile", "subscription": "Subscription",
-    "tier": "Tier", "consumer": "Consumer", "starter": "Starter",
-    "pro": "Pro", "business": "Business", "enterprise": "Enterprise",
+    "tier": "Tier", "consumer": "Consumer", "freemium": "Freemium",
+    "starter": "Starter", "pro": "Pro", "business": "Business", "enterprise": "Enterprise",
     "upgradeNow": "Upgrade now", "memberSince": "Member since",
-    "savedAddresses": "Saved addresses", "paymentMethods": "Payment methods"
+    "savedAddresses": "Saved addresses", "paymentMethods": "Payment methods",
+    "myDiary": "My Diary", "shoppingList": "Shopping List",
+    "emergencyContacts": "Emergency Contacts", "settings": "Settings"
   },
   "settings": {
     "title": "Settings", "language": "Language", "notifications": "Notifications",
@@ -62,12 +84,87 @@
     "annual": "Annual", "upgrade": "Upgrade", "downgrade": "Downgrade",
     "currentPlan": "Current plan", "features": "Features",
     "perMonth": "/month", "perYear": "/year", "trialDays": "30-day free trial",
-    "cancelAnytime": "Cancel anytime", "mostPopular": "Most popular"
+    "cancelAnytime": "Cancel anytime", "mostPopular": "Most Popular",
+    "freemiumDesc": "List up to 10 products, basic analytics",
+    "starterDesc": "Up to 50 products, order management, WhatsApp alerts",
+    "proDesc": "Unlimited products, VleisAI™, campaigns, stockvel",
+    "businessDesc": "Multi-branch, B2B bulk orders, volume pricing, invoicing",
+    "enterpriseDesc": "Full suite, dedicated support, custom integrations, API access"
   },
   "butchery": {
     "title": "Butcheries", "nearYou": "Near you", "allButcheries": "All butcheries",
     "selectButchery": "Select butchery", "hours": "Hours", "contact": "Contact",
     "address": "Address", "rating": "Rating", "verified": "Verified",
     "specialOffers": "Special offers", "deliveryAvailable": "Delivery available"
+  },
+  "academy": {
+    "title": "Meat Academy", "noArticles": "No articles yet",
+    "categories": "Categories", "proTips": "Pro Tips", "heatLevel": "Heat Level",
+    "back": "Back", "readMore": "Read more"
+  },
+  "admin": {
+    "manageOrders": "Manage Orders", "manageProducts": "Manage Products",
+    "manageCustomers": "Manage Customers", "featureFlags": "Feature Flags",
+    "woocommerce": "WooCommerce Sync", "posImport": "POS Import",
+    "margins": "Margin Analysis", "shelfLife": "Shelf Life Tracker",
+    "sentiment": "Customer Sentiment", "platinumButchery": "Platinum Branding"
+  },
+  "delivery": {
+    "tracker": "Delivery Tracking", "preparing": "Preparing",
+    "onTheWay": "On the Way", "arrived": "Arrived", "delivered": "Delivered"
+  },
+  "diary": {
+    "title": "My Diary", "noEntries": "No diary entries yet",
+    "addEntry": "Add Entry", "createEntry": "Create Entry",
+    "moodLabel": "How are you feeling?", "notesLabel": "Notes"
+  },
+  "emergency": {
+    "title": "Emergency Contacts", "addContact": "Add Contact",
+    "noContacts": "No emergency contacts added yet",
+    "name": "Name", "phone": "Phone", "relationship": "Relationship",
+    "callNow": "Call Now", "deleteContact": "Delete contact"
+  },
+  "spitbraai": {
+    "title": "Spitbraai Calculator", "guests": "Number of guests",
+    "calculate": "Calculate", "meatRequired": "Meat required",
+    "woodRequired": "Wood required", "timeRequired": "Time required"
+  },
+  "stockvel": {
+    "title": "Stockvel", "myGroup": "My Group", "contribute": "Contribute",
+    "balance": "Balance", "members": "Members", "nextPayout": "Next payout"
+  },
+  "mealPlanner": {
+    "title": "Meal Planner", "addMeal": "Add Meal", "noMeals": "No meals planned",
+    "monday": "Monday", "tuesday": "Tuesday", "wednesday": "Wednesday",
+    "thursday": "Thursday", "friday": "Friday", "saturday": "Saturday", "sunday": "Sunday"
+  },
+  "weather": {
+    "title": "Weather & Braai Conditions", "perfect": "Perfect braai weather!",
+    "notIdeal": "Not ideal for braai", "temperature": "Temperature",
+    "wind": "Wind", "humidity": "Humidity"
+  },
+  "predictions": {
+    "title": "Price Predictions", "trend": "Trend", "up": "Up", "down": "Down",
+    "stable": "Stable", "confidence": "Confidence"
+  },
+  "competitions": {
+    "title": "Competitions", "enter": "Enter", "noComps": "No active competitions",
+    "prize": "Prize", "deadline": "Deadline", "entries": "Entries"
+  },
+  "layby": {
+    "title": "Lay-by", "myLayby": "My Lay-by", "addItem": "Add Item",
+    "noItems": "No lay-by items", "totalSaved": "Total saved", "remaining": "Remaining"
+  },
+  "shoppingList": {
+    "title": "Shopping List", "addItem": "Add Item", "noItems": "Your list is empty",
+    "clearAll": "Clear all", "markDone": "Mark done"
+  },
+  "bundles": {
+    "title": "Bundles", "noBundles": "No bundles available",
+    "addToCart": "Add bundle to cart", "saving": "You save"
+  },
+  "campaigns": {
+    "title": "Campaigns", "noCampaigns": "No active campaigns",
+    "viewDeal": "View deal", "expires": "Expires"
   }
 }

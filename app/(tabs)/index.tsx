@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View, Text, FlatList, TouchableOpacity, StyleSheet,
-  TextInput, Alert, SafeAreaView, StatusBar,
+  TextInput, SafeAreaView, StatusBar, RefreshControl, ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import { useI18n } from "../../src/i18n";
 
 const API = process.env.EXPO_PUBLIC_API_URL || "https://vcds-vleiskraft.onrender.com";
-
 const GOLD = "#C9A84C";
 const BG = "#0A0A0A";
 const SURFACE = "#141414";
@@ -17,196 +17,190 @@ const BORDER = "rgba(255,255,255,0.06)";
 const TEXT = "#FFFFFF";
 const MUTED = "#888888";
 
-const MOCK_PRODUCTS = [
-  { id: "1", nameEn: "Ribeye Steak", nameAf: "Riboog-steak", price: 189.99, unit: "500g", category: "beef", icon: "🐄" },
-  { id: "2", nameEn: "Boerewors", nameAf: "Boerewors", price: 89.99, unit: "1kg", category: "sausage", icon: "🌭" },
-  { id: "3", nameEn: "Lamb Chops", nameAf: "Lamtjops", price: 149.99, unit: "500g", category: "lamb", icon: "🐑" },
-  { id: "4", nameEn: "Chicken Braai Pack", nameAf: "Hoender Braai-pak", price: 79.99, unit: "1.5kg", category: "chicken", icon: "🐔" },
-  { id: "5", nameEn: "Pork Belly", nameAf: "Varkpens", price: 99.99, unit: "1kg", category: "pork", icon: "🐷" },
-  { id: "6", nameEn: "Biltong", nameAf: "Biltong", price: 129.99, unit: "250g", category: "cured", icon: "🥩" },
-  { id: "7", nameEn: "T-Bone Steak", nameAf: "T-Been Steak", price: 219.99, unit: "600g", category: "beef", icon: "🐄" },
-  { id: "8", nameEn: "Pork Ribs", nameAf: "Varkrib", price: 119.99, unit: "1kg", category: "pork", icon: "🐷" },
-];
-
-const CATEGORIES = [
-  { key: "all", label: "Alles" },
-  { key: "beef", label: "Bees" },
-  { key: "lamb", label: "Lam" },
-  { key: "pork", label: "Vark" },
-  { key: "chicken", label: "Hoender" },
-  { key: "sausage", label: "Wors" },
-  { key: "cured", label: "Gedroog" },
-];
+const CATEGORIES_EN = ["All","Beef","Lamb","Pork","Chicken","Sausage","Cured"];
+const CATEGORIES_AF = ["Alles","Bees","Lam","Vark","Hoender","Wors","Gedroog"];
+const CAT_KEYS = ["all","beef","lamb","pork","chicken","sausage","cured"];
 
 export default function ShopScreen() {
   const { t, lang, toggleLang } = useI18n();
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<any[]>([]);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
-  const filtered = MOCK_PRODUCTS.filter(p => {
-    const name = lang === "en" ? p.nameEn : p.nameAf;
-    const matchSearch = name.toLowerCase().includes(search.toLowerCase());
-    const matchCat = activeCategory === "all" || p.category === activeCategory;
-    return matchSearch && matchCat;
-  });
+  useEffect(() => {
+    AsyncStorage.getItem("token").then(setToken);
+  }, []);
+
+  const loadProducts = useCallback(async () => {
+    try {
+      const headers: any = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      const params = new URLSearchParams();
+      if (activeCategory !== "all") params.set("category", activeCategory);
+      if (search) params.set("search", search);
+      const res = await fetch(`${API}/api/meat?${params}`, { headers });
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(Array.isArray(data) ? data : data.products ?? []);
+      }
+    } catch (e) {
+      console.warn("Products load failed:", e);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [token, activeCategory, search]);
+
+  useEffect(() => { loadProducts(); }, [loadProducts]);
 
   async function addToCart(product: any) {
-    const existing = cart.find(c => c.id === product.id);
+    const existing = cart.find(i => i.id === product.id);
     const updated = existing
-      ? cart.map(c => c.id === product.id ? { ...c, qty: c.qty + 1 } : c)
+      ? cart.map(i => i.id === product.id ? { ...i, qty: i.qty + 1 } : i)
       : [...cart, { ...product, qty: 1 }];
     setCart(updated);
-    await AsyncStorage.setItem("vleiskraft_cart", JSON.stringify(updated));
-    Alert.alert("✓", lang === "en" ? "Added to cart" : "By mandjie gevoeg");
+    await AsyncStorage.setItem("cart", JSON.stringify(updated));
   }
 
-  const cartCount = cart.reduce((s, c) => s + c.qty, 0);
+  const categories = lang === "af" ? CATEGORIES_AF : CATEGORIES_EN;
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={s.safe}>
       <StatusBar barStyle="light-content" backgroundColor={BG} />
-
-      {/* Hero Header */}
-      <LinearGradient
-        colors={["#1A0800", "#2D1200", "#0A0A0A"]}
-        start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-        style={styles.hero}
-      >
-        <View style={styles.heroContent}>
+      <LinearGradient colors={["#0A0A0A", "#111111"]} style={s.container}>
+        {/* Header */}
+        <View style={s.header}>
           <View>
-            <Text style={styles.heroLabel}>VLEISKRAFT™</Text>
-            <Text style={styles.heroTitle}>Vars Vleis, Elke Dag</Text>
+            <Text style={s.logo}>VleisKraft™</Text>
+            <Text style={s.sub}>{t("shop.title")}</Text>
           </View>
-          <View style={styles.cartBadge}>
-            <Ionicons name="cart" size={22} color={GOLD} />
-            {cartCount > 0 && (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{cartCount}</Text>
-              </View>
-            )}
+          <View style={s.headerRight}>
+            <TouchableOpacity onPress={toggleLang} style={s.langBtn}>
+              <Text style={s.langText}>{lang === "en" ? "AF" : "EN"}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/(tabs)/cart")} style={s.cartBtn}>
+              <Ionicons name="cart-outline" size={24} color={GOLD} />
+              {cart.length > 0 && (
+                <View style={s.badge}><Text style={s.badgeText}>{cart.reduce((a,i)=>a+i.qty,0)}</Text></View>
+              )}
+            </TouchableOpacity>
           </View>
         </View>
 
         {/* Search */}
-        <View style={styles.searchRow}>
-          <Ionicons name="search" size={16} color={MUTED} style={{ marginRight: 8 }} />
+        <View style={s.searchRow}>
+          <Ionicons name="search-outline" size={18} color={MUTED} style={s.searchIcon} />
           <TextInput
-            style={styles.searchInput}
-            placeholder={lang === "en" ? "Search products..." : "Soek produkte..."}
+            style={s.searchInput}
+            placeholder={t("common.search")}
             placeholderTextColor={MUTED}
             value={search}
             onChangeText={setSearch}
           />
         </View>
-      </LinearGradient>
 
-      {/* Category Pills */}
-      <FlatList
-        horizontal
-        data={CATEGORIES}
-        keyExtractor={c => c.key}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.pillsContainer}
-        renderItem={({ item }) => {
-          const active = activeCategory === item.key;
-          return (
+        {/* Category Pills */}
+        <FlatList
+          horizontal showsHorizontalScrollIndicator={false}
+          data={CAT_KEYS}
+          keyExtractor={i => i}
+          style={s.catList}
+          contentContainerStyle={{ paddingHorizontal: 16 }}
+          renderItem={({ item, index }) => (
             <TouchableOpacity
-              style={[styles.pill, active && styles.pillActive]}
-              onPress={() => setActiveCategory(item.key)}
-              activeOpacity={0.7}
+              style={[s.catChip, activeCategory === item && s.catActive]}
+              onPress={() => setActiveCategory(item)}
             >
-              <Text style={[styles.pillText, active && styles.pillTextActive]}>{item.label}</Text>
+              <Text style={[s.catText, activeCategory === item && s.catTextActive]}>
+                {categories[index]}
+              </Text>
             </TouchableOpacity>
-          );
-        }}
-      />
+          )}
+        />
 
-      {/* Product List */}
-      <FlatList
-        data={filtered}
-        keyExtractor={p => p.id}
-        contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
-          <View style={styles.productCard}>
-            <View style={styles.productIcon}>
-              <Text style={{ fontSize: 28 }}>{item.icon}</Text>
-            </View>
-            <View style={styles.productInfo}>
-              <Text style={styles.productName}>{lang === "en" ? item.nameEn : item.nameAf}</Text>
-              <Text style={styles.productUnit}>{item.unit}</Text>
-            </View>
-            <View style={styles.productRight}>
-              {item.price > 0 ? (
-                <>
-                  <Text style={styles.productPrice}>R{item.price.toFixed(2)}</Text>
-                  <TouchableOpacity style={styles.addBtn} onPress={() => addToCart(item)}>
-                    <Ionicons name="add" size={18} color="#000" />
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <Text style={styles.outOfStock}>Uit Voorraad</Text>
-              )}
-            </View>
+        {/* Products */}
+        {loading ? (
+          <View style={s.center}><ActivityIndicator color={GOLD} size="large" /></View>
+        ) : products.length === 0 ? (
+          <View style={s.center}>
+            <Ionicons name="storefront-outline" size={48} color={MUTED} />
+            <Text style={s.emptyText}>{t("common.noResults")}</Text>
+            <TouchableOpacity onPress={loadProducts} style={s.retryBtn}>
+              <Text style={s.retryText}>{t("common.tryAgain")}</Text>
+            </TouchableOpacity>
           </View>
+        ) : (
+          <FlatList
+            data={products}
+            keyExtractor={i => String(i.id)}
+            numColumns={2}
+            columnWrapperStyle={s.row}
+            contentContainerStyle={{ padding: 12, paddingBottom: 100 }}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadProducts(); }} tintColor={GOLD} />}
+            renderItem={({ item }) => {
+              const name = lang === "af" ? (item.nameAf ?? item.name) : (item.nameEn ?? item.name);
+              return (
+                <TouchableOpacity style={s.card} onPress={() => router.push(`/product/${item.id}`)}>
+                  <LinearGradient colors={["#1A1A1A","#141414"]} style={s.cardGrad}>
+                    <Text style={s.productIcon}>{item.icon ?? "🥩"}</Text>
+                    <Text style={s.productName} numberOfLines={2}>{name}</Text>
+                    <Text style={s.productUnit}>{item.unit ?? ""}</Text>
+                    <View style={s.priceRow}>
+                      <Text style={s.price}>R{Number(item.price ?? 0).toFixed(2)}</Text>
+                      <Text style={s.perKg}>{t("shop.perKg")}</Text>
+                    </View>
+                    <TouchableOpacity style={s.addBtn} onPress={() => addToCart(item)}>
+                      <Ionicons name="add" size={18} color={BG} />
+                      <Text style={s.addText}>{t("shop.addToCart")}</Text>
+                    </TouchableOpacity>
+                  </LinearGradient>
+                </TouchableOpacity>
+              );
+            }}
+          />
         )}
-      />
+      </LinearGradient>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: BG },
-  hero: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 16 },
-  heroContent: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
-  heroLabel: { fontSize: 10, fontWeight: "700", letterSpacing: 2, color: GOLD, marginBottom: 2 },
-  heroTitle: { fontSize: 22, fontWeight: "800", color: TEXT },
-  cartBadge: { position: "relative", padding: 8 },
-  badge: {
-    position: "absolute", top: 2, right: 2,
-    backgroundColor: "#EF4444", borderRadius: 8,
-    minWidth: 16, height: 16, alignItems: "center", justifyContent: "center",
-  },
-  badgeText: { fontSize: 10, fontWeight: "700", color: "#fff" },
-  searchRow: {
-    flexDirection: "row", alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.06)",
-    borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10,
-    borderWidth: 1, borderColor: BORDER,
-  },
-  searchInput: { flex: 1, fontSize: 14, color: TEXT },
-  pillsContainer: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
-  pill: {
-    paddingHorizontal: 14, paddingVertical: 7,
-    borderRadius: 20, borderWidth: 1, borderColor: BORDER,
-    backgroundColor: SURFACE,
-  },
-  pillActive: {
-    backgroundColor: GOLD, borderColor: GOLD,
-    shadowColor: GOLD, shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5, shadowRadius: 8, elevation: 6,
-  },
-  pillText: { fontSize: 13, color: MUTED, fontWeight: "600" },
-  pillTextActive: { color: "#000" },
-  listContent: { paddingHorizontal: 16, paddingBottom: 24, gap: 10 },
-  productCard: {
-    flexDirection: "row", alignItems: "center",
-    backgroundColor: SURFACE, borderRadius: 14,
-    padding: 14, borderWidth: 1, borderColor: BORDER,
-  },
-  productIcon: {
-    width: 52, height: 52, borderRadius: 12,
-    backgroundColor: "rgba(201,168,76,0.08)",
-    alignItems: "center", justifyContent: "center", marginRight: 12,
-  },
-  productInfo: { flex: 1 },
-  productName: { fontSize: 15, fontWeight: "600", color: TEXT, marginBottom: 2 },
-  productUnit: { fontSize: 12, color: MUTED },
-  productRight: { alignItems: "flex-end", gap: 8 },
-  productPrice: { fontSize: 16, fontWeight: "700", color: GOLD },
-  outOfStock: { fontSize: 11, color: '#888', fontWeight: '600', textAlign: 'right' },
-  addBtn: {
-    width: 32, height: 32, borderRadius: 8,
-    backgroundColor: GOLD, alignItems: "center", justifyContent: "center",
-  },
+const s = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: "#0A0A0A" },
+  container: { flex: 1 },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 },
+  logo: { fontSize: 22, fontWeight: "800", color: GOLD, letterSpacing: 1 },
+  sub: { fontSize: 12, color: MUTED, marginTop: 2 },
+  headerRight: { flexDirection: "row", alignItems: "center", gap: 12 },
+  langBtn: { backgroundColor: "rgba(201,168,76,0.15)", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: "rgba(201,168,76,0.3)" },
+  langText: { color: GOLD, fontSize: 12, fontWeight: "700" },
+  cartBtn: { position: "relative" },
+  badge: { position: "absolute", top: -6, right: -6, backgroundColor: GOLD, borderRadius: 10, minWidth: 18, height: 18, alignItems: "center", justifyContent: "center" },
+  badgeText: { color: "#000", fontSize: 10, fontWeight: "800" },
+  searchRow: { flexDirection: "row", alignItems: "center", backgroundColor: SURFACE, borderRadius: 12, marginHorizontal: 16, marginVertical: 10, paddingHorizontal: 12, borderWidth: 1, borderColor: BORDER },
+  searchIcon: { marginRight: 8 },
+  searchInput: { flex: 1, color: TEXT, fontSize: 14, paddingVertical: 12 },
+  catList: { maxHeight: 48, marginBottom: 4 },
+  catChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: SURFACE, marginRight: 8, borderWidth: 1, borderColor: BORDER },
+  catActive: { backgroundColor: GOLD, borderColor: GOLD },
+  catText: { color: MUTED, fontSize: 13, fontWeight: "600" },
+  catTextActive: { color: "#000" },
+  center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },
+  emptyText: { color: MUTED, fontSize: 15, marginTop: 8 },
+  retryBtn: { backgroundColor: "rgba(201,168,76,0.15)", borderRadius: 10, paddingHorizontal: 20, paddingVertical: 10, borderWidth: 1, borderColor: GOLD },
+  retryText: { color: GOLD, fontWeight: "700" },
+  row: { justifyContent: "space-between" },
+  card: { width: "48%", marginBottom: 12, borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: BORDER },
+  cardGrad: { padding: 14 },
+  productIcon: { fontSize: 32, marginBottom: 8 },
+  productName: { color: TEXT, fontSize: 14, fontWeight: "700", marginBottom: 2 },
+  productUnit: { color: MUTED, fontSize: 11, marginBottom: 8 },
+  priceRow: { flexDirection: "row", alignItems: "baseline", gap: 4, marginBottom: 10 },
+  price: { color: GOLD, fontSize: 18, fontWeight: "800" },
+  perKg: { color: MUTED, fontSize: 10 },
+  addBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: GOLD, borderRadius: 10, paddingVertical: 8, gap: 4 },
+  addText: { color: "#000", fontSize: 12, fontWeight: "800" },
 });
