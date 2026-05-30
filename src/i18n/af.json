@@ -6,7 +6,12 @@
     "search": "Soek", "filter": "Filter", "sort": "Sorteer", "refresh": "Verfris",
     "noResults": "Geen resultate gevind nie", "tryAgain": "Probeer weer", "submit": "Dien in",
     "close": "Sluit", "yes": "Ja", "no": "Nee", "ok": "OK", "done": "Klaar",
-    "next": "Volgende", "previous": "Vorige", "viewAll": "Sien alles", "seeMore": "Sien meer"
+    "next": "Volgende", "previous": "Vorige", "viewAll": "Sien alles", "seeMore": "Sien meer",
+    "skip": "Slaan Oor", "letsBraai": "Kom Ons Braai!"
+  },
+  "nav": {
+    "home": "Tuis", "shop": "Winkel", "braai": "Braai Brein", "orders": "Bestellings",
+    "profile": "Profiel", "vleisgpt": "VleisGPT™", "cart": "Mandjie"
   },
   "auth": {
     "login": "Teken In", "register": "Registreer", "email": "E-pos", "password": "Wagwoord",
@@ -15,7 +20,14 @@
     "haveAccount": "Het jy reeds 'n rekening?", "signUp": "Registreer",
     "company": "Maatskappynaam", "phone": "Telefoonnommer", "vatNumber": "BTW-nommer",
     "businessType": "Besigheidstipe", "loginFailed": "Aanmelding misluk. Kontroleer jou besonderhede.",
-    "registerFailed": "Registrasie misluk. Probeer asseblief weer."
+    "registerFailed": "Registrasie misluk. Probeer asseblief weer.",
+    "confirmPassword": "Bevestig Wagwoord",
+    "whoAreYou": "Wie is jy?", "chooseType": "Kies jou rekening tipe om te begin",
+    "consumer": "Verbruiker", "consumerDesc": "Blaai en koop premium vleis — gratis vir altyd",
+    "butcher": "Slagtery", "butcherDesc": "Verkoop jou vleis op VleisKraft™",
+    "yourDetails": "Jou Besonderhede", "choosePlan": "Kies Jou Plan",
+    "startFreeUpgrade": "Begin gratis, opgradeer enige tyd",
+    "createAccount": "Skep Rekening", "creating": "Rekening word geskep..."
   },
   "shop": {
     "title": "Winkel", "addToCart": "Voeg by Mandjie", "cart": "Mandjie", "checkout": "Betaal",
@@ -25,7 +37,10 @@
     "all": "Alles", "inStock": "In voorraad", "outOfStock": "Uit voorraad",
     "perKg": "per kg", "addedToCart": "By mandjie gevoeg", "viewCart": "Sien mandjie",
     "continueShopping": "Gaan voort met inkopies", "quantity": "Hoeveelheid",
-    "unitPrice": "Eenheidsprys", "subtotal": "Subtotaal"
+    "unitPrice": "Eenheidsprys", "subtotal": "Subtotaal",
+    "meatOfWeek": "Vleis van die Week", "todaysPick": "Vandag se Keuse",
+    "yourUsual": "Jou Gewone", "orderAgain": "Bestel Weer", "specials": "Spesiale",
+    "smartTools": "Slim Gereedskap", "community": "Gemeenskap"
   },
   "orders": {
     "title": "Bestellings", "status": "Status", "pending": "Hangende", "confirmed": "Bevestig",
@@ -33,22 +48,29 @@
     "shipped": "Gestuur", "orderNumber": "Bestelling #", "placedOn": "Geplaas op",
     "deliverTo": "Lewer aan", "trackOrder": "Volg bestelling", "reorder": "Herbestel",
     "noOrders": "Nog geen bestellings nie", "orderDetails": "Bestelbesonderhede",
-    "estimatedDelivery": "Geskatte aflewering", "orderConfirmed": "Bestelling bevestig!"
+    "estimatedDelivery": "Geskatte aflewering", "orderConfirmed": "Bestelling bevestig!",
+    "rateOrder": "Gradeer hierdie bestelling", "submitRating": "Stuur Gradering",
+    "deliveryTracker": "Aflewering Nasporing", "preparing": "Voorbereiding",
+    "onTheWay": "Onderweg", "arrived": "Aangekom"
   },
   "ai": {
-    "title": "VleisAI™", "placeholder": "Vra oor snitte, resepte, pryse...",
-    "send": "Stuur", "thinking": "VleisAI™ dink...",
+    "title": "VleisGPT™", "placeholder": "Vra oor snitte, resepte, pryse...",
+    "send": "Stuur", "thinking": "VleisGPT™ dink...",
     "identify": "Identifiseer snit", "voiceOrder": "Stembestelling",
     "suggestions": "Voorstelle", "cutGuide": "Snitgids",
-    "biltongTips": "Biltong wenke", "braaiGuide": "Braaigids"
+    "biltongTips": "Biltong wenke", "braaiGuide": "Braaigids",
+    "braai": "Braai Brein", "meatAcademy": "Vleis Akademie",
+    "noArticles": "Geen artikels nog nie"
   },
   "profile": {
     "title": "Profiel", "company": "Maatskappy", "vatNumber": "BTW-nommer",
     "phone": "Telefoon", "editProfile": "Wysig profiel", "subscription": "Intekening",
-    "tier": "Vlak", "consumer": "Verbruiker", "starter": "Aanvanger",
-    "pro": "Pro", "business": "Besigheid", "enterprise": "Onderneming",
+    "tier": "Vlak", "consumer": "Verbruiker", "freemium": "Freemium",
+    "starter": "Aavanger", "pro": "Pro", "business": "Besigheid", "enterprise": "Onderneming",
     "upgradeNow": "Opgradeer nou", "memberSince": "Lid sedert",
-    "savedAddresses": "Gestoorde adresse", "paymentMethods": "Betaalmetodes"
+    "savedAddresses": "Gestooorde adresse", "paymentMethods": "Betaalmetodes",
+    "myDiary": "My Dagboek", "shoppingList": "Inkopielys",
+    "emergencyContacts": "Noodkontakte", "settings": "Instellings"
   },
   "settings": {
     "title": "Instellings", "language": "Taal", "notifications": "Kennisgewings",
@@ -62,12 +84,87 @@
     "annual": "Jaarliks", "upgrade": "Opgradeer", "downgrade": "Afgradeer",
     "currentPlan": "Huidige plan", "features": "Kenmerke",
     "perMonth": "/maand", "perYear": "/jaar", "trialDays": "30-dag gratis proeftydperk",
-    "cancelAnytime": "Kanselleer enige tyd", "mostPopular": "Gewildste"
+    "cancelAnytime": "Kanselleer enige tyd", "mostPopular": "Gewildste",
+    "freemiumDesc": "Lys tot 10 produkte, basiese analise",
+    "starterDesc": "Tot 50 produkte, bestellingbestuur, WhatsApp-waarskuwings",
+    "proDesc": "Onbeperkte produkte, VleisAI™, veldtogte, stockvel",
+    "businessDesc": "Multi-tak, B2B grootmaat bestellings, volumepryse, fakturering",
+    "enterpriseDesc": "Volle pakket, toegewyde ondersteuning, pasgemaakte integrasies, API-toegang"
   },
   "butchery": {
     "title": "Slaghuise", "nearYou": "Naby jou", "allButcheries": "Alle slaghuise",
     "selectButchery": "Kies slaghuis", "hours": "Ure", "contact": "Kontak",
     "address": "Adres", "rating": "Gradering", "verified": "Geverifieer",
     "specialOffers": "Spesiale aanbiedinge", "deliveryAvailable": "Aflewering beskikbaar"
+  },
+  "academy": {
+    "title": "Vleis Akademie", "noArticles": "Geen artikels nog nie",
+    "categories": "Kategorieë", "proTips": "Pro Wenke", "heatLevel": "Hitte Vlak",
+    "back": "Terug", "readMore": "Lees meer"
+  },
+  "admin": {
+    "manageOrders": "Bestellings Bestuur", "manageProducts": "Produkte Bestuur",
+    "manageCustomers": "Kliënte Bestuur", "featureFlags": "Kenmerk Vlae",
+    "woocommerce": "WooCommerce Sinkroniseer", "posImport": "POS Invoer",
+    "margins": "Marge Analise", "shelfLife": "Raklewe Nasporing",
+    "sentiment": "Kliënt Sentiment", "platinumButchery": "Platinum Handelsmerk"
+  },
+  "delivery": {
+    "tracker": "Aflewering Nasporing", "preparing": "Voorbereiding",
+    "onTheWay": "Onderweg", "arrived": "Aangekom", "delivered": "Afgelewer"
+  },
+  "diary": {
+    "title": "My Dagboek", "noEntries": "Geen dagboekinskrywings nog nie",
+    "addEntry": "Voeg Inskrywing By", "createEntry": "Skep Inskrywing",
+    "moodLabel": "Hoe voel jy?", "notesLabel": "Notas"
+  },
+  "emergency": {
+    "title": "Noodkontakte", "addContact": "Voeg Kontak By",
+    "noContacts": "Geen noodkontakte bygevoeg nie",
+    "name": "Naam", "phone": "Foon", "relationship": "Verhouding",
+    "callNow": "Bel Nou", "deleteContact": "Verwyder kontak"
+  },
+  "spitbraai": {
+    "title": "Spitbraai Sakrekenaar", "guests": "Aantal gaste",
+    "calculate": "Bereken", "meatRequired": "Vleis benodig",
+    "woodRequired": "Hout benodig", "timeRequired": "Tyd benodig"
+  },
+  "stockvel": {
+    "title": "Stockvel", "myGroup": "My Groep", "contribute": "Bydra",
+    "balance": "Balans", "members": "Lede", "nextPayout": "Volgende uitbetaling"
+  },
+  "mealPlanner": {
+    "title": "Maaltydbeplanners", "addMeal": "Voeg Maaltyd By", "noMeals": "Geen maaltye beplan nie",
+    "monday": "Maandag", "tuesday": "Dinsdag", "wednesday": "Woensdag",
+    "thursday": "Donderdag", "friday": "Vrydag", "saturday": "Saterdag", "sunday": "Sondag"
+  },
+  "weather": {
+    "title": "Weer en Braai Toestande", "perfect": "Perfekte braai weer!",
+    "notIdeal": "Nie ideaal vir braai nie", "temperature": "Temperatuur",
+    "wind": "Wind", "humidity": "Humiditeit"
+  },
+  "predictions": {
+    "title": "Prysvoorspellings", "trend": "Neiging", "up": "Op", "down": "Af",
+    "stable": "Stabiel", "confidence": "Vertroue"
+  },
+  "competitions": {
+    "title": "Kompetisies", "enter": "Inskryf", "noComps": "Geen aktiewe kompetisies nie",
+    "prize": "Prys", "deadline": "Sperdatum", "entries": "Inskrywings"
+  },
+  "layby": {
+    "title": "Lê-by", "myLayby": "My Lê-by", "addItem": "Voeg Item By",
+    "noItems": "Geen lê-by items nie", "totalSaved": "Totaal gespaar", "remaining": "Oorblywend"
+  },
+  "shoppingList": {
+    "title": "Inkopielys", "addItem": "Voeg Item By", "noItems": "Jou lys is leeg",
+    "clearAll": "Maak alles skoon", "markDone": "Merk klaar"
+  },
+  "bundles": {
+    "title": "Bondels", "noBundles": "Geen bondels beskikbaar nie",
+    "addToCart": "Voeg bondel by mandjie", "saving": "Jy spaar"
+  },
+  "campaigns": {
+    "title": "Veldtogte", "noCampaigns": "Geen aktiewe veldtogte nie",
+    "viewDeal": "Sien aanbieding", "expires": "Verval"
   }
 }
