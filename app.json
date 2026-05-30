@@ -38,6 +38,13 @@
           "photosPermission": "Allow $(BUNDLE_IDENTIFIER) to access your photos.",
           "cameraPermission": "Allow $(BUNDLE_IDENTIFIER) to access your camera."
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "valhalla-custom-design-studios",
+          "project": "vcds-vleiskraft"
+        }
       ]
     ],
     "extra": {
