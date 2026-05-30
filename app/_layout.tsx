@@ -44,6 +44,7 @@ export default function RootLayout() {
       <Stack.Screen name="admin/woocommerce" />
       <Stack.Screen name="profile/index" />
       <Stack.Screen name="subscriptions/index" />
+      <Stack.Screen name="paywall/butcher-plans" />
       <Stack.Screen name="payments/index" />
       <Stack.Screen name="shopping-list/index" />
       <Stack.Screen name="meal-planner/index" />
