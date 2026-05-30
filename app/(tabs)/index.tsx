@@ -137,10 +137,16 @@ export default function ShopScreen() {
               <Text style={styles.productUnit}>{item.unit}</Text>
             </View>
             <View style={styles.productRight}>
-              <Text style={styles.productPrice}>R{item.price.toFixed(2)}</Text>
-              <TouchableOpacity style={styles.addBtn} onPress={() => addToCart(item)}>
-                <Ionicons name="add" size={18} color="#000" />
-              </TouchableOpacity>
+              {item.price > 0 ? (
+                <>
+                  <Text style={styles.productPrice}>R{item.price.toFixed(2)}</Text>
+                  <TouchableOpacity style={styles.addBtn} onPress={() => addToCart(item)}>
+                    <Ionicons name="add" size={18} color="#000" />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <Text style={styles.outOfStock}>Uit Voorraad</Text>
+              )}
             </View>
           </View>
         )}
@@ -198,6 +204,7 @@ const styles = StyleSheet.create({
   productUnit: { fontSize: 12, color: MUTED },
   productRight: { alignItems: "flex-end", gap: 8 },
   productPrice: { fontSize: 16, fontWeight: "700", color: GOLD },
+  outOfStock: { fontSize: 11, color: '#888', fontWeight: '600', textAlign: 'right' },
   addBtn: {
     width: 32, height: 32, borderRadius: 8,
     backgroundColor: GOLD, alignItems: "center", justifyContent: "center",
