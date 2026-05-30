@@ -134,6 +134,8 @@ export default function ProfileScreen() {
         <View style={styles.card}>
           <SettingsRow icon="star-outline" label="Opgradeer na Pro" onPress={() => router.push("/subscriptions")} />
           <View style={styles.divider} />
+          <SettingsRow icon="people-outline" label={lang === "en" ? "Emergency Contacts" : "Noodkontakte"} onPress={() => router.push("/emergency-contacts")} />
+          <View style={styles.divider} />
           <SettingsRow icon="help-circle-outline" label="Hulp & Ondersteuning" onPress={() => {}} />
         </View>
 
