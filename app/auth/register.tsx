@@ -1,34 +1,34 @@
 import React, { useState, useRef } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
-  ScrollView, KeyboardAvoidingView, Platform, Switch,
-  SafeAreaView, StatusBar, Animated, Alert,
+  ScrollView, KeyboardAvoidingView, Platform, SafeAreaView,
+  StatusBar, Animated, Alert, ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
-import { ButcherySelector } from '../../src/components/ButcherySelector';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
-// ─── Types ─────────────────────────────────────────────────────
-interface Butchery {
-  id: string; name: string; city: string; province: string;
-  address?: string; phone?: string; is_verified: boolean; tier: string;
-}
+const API = process.env.EXPO_PUBLIC_API_URL || 'https://vcds-vleiskraft.onrender.com';
+const GOLD = '#C9A84C';
+const BG = '#0A0A0A';
+const SURFACE = '#141414';
+const BORDER = 'rgba(255,255,255,0.08)';
+const TEXT = '#FFFFFF';
+const MUTED = '#888888';
+const RED = '#C0392B';
 
-type UserType = 'consumer' | 'butchery' | '';
-
-const API_BASE = process.env.EXPO_PUBLIC_API_URL || 'https://vleiskraft-api.onrender.com';
-
-// ─── Labels ────────────────────────────────────────────────────
+// ─── Bilingual Labels ───────────────────────────────────────────
 const L = {
   en: {
-    title: 'Create Account',
-    step1: 'Who are you?',
-    step2: 'Your Details',
-    step3: 'Your Butchery',
-    step4: 'Choose Plan',
-    consumer: 'Consumer',
-    consumerDesc: 'Buy premium meat from local butcheries',
-    butchery: 'Butchery',
-    butcheryDesc: 'Sell your meat on VleisKraft™',
+    title: 'Join VleisKraft™',
+    step1Title: 'Who are you?',
+    step1Sub: 'Choose your account type to get started',
+    consumerLabel: 'Consumer',
+    consumerDesc: 'Browse & buy premium meat from local butcheries — free forever',
+    butcherLabel: 'Butchery / Slagtery',
+    butcherDesc: 'Sell your meat on VleisKraft™',
+    step2Title: 'Your Details',
     firstName: 'First Name',
     lastName: 'Last Name',
     email: 'Email Address',
@@ -37,110 +37,103 @@ const L = {
     confirmPassword: 'Confirm Password',
     butcheryName: 'Butchery Name',
     butcheryType: 'Butchery Type',
-    regNumber: 'Registration Number (optional)',
-    selectButchery: 'Select Your Butchery',
-    butcheryHint: 'Choose a butchery near you. You can change this later.',
+    butcheryTypes: ['Independent Butchery', 'Farm Stall', 'Supermarket Deli', 'Online Only', 'Other'],
+    step3Title: 'Choose Your Plan',
+    step3Sub: 'Start free, upgrade anytime',
+    planFreeLabel: 'Freemium',
+    planFreePrice: 'R0/mo',
+    planFreeDesc: 'List up to 10 products, basic analytics',
+    planStarterLabel: 'Starter',
+    planStarterPrice: 'R3,500/mo',
+    planStarterDesc: 'Up to 50 products, order management, WhatsApp alerts',
+    planProLabel: 'Pro',
+    planProPrice: 'R7,500/mo',
+    planProDesc: 'Unlimited products, VleisAI™, campaigns, stockvel',
+    planBusinessLabel: 'Business',
+    planBusinessPrice: 'R10,000/mo',
+    planBusinessDesc: 'Multi-branch, B2B bulk orders, volume pricing, invoicing',
+    planEnterpriseLabel: 'Enterprise',
+    planEnterprisePrice: 'R15,000/mo',
+    planEnterpriseDesc: 'Full suite, dedicated support, custom integrations, API access',
+    popular: '⭐ Most Popular',
     next: 'Next',
     back: 'Back',
-    submit: 'Create Account',
-    lang: 'EN',
+    createAccount: 'Create Account',
+    creating: 'Creating account...',
     langSwitch: 'AF',
-    plans: [
-      { id: 'free', label: 'Free', price: 'R0/mo', desc: 'Browse & buy meat' },
-      { id: 'starter', label: 'Starter', price: 'R149/mo', desc: '50 products + analytics' },
-      { id: 'pro', label: 'Pro', price: 'R499/mo', desc: 'Unlimited + VleisAI™' },
-    ],
-    butcheryTypes: ['Independent Butchery', 'Farm Stall', 'Supermarket Deli', 'Online Only', 'Other'],
     errors: {
+      userType: 'Please select your account type',
       firstName: 'First name required',
       lastName: 'Last name required',
       email: 'Valid email required',
       phone: 'Phone number required',
       password: 'Password must be at least 8 characters',
       passwordMatch: 'Passwords do not match',
-      userType: 'Please select who you are',
       butcheryName: 'Butchery name required',
     },
-    success: 'Account created! Welcome to VleisKraft™',
-    registering: 'Creating account...',
   },
   af: {
-    title: 'Skep Rekening',
-    step1: 'Wie is jy?',
-    step2: 'Jou Besonderhede',
-    step3: 'Jou Slagtery',
-    step4: 'Kies Pakket',
-    consumer: 'Verbruiker',
-    consumerDesc: 'Koop premium vleis van plaaslike slagteries',
-    butchery: 'Slagtery',
-    butcheryDesc: 'Verkoop jou vleis op VleisKraft™',
+    title: 'Sluit aan by VleisKraft™',
+    step1Title: 'Wie is jy?',
+    step1Sub: 'Kies jou rekening tipe om te begin',
+    consumerLabel: 'Verbruiker',
+    consumerDesc: 'Blaai en koop premium vleis van plaaslike slagteries — gratis vir altyd',
+    butcherLabel: 'Slagtery',
+    butcherDesc: 'Verkoop jou vleis op VleisKraft™',
+    step2Title: 'Jou Besonderhede',
     firstName: 'Voornaam',
     lastName: 'Van',
     email: 'E-posadres',
-    phone: 'Selfoonnommer',
+    phone: 'Telefoonnommer',
     password: 'Wagwoord (min 8 karakters)',
     confirmPassword: 'Bevestig Wagwoord',
     butcheryName: 'Slagtery Naam',
     butcheryType: 'Slagtery Tipe',
-    regNumber: 'Registrasienommer (opsioneel)',
-    selectButchery: 'Kies Jou Slagtery',
-    butcheryHint: "Kies 'n slagtery naby jou. Jy kan dit later verander.",
+    butcheryTypes: ['Onafhanklike Slagtery', 'Plaasstal', 'Supermark Deli', 'Aanlyn Slegs', 'Ander'],
+    step3Title: 'Kies Jou Plan',
+    step3Sub: 'Begin gratis, opgradeer enige tyd',
+    planFreeLabel: 'Gratis',
+    planFreePrice: 'R0/mo',
+    planFreeDesc: 'Lys tot 10 produkte, basiese analitiek',
+    planStarterLabel: 'Beginners',
+    planStarterPrice: 'R3 500/mo',
+    planStarterDesc: 'Tot 50 produkte, bestellingbestuur, WhatsApp-kennisgewings',
+    planProLabel: 'Pro',
+    planProPrice: 'R7 500/mo',
+    planProDesc: 'Onbeperkte produkte, VleisAI™, veldtogte, stockvel',
+    planBusinessLabel: 'Besigheid',
+    planBusinessPrice: 'R10 000/mo',
+    planBusinessDesc: 'Multi-tak, B2B grootmaat bestellings, volumepryse, fakturering',
+    planEnterpriseLabel: 'Onderneming',
+    planEnterprisePrice: 'R15 000/mo',
+    planEnterpriseDesc: 'Volle pakket, toegewyde ondersteuning, pasgemaakte integrasies, API-toegang',
+    popular: '⭐ Gewildste',
     next: 'Volgende',
     back: 'Terug',
-    submit: 'Skep Rekening',
-    lang: 'AF',
+    createAccount: 'Skep Rekening',
+    creating: 'Skep rekening...',
     langSwitch: 'EN',
-    plans: [
-      { id: 'free', label: 'Gratis', price: 'R0/md', desc: 'Blaai & koop vleis' },
-      { id: 'starter', label: 'Aanvanger', price: 'R149/md', desc: '50 produkte + ontledings' },
-      { id: 'pro', label: 'Pro', price: 'R499/md', desc: 'Onbeperk + VleisAI™' },
-    ],
-    butcheryTypes: ['Onafhanklike Slagtery', 'Plaasstal', 'Supermark Deli', 'Aanlyn Slegs', 'Ander'],
     errors: {
-      firstName: 'Voornaam verpligtend',
-      lastName: 'Van verpligtend',
-      email: 'Geldige e-pos verpligtend',
-      phone: 'Selfoonnommer verpligtend',
-      password: 'Wagwoord moet minstens 8 karakters wees',
+      userType: 'Kies asseblief jou rekening tipe',
+      firstName: 'Voornaam vereis',
+      lastName: 'Van vereis',
+      email: 'Geldige e-pos vereis',
+      phone: 'Telefoonnommer vereis',
+      password: 'Wagwoord moet ten minste 8 karakters wees',
       passwordMatch: 'Wagwoorde stem nie ooreen nie',
-      userType: 'Kies asseblief wie jy is',
-      butcheryName: 'Slagtery naam verpligtend',
+      butcheryName: 'Slagtery naam vereis',
     },
-    success: 'Rekening geskep! Welkom by VleisKraft™',
-    registering: 'Skep rekening...',
   },
-};
+} as const;
 
-// ─── Step Indicator ────────────────────────────────────────────
-function StepIndicator({ current, total }: { current: number; total: number }) {
-  return (
-    <View style={styles.stepRow}>
-      {Array.from({ length: total }).map((_, i) => (
-        <React.Fragment key={i}>
-          <View style={[styles.stepDot, i < current && styles.stepDotDone, i === current - 1 && styles.stepDotActive]}>
-            {i < current - 1 ? (
-              <Text style={styles.stepCheck}>✓</Text>
-            ) : (
-              <Text style={[styles.stepNum, i === current - 1 && styles.stepNumActive]}>{i + 1}</Text>
-            )}
-          </View>
-          {i < total - 1 && <View style={[styles.stepLine, i < current - 1 && styles.stepLineDone]} />}
-        </React.Fragment>
-      ))}
-    </View>
-  );
-}
+type Lang = 'en' | 'af';
+type UserType = 'consumer' | 'butcher' | null;
+type Plan = 'free' | 'starter' | 'pro' | 'business' | 'enterprise';
 
-// ─── Main Screen ───────────────────────────────────────────────
 export default function RegisterScreen() {
-  const [lang, setLang] = useState<'en' | 'af'>('en');
-  const t = L[lang];
-  const totalSteps = 4;
+  const [lang, setLang] = useState<Lang>('af');
   const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const [userType, setUserType] = useState<UserType>('');
+  const [userType, setUserType] = useState<UserType>(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -149,369 +142,297 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [butcheryName, setButcheryName] = useState('');
   const [butcheryType, setButcheryType] = useState('');
-  const [regNumber, setRegNumber] = useState('');
-  const [selectedButchery, setSelectedButchery] = useState<Butchery | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState('free');
+  const [selectedPlan, setSelectedPlan] = useState<Plan>('free');
+  const [loading, setLoading] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const l = L[lang];
 
-  const scrollRef = useRef<ScrollView>(null);
+  // Consumers skip step 3 (no plan selection needed — free forever)
+  const totalSteps = userType === 'consumer' ? 2 : 3;
 
-  const validate = (s: number): boolean => {
-    const e: Record<string, string> = {};
-    if (s === 1 && !userType) e.userType = t.errors.userType;
-    if (s === 2) {
-      if (!firstName.trim()) e.firstName = t.errors.firstName;
-      if (!lastName.trim()) e.lastName = t.errors.lastName;
-      if (!email.trim() || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) e.email = t.errors.email;
-      if (!phone.trim()) e.phone = t.errors.phone;
-      if (password.length < 8) e.password = t.errors.password;
-      if (password !== confirmPassword) e.confirmPassword = t.errors.passwordMatch;
+  function toggleLang() {
+    setLang(prev => prev === 'en' ? 'af' : 'en');
+  }
+
+  function animateStep(fn: () => void) {
+    Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }).start(() => {
+      fn();
+      Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
+    });
+  }
+
+  function handleNext() {
+    if (step === 1) {
+      if (!userType) { Alert.alert('', l.errors.userType); return; }
+      animateStep(() => setStep(2));
+    } else if (step === 2) {
+      if (!firstName.trim()) { Alert.alert('', l.errors.firstName); return; }
+      if (!lastName.trim()) { Alert.alert('', l.errors.lastName); return; }
+      if (!email.includes('@')) { Alert.alert('', l.errors.email); return; }
+      if (!phone.trim()) { Alert.alert('', l.errors.phone); return; }
+      if (password.length < 8) { Alert.alert('', l.errors.password); return; }
+      if (password !== confirmPassword) { Alert.alert('', l.errors.passwordMatch); return; }
+      if (userType === 'butcher' && !butcheryName.trim()) { Alert.alert('', l.errors.butcheryName); return; }
+      // Consumers go straight to account creation — no plan step
+      if (userType === 'consumer') {
+        handleCreate();
+      } else {
+        animateStep(() => setStep(3));
+      }
     }
-    if (s === 3 && userType === 'butchery' && !butcheryName.trim()) e.butcheryName = t.errors.butcheryName;
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
+  }
 
-  const next = () => {
-    if (!validate(step)) return;
-    // Skip step 3 (butchery details) for consumers
-    const nextStep = step === 2 && userType === 'consumer' ? 4 : step + 1;
-    setStep(Math.min(nextStep, totalSteps));
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
-  };
+  function handleBack() {
+    if (step > 1) animateStep(() => setStep(s => s - 1));
+    else router.back();
+  }
 
-  const back = () => {
-    const prevStep = step === 4 && userType === 'consumer' ? 2 : step - 1;
-    setStep(Math.max(prevStep, 1));
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
-  };
-
-  const submit = async () => {
-    if (!validate(step)) return;
+  async function handleCreate() {
     setLoading(true);
     try {
-      const body: Record<string, unknown> = {
+      const body: Record<string, string> = {
         firstName, lastName, email, phone, password,
-        preferredLocale: lang,
-        userType,
-        plan: selectedPlan,
-        butcheryId: selectedButchery?.id || null,
+        userType: userType!,
+        ...(userType === 'butcher' ? { butcheryName, butcheryType, plan: selectedPlan } : {}),
       };
-      if (userType === 'butchery') {
-        body.butcheryName = butcheryName;
-        body.butcheryType = butcheryType;
-        body.regNumber = regNumber;
-      }
-
-      const res = await fetch(`${API_BASE}/api/auth/register`, {
+      const res = await fetch(`${API}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
       const data = await res.json();
-
-      if (data.success) {
-        Alert.alert('✅', t.success, [{ text: 'OK', onPress: () => router.replace('/(tabs)') }]);
-      } else {
-        Alert.alert('Error', data.message || 'Registration failed');
-      }
-    } catch {
-      Alert.alert('Error', 'Network error — please try again');
+      if (!res.ok) throw new Error(data.message || 'Registration failed');
+      await AsyncStorage.setItem('token', data.token);
+      await AsyncStorage.setItem('userType', userType!);
+      if (userType === 'butcher') await AsyncStorage.setItem('plan', selectedPlan);
+      router.replace('/(tabs)');
+    } catch (e: any) {
+      Alert.alert('Error', e.message);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const Field = ({ label, value, onChangeText, error, ...props }: any) => (
-    <View style={styles.fieldWrap}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      <TextInput
-        style={[styles.input, error && styles.inputError]}
-        value={value}
-        onChangeText={onChangeText}
-        placeholderTextColor="#555"
-        {...props}
-      />
-      {error ? <Text style={styles.fieldError}>{error}</Text> : null}
-    </View>
-  );
+  const plans: { id: Plan; label: string; price: string; desc: string; popular?: boolean; color: string }[] = [
+    { id: 'free',       label: l.planFreeLabel,       price: l.planFreePrice,       desc: l.planFreeDesc,       color: '#555' },
+    { id: 'starter',    label: l.planStarterLabel,    price: l.planStarterPrice,    desc: l.planStarterDesc,    color: RED },
+    { id: 'pro',        label: l.planProLabel,        price: l.planProPrice,        desc: l.planProDesc,        popular: true, color: '#8B0000' },
+    { id: 'business',   label: l.planBusinessLabel,   price: l.planBusinessPrice,   desc: l.planBusinessDesc,   color: '#1a3a5c' },
+    { id: 'enterprise', label: l.planEnterpriseLabel, price: l.planEnterprisePrice, desc: l.planEnterpriseDesc, color: GOLD },
+  ];
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="light-content" backgroundColor="#0A0A14" />
-      <KeyboardAvoidingView
-        style={styles.kav}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0}
-      >
-        <ScrollView
-          ref={scrollRef}
-          contentContainerStyle={styles.scroll}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Header */}
-          <View style={styles.topRow}>
-            <Text style={styles.title}>{t.title}</Text>
-            <TouchableOpacity
-              style={styles.langBtn}
-              onPress={() => setLang(l => l === 'en' ? 'af' : 'en')}
-              accessibilityLabel={`Switch to ${lang === 'en' ? 'Afrikaans' : 'English'}`}
-            >
-              <Text style={styles.langText}>{t.lang} / {t.langSwitch}</Text>
-            </TouchableOpacity>
-          </View>
+    <SafeAreaView style={s.safe}>
+      <StatusBar barStyle="light-content" backgroundColor={BG} />
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        {/* Header */}
+        <View style={s.header}>
+          <TouchableOpacity onPress={handleBack} style={s.backBtn}>
+            <Ionicons name="arrow-back" size={22} color={TEXT} />
+          </TouchableOpacity>
+          <Text style={s.headerTitle}>{l.title}</Text>
+          <TouchableOpacity onPress={toggleLang} style={s.langBtn}>
+            <Text style={s.langText}>{l.langSwitch}</Text>
+          </TouchableOpacity>
+        </View>
 
-          <StepIndicator current={step} total={totalSteps} />
+        {/* Step indicator */}
+        <View style={s.stepRow}>
+          {Array.from({ length: totalSteps }).map((_, i) => (
+            <View key={i} style={[s.stepDot, step > i && s.stepDotActive, step === i + 1 && s.stepDotCurrent]} />
+          ))}
+        </View>
 
-          {/* ── STEP 1: Who are you? ── */}
-          {step === 1 && (
-            <View>
-              <Text style={styles.stepTitle}>{t.step1}</Text>
-              {errors.userType ? <Text style={styles.fieldError}>{errors.userType}</Text> : null}
-              <TouchableOpacity
-                style={[styles.typeCard, userType === 'consumer' && styles.typeCardActive]}
-                onPress={() => setUserType('consumer')}
-                activeOpacity={0.8}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: userType === 'consumer' }}
-              >
-                <Text style={styles.typeEmoji}>🛒</Text>
-                <View style={styles.typeText}>
-                  <Text style={styles.typeLabel}>{t.consumer}</Text>
-                  <Text style={styles.typeDesc}>{t.consumerDesc}</Text>
-                </View>
-                <View style={[styles.typeRadio, userType === 'consumer' && styles.typeRadioActive]} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.typeCard, userType === 'butchery' && styles.typeCardActive]}
-                onPress={() => setUserType('butchery')}
-                activeOpacity={0.8}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: userType === 'butchery' }}
-              >
-                <Text style={styles.typeEmoji}>🥩</Text>
-                <View style={styles.typeText}>
-                  <Text style={styles.typeLabel}>{t.butchery}</Text>
-                  <Text style={styles.typeDesc}>{t.butcheryDesc}</Text>
-                </View>
-                <View style={[styles.typeRadio, userType === 'butchery' && styles.typeRadioActive]} />
-              </TouchableOpacity>
-            </View>
-          )}
+        <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
+          <Animated.View style={{ opacity: fadeAnim }}>
 
-          {/* ── STEP 2: Personal Details ── */}
-          {step === 2 && (
-            <View>
-              <Text style={styles.stepTitle}>{t.step2}</Text>
-              <Field label={t.firstName} value={firstName} onChangeText={setFirstName}
-                error={errors.firstName} autoCapitalize="words" />
-              <Field label={t.lastName} value={lastName} onChangeText={setLastName}
-                error={errors.lastName} autoCapitalize="words" />
-              <Field label={t.email} value={email} onChangeText={setEmail}
-                error={errors.email} keyboardType="email-address" autoCapitalize="none" />
-              <Field label={t.phone} value={phone} onChangeText={setPhone}
-                error={errors.phone} keyboardType="phone-pad" />
-              <Field label={t.password} value={password} onChangeText={setPassword}
-                error={errors.password} secureTextEntry />
-              <Field label={t.confirmPassword} value={confirmPassword} onChangeText={setConfirmPassword}
-                error={errors.confirmPassword} secureTextEntry />
-            </View>
-          )}
+            {/* ── STEP 1: Who are you? ── */}
+            {step === 1 && (
+              <View>
+                <Text style={s.stepTitle}>{l.step1Title}</Text>
+                <Text style={s.stepSub}>{l.step1Sub}</Text>
 
-          {/* ── STEP 3: Butchery Details (butchery owners only) ── */}
-          {step === 3 && userType === 'butchery' && (
-            <View>
-              <Text style={styles.stepTitle}>{t.step3}</Text>
-              <Field label={t.butcheryName} value={butcheryName} onChangeText={setButcheryName}
-                error={errors.butcheryName} autoCapitalize="words" />
-              <Text style={styles.fieldLabel}>{t.butcheryType}</Text>
-              <View style={styles.typeGrid}>
-                {t.butcheryTypes.map(bt => (
-                  <TouchableOpacity
-                    key={bt}
-                    style={[styles.typeChip, butcheryType === bt && styles.typeChipActive]}
-                    onPress={() => setButcheryType(bt)}
-                    accessibilityRole="radio"
-                    accessibilityState={{ checked: butcheryType === bt }}
+                <TouchableOpacity
+                  style={[s.typeCard, userType === 'consumer' && s.typeCardActive]}
+                  onPress={() => setUserType('consumer')}
+                  activeOpacity={0.8}
+                >
+                  <LinearGradient
+                    colors={userType === 'consumer' ? ['#1a2a1a', '#0f1f0f'] : [SURFACE, SURFACE]}
+                    style={s.typeCardInner}
                   >
-                    <Text style={[styles.typeChipText, butcheryType === bt && styles.typeChipTextActive]}>{bt}</Text>
+                    <View style={[s.typeIcon, userType === 'consumer' && { backgroundColor: 'rgba(201,168,76,0.15)' }]}>
+                      <Ionicons name="storefront" size={28} color={userType === 'consumer' ? GOLD : MUTED} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <View style={s.typeRow}>
+                        <Text style={[s.typeLabel, userType === 'consumer' && { color: GOLD }]}>{l.consumerLabel}</Text>
+                        <View style={s.freeBadge}>
+                          <Text style={s.freeBadgeText}>GRATIS</Text>
+                        </View>
+                      </View>
+                      <Text style={s.typeDesc}>{l.consumerDesc}</Text>
+                    </View>
+                    {userType === 'consumer' && <Ionicons name="checkmark-circle" size={22} color={GOLD} />}
+                  </LinearGradient>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[s.typeCard, userType === 'butcher' && s.typeCardActive]}
+                  onPress={() => setUserType('butcher')}
+                  activeOpacity={0.8}
+                >
+                  <LinearGradient
+                    colors={userType === 'butcher' ? ['#2a1a1a', '#1f0f0f'] : [SURFACE, SURFACE]}
+                    style={s.typeCardInner}
+                  >
+                    <View style={[s.typeIcon, userType === 'butcher' && { backgroundColor: 'rgba(192,57,43,0.15)' }]}>
+                      <Ionicons name="cut" size={28} color={userType === 'butcher' ? RED : MUTED} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[s.typeLabel, userType === 'butcher' && { color: RED }]}>{l.butcherLabel}</Text>
+                      <Text style={s.typeDesc}>{l.butcherDesc}</Text>
+                    </View>
+                    {userType === 'butcher' && <Ionicons name="checkmark-circle" size={22} color={RED} />}
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* ── STEP 2: Details ── */}
+            {step === 2 && (
+              <View>
+                <Text style={s.stepTitle}>{l.step2Title}</Text>
+                <View style={s.row}>
+                  <TextInput style={[s.input, { flex: 1, marginRight: 8 }]} placeholder={l.firstName} placeholderTextColor={MUTED} value={firstName} onChangeText={setFirstName} />
+                  <TextInput style={[s.input, { flex: 1 }]} placeholder={l.lastName} placeholderTextColor={MUTED} value={lastName} onChangeText={setLastName} />
+                </View>
+                <TextInput style={s.input} placeholder={l.email} placeholderTextColor={MUTED} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+                <TextInput style={s.input} placeholder={l.phone} placeholderTextColor={MUTED} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+                <TextInput style={s.input} placeholder={l.password} placeholderTextColor={MUTED} value={password} onChangeText={setPassword} secureTextEntry />
+                <TextInput style={s.input} placeholder={l.confirmPassword} placeholderTextColor={MUTED} value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
+                {userType === 'butcher' && (
+                  <>
+                    <TextInput style={s.input} placeholder={l.butcheryName} placeholderTextColor={MUTED} value={butcheryName} onChangeText={setButcheryName} />
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
+                      {l.butcheryTypes.map(t => (
+                        <TouchableOpacity key={t} onPress={() => setButcheryType(t)} style={[s.pill, butcheryType === t && s.pillActive]}>
+                          <Text style={[s.pillText, butcheryType === t && { color: GOLD }]}>{t}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  </>
+                )}
+                {/* Consumer info banner — no payment ever */}
+                {userType === 'consumer' && (
+                  <View style={s.infoBanner}>
+                    <Ionicons name="checkmark-circle" size={18} color="#4CAF50" />
+                    <Text style={s.infoBannerText}>
+                      {lang === 'en'
+                        ? 'VleisKraft™ is completely free for consumers — no card required, ever.'
+                        : 'VleisKraft™ is heeltemal gratis vir verbruikers — geen kaart ooit nodig nie.'}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            )}
+
+            {/* ── STEP 3: Butcher Plan Selection ── */}
+            {step === 3 && userType === 'butcher' && (
+              <View>
+                <Text style={s.stepTitle}>{l.step3Title}</Text>
+                <Text style={s.stepSub}>{l.step3Sub}</Text>
+                {plans.map(plan => (
+                  <TouchableOpacity
+                    key={plan.id}
+                    style={[s.planCard, selectedPlan === plan.id && { borderColor: plan.color, borderWidth: 2 }]}
+                    onPress={() => setSelectedPlan(plan.id)}
+                    activeOpacity={0.8}
+                  >
+                    <View style={s.planHeader}>
+                      <View style={[s.planDot, { backgroundColor: plan.color }]} />
+                      <Text style={s.planName}>{plan.label}</Text>
+                      {plan.popular && <View style={s.popularBadge}><Text style={s.popularText}>{l.popular}</Text></View>}
+                      <Text style={[s.planPrice, { color: plan.color }]}>{plan.price}</Text>
+                    </View>
+                    <Text style={s.planDesc}>{plan.desc}</Text>
+                    {selectedPlan === plan.id && (
+                      <View style={s.planCheck}>
+                        <Ionicons name="checkmark-circle" size={20} color={plan.color} />
+                      </View>
+                    )}
                   </TouchableOpacity>
                 ))}
               </View>
-              <Field label={t.regNumber} value={regNumber} onChangeText={setRegNumber}
-                autoCapitalize="characters" />
-            </View>
-          )}
-
-          {/* ── STEP 4: Plan + Butchery Selector (consumers) ── */}
-          {step === 4 && (
-            <View>
-              <Text style={styles.stepTitle}>{t.step4}</Text>
-
-              {/* Plan cards */}
-              {t.plans.map(plan => (
-                <TouchableOpacity
-                  key={plan.id}
-                  style={[styles.planCard, selectedPlan === plan.id && styles.planCardActive]}
-                  onPress={() => setSelectedPlan(plan.id)}
-                  activeOpacity={0.8}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: selectedPlan === plan.id }}
-                >
-                  <View style={styles.planLeft}>
-                    <Text style={styles.planLabel}>{plan.label}</Text>
-                    <Text style={styles.planDesc}>{plan.desc}</Text>
-                  </View>
-                  <View style={styles.planRight}>
-                    <Text style={styles.planPrice}>{plan.price}</Text>
-                    <View style={[styles.planRadio, selectedPlan === plan.id && styles.planRadioActive]} />
-                  </View>
-                </TouchableOpacity>
-              ))}
-
-              {/* Butchery selector — for consumers */}
-              {userType === 'consumer' && (
-                <View style={styles.butcherySection}>
-                  <Text style={styles.sectionLabel}>{t.selectButchery}</Text>
-                  <Text style={styles.sectionHint}>{t.butcheryHint}</Text>
-                  <ButcherySelector
-                    value={selectedButchery}
-                    onChange={setSelectedButchery}
-                    lang={lang}
-                    required={false}
-                  />
-                </View>
-              )}
-            </View>
-          )}
-
-          {/* Navigation buttons */}
-          <View style={styles.navRow}>
-            {step > 1 && (
-              <TouchableOpacity style={styles.backBtn} onPress={back} activeOpacity={0.8}>
-                <Text style={styles.backText}>{t.back}</Text>
-              </TouchableOpacity>
             )}
-            {step < totalSteps ? (
-              <TouchableOpacity style={styles.nextBtn} onPress={next} activeOpacity={0.8}>
-                <Text style={styles.nextText}>{t.next}</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={[styles.nextBtn, loading && styles.btnDisabled]}
-                onPress={submit}
-                disabled={loading}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.nextText}>{loading ? t.registering : t.submit}</Text>
-              </TouchableOpacity>
-            )}
-          </View>
+
+          </Animated.View>
         </ScrollView>
+
+        {/* CTA Button */}
+        <View style={s.footer}>
+          <TouchableOpacity
+            style={s.cta}
+            onPress={step < (userType === 'consumer' ? 2 : 3) ? handleNext : handleCreate}
+            disabled={loading}
+            activeOpacity={0.85}
+          >
+            <LinearGradient colors={[GOLD, '#a07830']} style={s.ctaGrad}>
+              {loading
+                ? <ActivityIndicator color={BG} />
+                : <Text style={s.ctaText}>
+                    {step === totalSteps ? l.createAccount : l.next}
+                  </Text>
+              }
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#0A0A14' },
-  kav: { flex: 1 },
-  scroll: { padding: 20, paddingBottom: 48 },
-  topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
-  title: { color: '#F5F0FF', fontSize: 26, fontWeight: '800' },
-  langBtn: {
-    paddingHorizontal: 14, paddingVertical: 8,
-    borderRadius: 20, borderWidth: 1,
-    borderColor: 'rgba(178,34,34,0.4)',
-    backgroundColor: 'rgba(178,34,34,0.08)',
-  },
-  langText: { color: '#B22222', fontSize: 13, fontWeight: '700' },
-  stepRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 28 },
-  stepDot: {
-    width: 32, height: 32, borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  stepDotActive: { borderColor: '#B22222', backgroundColor: 'rgba(178,34,34,0.15)' },
-  stepDotDone: { borderColor: '#22C55E', backgroundColor: 'rgba(34,197,94,0.15)' },
-  stepNum: { color: '#6B7280', fontSize: 13, fontWeight: '700' },
-  stepNumActive: { color: '#B22222' },
-  stepCheck: { color: '#22C55E', fontSize: 14, fontWeight: '700' },
-  stepLine: { flex: 1, height: 2, backgroundColor: 'rgba(255,255,255,0.08)', marginHorizontal: 4 },
-  stepLineDone: { backgroundColor: '#22C55E' },
-  stepTitle: { color: '#F5F0FF', fontSize: 20, fontWeight: '700', marginBottom: 20 },
-  fieldWrap: { marginBottom: 16 },
-  fieldLabel: { color: '#9CA3AF', fontSize: 13, fontWeight: '600', marginBottom: 6 },
-  input: {
-    height: 52, borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.1)',
-    color: '#F5F0FF', paddingHorizontal: 16, fontSize: 15,
-  },
-  inputError: { borderColor: '#EF4444' },
-  fieldError: { color: '#EF4444', fontSize: 12, marginTop: 4 },
-  typeCard: {
-    flexDirection: 'row', alignItems: 'center',
-    padding: 16, borderRadius: 14, marginBottom: 12,
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.1)',
-    minHeight: 44,
-  },
-  typeCardActive: { borderColor: '#B22222', backgroundColor: 'rgba(178,34,34,0.1)' },
-  typeEmoji: { fontSize: 28, marginRight: 14 },
-  typeText: { flex: 1 },
-  typeLabel: { color: '#F5F0FF', fontSize: 16, fontWeight: '700' },
-  typeDesc: { color: '#9CA3AF', fontSize: 13, marginTop: 2 },
-  typeRadio: {
-    width: 22, height: 22, borderRadius: 11,
-    borderWidth: 2, borderColor: 'rgba(255,255,255,0.2)',
-  },
-  typeRadioActive: { borderColor: '#B22222', backgroundColor: '#B22222' },
-  typeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
-  typeChip: {
-    paddingHorizontal: 14, paddingVertical: 10,
-    borderRadius: 20, borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    minHeight: 44, justifyContent: 'center',
-  },
-  typeChipActive: { backgroundColor: '#B22222', borderColor: '#B22222' },
-  typeChipText: { color: '#9CA3AF', fontSize: 13, fontWeight: '500' },
-  typeChipTextActive: { color: '#fff', fontWeight: '700' },
-  planCard: {
-    flexDirection: 'row', alignItems: 'center',
-    padding: 16, borderRadius: 14, marginBottom: 10,
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.1)',
-    minHeight: 44,
-  },
-  planCardActive: { borderColor: '#B22222', backgroundColor: 'rgba(178,34,34,0.1)' },
-  planLeft: { flex: 1 },
-  planLabel: { color: '#F5F0FF', fontSize: 16, fontWeight: '700' },
-  planDesc: { color: '#9CA3AF', fontSize: 13, marginTop: 2 },
-  planRight: { alignItems: 'flex-end', gap: 8 },
-  planPrice: { color: '#B22222', fontSize: 15, fontWeight: '700' },
-  planRadio: {
-    width: 22, height: 22, borderRadius: 11,
-    borderWidth: 2, borderColor: 'rgba(255,255,255,0.2)',
-  },
-  planRadioActive: { borderColor: '#B22222', backgroundColor: '#B22222' },
-  butcherySection: { marginTop: 20 },
-  sectionLabel: { color: '#F5F0FF', fontSize: 16, fontWeight: '700', marginBottom: 4 },
-  sectionHint: { color: '#6B7280', fontSize: 13, marginBottom: 12 },
-  navRow: { flexDirection: 'row', gap: 12, marginTop: 28 },
-  backBtn: {
-    flex: 1, height: 52, borderRadius: 12,
-    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  backText: { color: '#9CA3AF', fontSize: 16, fontWeight: '600' },
-  nextBtn: {
-    flex: 2, height: 52, borderRadius: 12,
-    backgroundColor: '#B22222',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  nextText: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  btnDisabled: { opacity: 0.6 },
+const s = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: BG },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 },
+  backBtn: { padding: 8 },
+  headerTitle: { flex: 1, textAlign: 'center', color: TEXT, fontSize: 17, fontWeight: '700' },
+  langBtn: { padding: 8, borderRadius: 8, borderWidth: 1, borderColor: BORDER },
+  langText: { color: GOLD, fontSize: 12, fontWeight: '700' },
+  stepRow: { flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 8 },
+  stepDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#333' },
+  stepDotActive: { backgroundColor: GOLD },
+  stepDotCurrent: { width: 24, backgroundColor: GOLD },
+  scroll: { padding: 20, paddingBottom: 40 },
+  stepTitle: { color: TEXT, fontSize: 22, fontWeight: '800', marginBottom: 6 },
+  stepSub: { color: MUTED, fontSize: 14, marginBottom: 20 },
+  typeCard: { borderRadius: 14, borderWidth: 1, borderColor: BORDER, marginBottom: 14, overflow: 'hidden' },
+  typeCardActive: { borderColor: GOLD },
+  typeCardInner: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
+  typeIcon: { width: 52, height: 52, borderRadius: 14, backgroundColor: '#1a1a1a', alignItems: 'center', justifyContent: 'center' },
+  typeRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
+  typeLabel: { color: TEXT, fontSize: 16, fontWeight: '700' },
+  typeDesc: { color: MUTED, fontSize: 13, lineHeight: 18 },
+  freeBadge: { backgroundColor: 'rgba(76,175,80,0.15)', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2, borderWidth: 1, borderColor: 'rgba(76,175,80,0.4)' },
+  freeBadgeText: { color: '#4CAF50', fontSize: 10, fontWeight: '800', letterSpacing: 0.5 },
+  input: { backgroundColor: SURFACE, borderWidth: 1, borderColor: BORDER, borderRadius: 12, padding: 14, color: TEXT, fontSize: 15, marginBottom: 12 },
+  row: { flexDirection: 'row' },
+  pill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: BORDER, marginRight: 8, backgroundColor: SURFACE },
+  pillActive: { borderColor: GOLD, backgroundColor: 'rgba(201,168,76,0.1)' },
+  pillText: { color: MUTED, fontSize: 13 },
+  infoBanner: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: 'rgba(76,175,80,0.08)', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: 'rgba(76,175,80,0.2)', marginTop: 4 },
+  infoBannerText: { color: '#4CAF50', fontSize: 13, flex: 1, lineHeight: 18 },
+  planCard: { backgroundColor: SURFACE, borderRadius: 14, borderWidth: 1, borderColor: BORDER, padding: 16, marginBottom: 12 },
+  planHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
+  planDot: { width: 10, height: 10, borderRadius: 5 },
+  planName: { color: TEXT, fontSize: 15, fontWeight: '700', flex: 1 },
+  planPrice: { fontSize: 15, fontWeight: '800' },
+  planDesc: { color: MUTED, fontSize: 13, lineHeight: 18 },
+  planCheck: { position: 'absolute', top: 12, right: 12 },
+  popularBadge: { backgroundColor: 'rgba(201,168,76,0.15)', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
+  popularText: { color: GOLD, fontSize: 10, fontWeight: '700' },
+  footer: { padding: 16, paddingBottom: 24 },
+  cta: { borderRadius: 14, overflow: 'hidden' },
+  ctaGrad: { padding: 16, alignItems: 'center' },
+  ctaText: { color: BG, fontSize: 16, fontWeight: '800' },
 });
