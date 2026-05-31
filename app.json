@@ -4,18 +4,18 @@
     "slug": "vcds-vleiskraft",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/icon.png",
+    "icon": "./assets/icon.png",
     "splash": {
-      "backgroundColor": "#F5EDD6",
-      "image": "./src/assets/splash.png",
-      "resizeMode": "contain"
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0D0000"
     },
     "scheme": "vleiskraft",
     "android": {
       "package": "co.za.vcds.vleiskraft",
       "adaptiveIcon": {
-        "backgroundColor": "#7F1D1D",
-        "foregroundImage": "./src/assets/adaptive-icon.png"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0D0000"
       }
     },
     "ios": {
