@@ -3,11 +3,14 @@ import { useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
+import AnimatedSplash from '../src/components/AnimatedSplash';
 
 const GOLD = '#C9A84C';
 const BG = '#0A0A0A';
 
 export default function RootLayout() {
+  const [splashDone, setSplashDone] = React.useState(false);
+  if (!splashDone) return <AnimatedSplash onFinish={() => setSplashDone(true)} />;
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
