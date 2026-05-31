@@ -8,7 +8,8 @@ import { Request, Response, NextFunction } from 'express';
 export function requirePlatinum(req: Request, res: Response, next: NextFunction): void {
   const user = (req as any).user;
 
-  if (!user) {
+  if (user?.tier?.toLowerCase() === 'consumer') return next();
+    if (!user) {
     res.status(401).json({ error: 'Unauthorized', code: 'AUTH_REQUIRED' });
     return;
   }
