@@ -1,135 +1,193 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
-  View, Text, TouchableOpacity, StyleSheet, ScrollView,
+  View, Text, StyleSheet, TouchableOpacity, ScrollView,
   SafeAreaView, StatusBar, Alert,
-} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import { useI18n } from "../../../src/i18n";
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 
-const GOLD = "#C9A84C";
-const BG = "#0A0A0A";
-const SURFACE = "#141414";
-const BORDER = "rgba(255,255,255,0.08)";
-const TEXT = "#FFFFFF";
-const MUTED = "#888888";
+const GOLD = '#C9A84C';
+const BG = '#0A0A0A';
+const SURFACE = '#141414';
+const BORDER = 'rgba(255,255,255,0.08)';
+const TEXT = '#FFFFFF';
+const MUTED = '#888888';
+const RED = '#C0392B';
 
-const TIER_COLORS: Record<string, string> = {
-  consumer: "#4CAF50",
-  freemium: "#888888",
-  starter: "#2196F3",
-  pro: "#9C27B0",
-  business: "#FF9800",
-  enterprise: "#C9A84C",
+const PLAN_COLORS: Record<string, string> = {
+  free: '#555555',
+  starter: '#C0392B',
+  pro: '#8B0000',
+  business: '#1a3a5c',
+  enterprise: GOLD,
+  consumer_premium: GOLD,
 };
 
-function Row({ icon, label, onPress, danger }: any) {
-  return (
-    <TouchableOpacity style={s.row} onPress={onPress}>
-      <View style={s.rowLeft}>
-        <Ionicons name={icon} size={20} color={danger ? "#E74C3C" : GOLD} />
-        <Text style={[s.rowLabel, danger && { color: "#E74C3C" }]}>{label}</Text>
-      </View>
-      <Ionicons name="chevron-forward" size={16} color={MUTED} />
-    </TouchableOpacity>
-  );
-}
+const PLAN_LABELS: Record<string, { en: string; af: string }> = {
+  free: { en: 'Freemium', af: 'Gratis' },
+  starter: { en: 'Starter', af: 'Beginners' },
+  pro: { en: 'Pro', af: 'Pro' },
+  business: { en: 'Business', af: 'Besigheid' },
+  enterprise: { en: 'Enterprise', af: 'Onderneming' },
+  consumer_premium: { en: 'Premium Consumer', af: 'Premium Verbruiker' },
+};
 
-export default function ProfileTab() {
-  const { t, lang, toggleLang } = useI18n();
+type Lang = 'en' | 'af';
+
+export default function ProfileScreen() {
+  const [lang, setLang] = useState<Lang>('af');
   const [user, setUser] = useState<any>(null);
+  const [plan, setPlan] = useState<string>('free');
+  const [userType, setUserType] = useState<string>('butcher');
 
   useEffect(() => {
-    AsyncStorage.getItem("user").then(u => { if (u) setUser(JSON.parse(u)); });
+    async function load() {
+      const u = await AsyncStorage.getItem('user');
+      const p = await AsyncStorage.getItem('plan');
+      const ut = await AsyncStorage.getItem('userType');
+      if (u) setUser(JSON.parse(u));
+      if (p) setPlan(p);
+      if (ut) setUserType(ut);
+    }
+    load();
   }, []);
 
-  const tier = user?.tier ?? user?.subscription ?? "consumer";
-  const tierColor = TIER_COLORS[tier] ?? GOLD;
-  const initials = user ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase() : "?";
-
-  async function logout() {
-    Alert.alert(t("settings.logout"), lang === "af" ? "Is jy seker?" : "Are you sure?", [
-      { text: t("common.cancel"), style: "cancel" },
-      {
-        text: t("settings.logout"), style: "destructive",
-        onPress: async () => {
-          await AsyncStorage.multiRemove(["token", "user", "cart"]);
-          router.replace("/auth/login");
+  async function handleLogout() {
+    Alert.alert(
+      'VleisKraft™',
+      lang === 'af' ? 'Wil jy uitteken?' : 'Log out?',
+      [
+        { text: lang === 'af' ? 'Nee' : 'No', style: 'cancel' },
+        {
+          text: lang === 'af' ? 'Ja' : 'Yes',
+          style: 'destructive',
+          onPress: async () => {
+            await AsyncStorage.multiRemove(['token', 'user', 'userType', 'plan']);
+            router.replace('/auth/login');
+          },
         },
-      },
-    ]);
+      ]
+    );
   }
 
+  const planColor = PLAN_COLORS[plan] || MUTED;
+  const planLabel = PLAN_LABELS[plan]?.[lang] || plan;
+  const isButcher = userType === 'butcher';
+  const canUpgrade = isButcher && plan !== 'enterprise';
+
+  const sections = [
+    {
+      title: lang === 'af' ? 'Rekening' : 'Account',
+      items: [
+        { icon: 'person-outline', label: lang === 'af' ? 'Persoonlike Besonderhede' : 'Personal Details', onPress: () => {} },
+        { icon: 'lock-closed-outline', label: lang === 'af' ? 'Wagwoord Verander' : 'Change Password', onPress: () => {} },
+        { icon: 'language-outline', label: lang === 'af' ? 'Taal' : 'Language', onPress: () => setLang(lang === 'af' ? 'en' : 'af') },
+      ],
+    },
+    ...(isButcher ? [{
+      title: lang === 'af' ? 'Slagtery' : 'Butchery',
+      items: [
+        { icon: 'storefront-outline', label: lang === 'af' ? 'Slagtery Profiel' : 'Butchery Profile', onPress: () => router.push('/admin/index') },
+        { icon: 'receipt-outline', label: lang === 'af' ? 'Bestellings' : 'Orders', onPress: () => router.push('/(tabs)/orders/index') },
+        { icon: 'megaphone-outline', label: lang === 'af' ? 'Veldtogte' : 'Campaigns', onPress: () => router.push('/campaigns/index') },
+      ],
+    }] : []),
+    {
+      title: lang === 'af' ? 'Ondersteuning' : 'Support',
+      items: [
+        { icon: 'help-circle-outline', label: lang === 'af' ? 'Hulp & FAQ' : 'Help & FAQ', onPress: () => {} },
+        { icon: 'chatbubble-outline', label: lang === 'af' ? 'Kontak Ons' : 'Contact Us', onPress: () => {} },
+      ],
+    },
+  ];
+
   return (
-    <SafeAreaView style={s.safe}>
+    <SafeAreaView style={s.root}>
       <StatusBar barStyle="light-content" backgroundColor={BG} />
-      <ScrollView style={s.container} contentContainerStyle={{ paddingBottom: 100 }}>
-        {/* Header */}
-        <LinearGradient colors={["#1A1500", "#0A0A0A"]} style={s.header}>
-          <View style={[s.avatar, { borderColor: tierColor }]}>
-            <Text style={s.avatarText}>{initials}</Text>
+      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+
+        {/* Avatar + Plan Badge */}
+        <LinearGradient colors={['#1a0a00', BG]} style={s.hero}>
+          <View style={[s.avatar, { shadowColor: planColor }]}>
+            <Text style={s.avatarText}>
+              {user?.firstName?.[0]?.toUpperCase() || '?'}
+            </Text>
           </View>
-          <Text style={s.name}>{user ? `${user.firstName} ${user.lastName}` : "—"}</Text>
-          <Text style={s.email}>{user?.email ?? "—"}</Text>
-          <View style={[s.tierBadge, { backgroundColor: `${tierColor}22`, borderColor: tierColor }]}>
-            <Text style={[s.tierText, { color: tierColor }]}>{tier.toUpperCase()}</Text>
-          </View>
-          <TouchableOpacity onPress={toggleLang} style={s.langBtn}>
-            <Text style={s.langText}>{lang === "en" ? "🇿🇦 Afrikaans" : "🇬🇧 English"}</Text>
-          </TouchableOpacity>
+          <Text style={s.name}>{user ? `${user.firstName} ${user.lastName}` : '—'}</Text>
+          <Text style={s.email}>{user?.email || '—'}</Text>
+
+          {/* Plan badge */}
+          <LinearGradient colors={[planColor + '33', planColor + '11']} style={[s.planBadge, { borderColor: planColor + '55' }]}>
+            <Ionicons name={isButcher ? 'storefront' : 'person'} size={13} color={planColor} />
+            <Text style={[s.planBadgeText, { color: planColor }]}>
+              {isButcher ? '🔪 ' : '🛒 '}{planLabel}
+            </Text>
+          </LinearGradient>
+
+          {/* Upgrade CTA for butchers not on enterprise */}
+          {canUpgrade && (
+            <TouchableOpacity onPress={() => router.push('/paywall/butcher-plans')} style={s.upgradeBtn}>
+              <LinearGradient colors={[GOLD, '#A07830']} style={s.upgradeBtnGrad}>
+                <Ionicons name="arrow-up-circle" size={16} color="#000" />
+                <Text style={s.upgradeBtnText}>{lang === 'af' ? 'Gradeer Op' : 'Upgrade Plan'}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          )}
         </LinearGradient>
 
-        {/* Account */}
-        <Text style={s.section}>{lang === "af" ? "Rekening" : "Account"}</Text>
-        <View style={s.card}>
-          <Row icon="person-outline" label={t("profile.editProfile")} onPress={() => router.push("/profile/index")} />
-          <Row icon="card-outline" label={t("profile.paymentMethods")} onPress={() => router.push("/payments/index")} />
-          <Row icon="location-outline" label={t("profile.savedAddresses")} onPress={() => {}} />
-          <Row icon="star-outline" label={t("profile.subscription")} onPress={() => router.push("/subscriptions/index")} />
-        </View>
+        {/* Sections */}
+        {sections.map((section) => (
+          <View key={section.title} style={s.section}>
+            <Text style={s.sectionTitle}>{section.title}</Text>
+            <View style={s.sectionCard}>
+              {section.items.map((item, i) => (
+                <TouchableOpacity key={item.label} onPress={item.onPress} style={[s.row, i < section.items.length - 1 && s.rowBorder]}>
+                  <View style={s.rowIcon}>
+                    <Ionicons name={item.icon as any} size={18} color={GOLD} />
+                  </View>
+                  <Text style={s.rowLabel}>{item.label}</Text>
+                  <Ionicons name="chevron-forward" size={16} color={MUTED} />
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        ))}
 
-        {/* Tools */}
-        <Text style={s.section}>{lang === "af" ? "Gereedskap" : "Tools"}</Text>
-        <View style={s.card}>
-          <Row icon="book-outline" label={t("profile.myDiary")} onPress={() => router.push("/diary/index")} />
-          <Row icon="list-outline" label={t("profile.shoppingList")} onPress={() => router.push("/shopping-list/index")} />
-          <Row icon="call-outline" label={t("profile.emergencyContacts")} onPress={() => router.push("/emergency-contacts/index")} />
-          <Row icon="trophy-outline" label={t("competitions.title")} onPress={() => router.push("/competitions/index")} />
-          <Row icon="people-outline" label={t("stockvel.title")} onPress={() => router.push("/stockvel/index")} />
-          <Row icon="calendar-outline" label={t("mealPlanner.title")} onPress={() => router.push("/meal-planner/index")} />
-        </View>
+        {/* Logout */}
+        <TouchableOpacity onPress={handleLogout} style={s.logoutBtn}>
+          <Ionicons name="log-out-outline" size={18} color={RED} />
+          <Text style={s.logoutText}>{lang === 'af' ? 'Uitteken' : 'Log Out'}</Text>
+        </TouchableOpacity>
 
-        {/* Settings */}
-        <Text style={s.section}>{t("settings.title")}</Text>
-        <View style={s.card}>
-          <Row icon="notifications-outline" label={t("settings.notifications")} onPress={() => {}} />
-          <Row icon="shield-outline" label={t("settings.privacy")} onPress={() => {}} />
-          <Row icon="document-text-outline" label={t("settings.terms")} onPress={() => {}} />
-          <Row icon="help-circle-outline" label={t("settings.support")} onPress={() => {}} />
-          <Row icon="log-out-outline" label={t("settings.logout")} onPress={logout} danger />
-        </View>
+        <Text style={s.version}>VleisKraft™ v1.0.0</Text>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#0A0A0A" },
-  container: { flex: 1, backgroundColor: "#0A0A0A" },
-  header: { alignItems: "center", paddingTop: 32, paddingBottom: 24, paddingHorizontal: 20 },
-  avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: "#1A1A1A", alignItems: "center", justifyContent: "center", borderWidth: 2, marginBottom: 12 },
-  avatarText: { color: GOLD, fontSize: 28, fontWeight: "800" },
-  name: { color: TEXT, fontSize: 20, fontWeight: "800", marginBottom: 4 },
-  email: { color: MUTED, fontSize: 13, marginBottom: 12 },
-  tierBadge: { borderRadius: 20, paddingHorizontal: 16, paddingVertical: 5, borderWidth: 1, marginBottom: 12 },
-  tierText: { fontSize: 11, fontWeight: "800", letterSpacing: 1.5 },
-  langBtn: { backgroundColor: "rgba(201,168,76,0.1)", borderRadius: 10, paddingHorizontal: 16, paddingVertical: 7, borderWidth: 1, borderColor: "rgba(201,168,76,0.3)" },
-  langText: { color: GOLD, fontSize: 13, fontWeight: "600" },
-  section: { color: MUTED, fontSize: 11, fontWeight: "700", letterSpacing: 1.5, marginTop: 24, marginBottom: 8, marginHorizontal: 20, textTransform: "uppercase" },
-  card: { backgroundColor: SURFACE, borderRadius: 16, marginHorizontal: 16, borderWidth: 1, borderColor: BORDER, overflow: "hidden" },
-  row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: BORDER },
-  rowLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
-  rowLabel: { color: TEXT, fontSize: 14, fontWeight: "600" },
+  root: { flex: 1, backgroundColor: BG },
+  scroll: { paddingBottom: 40 },
+  hero: { alignItems: 'center', paddingTop: 32, paddingBottom: 28, paddingHorizontal: 24 },
+  avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#1a0a00', borderWidth: 2, borderColor: GOLD, alignItems: 'center', justifyContent: 'center', marginBottom: 12, shadowOpacity: 0.6, shadowRadius: 16, elevation: 10 },
+  avatarText: { fontSize: 32, fontWeight: '900', color: GOLD },
+  name: { fontSize: 22, fontWeight: '800', color: TEXT, marginBottom: 4 },
+  email: { fontSize: 14, color: MUTED, marginBottom: 14 },
+  planBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 6, marginBottom: 14 },
+  planBadgeText: { fontSize: 13, fontWeight: '700' },
+  upgradeBtn: { borderRadius: 12, overflow: 'hidden' },
+  upgradeBtnGrad: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 20, paddingVertical: 10 },
+  upgradeBtnText: { fontSize: 14, fontWeight: '800', color: '#000' },
+  section: { paddingHorizontal: 16, marginBottom: 16 },
+  sectionTitle: { fontSize: 12, fontWeight: '700', color: MUTED, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8, marginLeft: 4 },
+  sectionCard: { backgroundColor: SURFACE, borderRadius: 16, borderWidth: 1, borderColor: BORDER, overflow: 'hidden' },
+  row: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, gap: 12 },
+  rowBorder: { borderBottomWidth: 1, borderBottomColor: BORDER },
+  rowIcon: { width: 32, height: 32, borderRadius: 8, backgroundColor: 'rgba(201,168,76,0.1)', alignItems: 'center', justifyContent: 'center' },
+  rowLabel: { flex: 1, fontSize: 15, color: TEXT },
+  logoutBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginHorizontal: 16, marginTop: 8, paddingVertical: 14, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(192,57,43,0.3)' },
+  logoutText: { fontSize: 15, fontWeight: '700', color: RED },
+  version: { textAlign: 'center', color: MUTED, fontSize: 12, marginTop: 16 },
 });
