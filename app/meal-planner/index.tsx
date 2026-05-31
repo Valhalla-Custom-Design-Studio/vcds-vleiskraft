@@ -1,17 +1,19 @@
 
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { Colors, Spacing, Radius } from '@/constants/colors';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { GradientButton } from '@/components/ui/GradientButton';
-import { useAuthStore } from '@/store/authStore';
-import { useCartStore } from '@/store/cartStore';
-import { t } from '@/locales';
-import api from '@/lib/api';
+import { Colors } from '../../src/theme/colors';
+const Spacing = { sm: 8, md: 16, lg: 24 };
+const Radius = { sm: 8, md: 12, lg: 16 };
+import { GlassCard } from '../../src/components/ui/GlassCard';
+import { GradientButton } from '../../src/components/ui/GradientButton';
+import { useAuthStore } from '../../src/store/authStore';
+import { useCartStore } from '../../src/store/cartStore';
+import { t } from '../../src/locales';
+import api from '../../src/lib/api';
 
 const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
-export default function MealPlannerScreen() {
+function MealPlannerScreenInner() {
   const { language } = useAuthStore();
   const { addItem } = useCartStore();
   const [people, setPeople] = useState('');
@@ -80,3 +82,18 @@ const styles = StyleSheet.create({
   ingredient: { color: Colors.textSecondary, fontSize: 13, marginBottom: 2 },
   dayCost: { color: Colors.successBright, fontSize: 14, fontWeight: '700', marginTop: Spacing.sm },
 });
+
+import { ButcherPaywallGate } from '../../src/components/ButcherPaywallGate';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export default function MealPlannerScreen() {
+  const [butcherTier, setButcherTier] = React.useState<any>('free');
+  React.useEffect(() => {
+    AsyncStorage.getItem('plan').then(p => { if (p) setButcherTier(p); });
+  }, []);
+  return (
+    <ButcherPaywallGate required="pro" currentTier={butcherTier} featureName="AI Maaltydplanner">
+      <MealPlannerScreenInner />
+    </ButcherPaywallGate>
+  );
+}

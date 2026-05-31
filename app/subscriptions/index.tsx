@@ -2,14 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Radius } from '@/constants/colors';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { GradientButton } from '@/components/ui/GradientButton';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { SkeletonBox } from '@/components/ui/SkeletonBox';
-import { useAuthStore } from '@/store/authStore';
-import { t } from '@/locales';
-import api from '@/lib/api';
+import { Colors } from '../../src/theme/colors';
+const Spacing = { sm: 8, md: 16, lg: 24 };
+const Radius = { sm: 8, md: 12, lg: 16 };
+import { GlassCard } from '../../src/components/ui/GlassCard';
+import { GradientButton } from '../../src/components/ui/GradientButton';
+import { EmptyState } from '../../src/components/ui/EmptyState';
+import { SkeletonBox } from '../../src/components/ui/SkeletonBox';
+import { useAuthStore } from '../../src/store/authStore';
+import { t } from '../../src/locales';
+import api from '../../src/lib/api';
 import { format } from 'date-fns';
 
 export default function SubscriptionsScreen() {

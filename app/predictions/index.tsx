@@ -2,17 +2,19 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Radius } from '@/constants/colors';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { SkeletonBox } from '@/components/ui/SkeletonBox';
-import { GradientButton } from '@/components/ui/GradientButton';
-import { useAuthStore } from '@/store/authStore';
-import { useCartStore } from '@/store/cartStore';
-import { t } from '@/locales';
-import api from '@/lib/api';
+import { Colors } from '../../src/theme/colors';
+const Spacing = { sm: 8, md: 16, lg: 24 };
+const Radius = { sm: 8, md: 12, lg: 16 };
+import { GlassCard } from '../../src/components/ui/GlassCard';
+import { EmptyState } from '../../src/components/ui/EmptyState';
+import { SkeletonBox } from '../../src/components/ui/SkeletonBox';
+import { GradientButton } from '../../src/components/ui/GradientButton';
+import { useAuthStore } from '../../src/store/authStore';
+import { useCartStore } from '../../src/store/cartStore';
+import { t } from '../../src/locales';
+import api from '../../src/lib/api';
 
-export default function PredictionsScreen() {
+function PredictionsScreenInner() {
   const { language } = useAuthStore();
   const { addItem } = useCartStore();
   const [predictions, setPredictions] = useState<any[]>([]);
@@ -82,3 +84,18 @@ const styles = StyleSheet.create({
   meta: { color: Colors.textSecondary, fontSize: 13, marginTop: 2 },
   addBtn: { width: 40, height: 40, backgroundColor: Colors.primary, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
 });
+
+import { ButcherPaywallGate } from '../../src/components/ButcherPaywallGate';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export default function PredictionsScreen() {
+  const [butcherTier, setButcherTier] = React.useState<any>('free');
+  React.useEffect(() => {
+    AsyncStorage.getItem('plan').then(p => { if (p) setButcherTier(p); });
+  }, []);
+  return (
+    <ButcherPaywallGate required="business" currentTier={butcherTier} featureName="Vraagvoorspelling">
+      <PredictionsScreenInner />
+    </ButcherPaywallGate>
+  );
+}
