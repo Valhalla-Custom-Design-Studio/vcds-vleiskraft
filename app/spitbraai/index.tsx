@@ -3,21 +3,23 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Radius } from '@/constants/colors';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { GradientButton } from '@/components/ui/GradientButton';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { SkeletonBox } from '@/components/ui/SkeletonBox';
-import { useAuthStore } from '@/store/authStore';
-import { t } from '@/locales';
-import api from '@/lib/api';
+import { Colors } from '../../src/theme/colors';
+const Spacing = { sm: 8, md: 16, lg: 24 };
+const Radius = { sm: 8, md: 12, lg: 16 };
+import { GlassCard } from '../../src/components/ui/GlassCard';
+import { GradientButton } from '../../src/components/ui/GradientButton';
+import { EmptyState } from '../../src/components/ui/EmptyState';
+import { SkeletonBox } from '../../src/components/ui/SkeletonBox';
+import { useAuthStore } from '../../src/store/authStore';
+import { t } from '../../src/locales';
+import api from '../../src/lib/api';
 import { format } from 'date-fns';
 
 const STATUS_COLOR: Record<string, string> = {
   PENDING: Colors.warning, CONFIRMED: Colors.successBright, CANCELLED: Colors.error, COMPLETED: Colors.success,
 };
 
-export default function SpitbraaiScreen() {
+function SpitbraaiScreenInner() {
   const { language } = useAuthStore();
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,3 +79,18 @@ const styles = StyleSheet.create({
   meta: { color: Colors.textSecondary, fontSize: 13 },
   quote: { color: Colors.secondary, fontSize: 15, fontWeight: '700', marginTop: 4 },
 });
+
+import { ButcherPaywallGate } from '../../src/components/ButcherPaywallGate';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export default function SpitbraaiScreen() {
+  const [butcherTier, setButcherTier] = React.useState<any>('free');
+  React.useEffect(() => {
+    AsyncStorage.getItem('plan').then(p => { if (p) setButcherTier(p); });
+  }, []);
+  return (
+    <ButcherPaywallGate required="starter" currentTier={butcherTier} featureName="Spitbraai Besprekings">
+      <SpitbraaiScreenInner />
+    </ButcherPaywallGate>
+  );
+}

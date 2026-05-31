@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Radius } from '@/constants/colors';
-import { GradientButton } from '@/components/ui/GradientButton';
-import { useAuthStore } from '@/store/authStore';
-import { t } from '@/locales';
-import api from '@/lib/api';
+import { Colors } from '../../src/theme/colors';
+const Spacing = { sm: 8, md: 16, lg: 24 };
+const Radius = { sm: 8, md: 12, lg: 16 };
+import { GradientButton } from '../../src/components/ui/GradientButton';
+import { useAuthStore } from '../../src/store/authStore';
+import { t } from '../../src/locales';
+import api from '../../src/lib/api';
 
 export default function DiaryCreateScreen() {
   const { language } = useAuthStore();

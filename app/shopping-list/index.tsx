@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Radius } from '@/constants/colors';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { useAuthStore } from '@/store/authStore';
-import { t } from '@/locales';
-import api from '@/lib/api';
+import { Colors } from '../../src/theme/colors';
+const Spacing = { sm: 8, md: 16, lg: 24 };
+const Radius = { sm: 8, md: 12, lg: 16 };
+import { EmptyState } from '../../src/components/ui/EmptyState';
+import { useAuthStore } from '../../src/store/authStore';
+import { t } from '../../src/locales';
+import api from '../../src/lib/api';
 
 export default function ShoppingListScreen() {
   const { language } = useAuthStore();
