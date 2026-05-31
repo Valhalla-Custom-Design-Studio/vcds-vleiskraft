@@ -17,7 +17,9 @@ CREATE TABLE IF NOT EXISTS users (
   is_active BOOLEAN DEFAULT true,
   trial_ends_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  reset_token VARCHAR(255),
+  reset_token_expires TIMESTAMPTZ
 );
 
 -- B2B Butchery Subscription Plans
