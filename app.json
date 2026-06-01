@@ -41,7 +41,8 @@
         "@sentry/react-native/expo",
         {
           "organization": "valhalla-custom-design-studios",
-          "project": "vcds-vleiskraft"
+          "project": "vcds-vleiskraft",
+          "uploadSourceMaps": false
         }
       ]
     ],
