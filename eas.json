@@ -8,11 +8,11 @@
       "developmentClient": true,
       "distribution": "internal",
       "android": {
-        "image": "latest",
+        "image": "sdk-53",
         "buildType": "apk"
       },
       "ios": {
-        "image": "latest",
+        "image": "sdk-53",
         "simulator": true
       },
       "env": {
@@ -24,11 +24,11 @@
     "preview": {
       "distribution": "internal",
       "android": {
-        "image": "latest",
+        "image": "sdk-53",
         "buildType": "apk"
       },
       "ios": {
-        "image": "latest"
+        "image": "sdk-53"
       },
       "env": {
         "SENTRY_ORG": "valhalla-custom-design-studios",
@@ -38,11 +38,11 @@
     },
     "production": {
       "android": {
-        "image": "latest",
+        "image": "sdk-53",
         "buildType": "app-bundle"
       },
       "ios": {
-        "image": "latest"
+        "image": "sdk-53"
       },
       "env": {
         "SENTRY_ORG": "valhalla-custom-design-studios",
