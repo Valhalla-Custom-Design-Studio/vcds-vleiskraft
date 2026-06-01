@@ -35,7 +35,7 @@ ${catalogue || 'Geen produkte beskikbaar nie.'}
 Antwoord ALTYD met hierdie JSON formaat:
 {"reply": "jou Afrikaanse antwoord hier", "suggestedProducts": [{"id": "produk-id", "nameAf": "Afrikaanse naam", "nameEn": "English name", "price": 0}]}
 
-As geen produkte relevant is nie, gebruik 'n leë array: "suggestedProducts": []`;
+As geen produkte relevant is nie, gebruik 'n leë array: "suggestedProducts": []';
 
 // ─── POST /chat ───────────────────────────────────────────────────────────────
 router.post('/chat', authenticate, async (req: Request, res: Response) => {
