@@ -9,7 +9,8 @@
       "distribution": "internal",
       "android": {
         "image": "sdk-53",
-        "buildType": "apk"
+        "buildType": "apk",
+        "resourceClass": "medium"
       },
       "ios": {
         "image": "sdk-53",
@@ -29,13 +30,15 @@
         "EXPO_PUBLIC_SENTRY_DSN": "https://7b08f203b22e854aebad0021deb4786f@o4511432712650752.ingest.de.sentry.io/4511461329207376",
         "SENTRY_AUTH_TOKEN": "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",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
-      }
+      },
+      "node": "20.19.0"
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "image": "sdk-53",
-        "buildType": "apk"
+        "buildType": "apk",
+        "resourceClass": "medium"
       },
       "ios": {
         "image": "sdk-53"
@@ -54,12 +57,14 @@
         "EXPO_PUBLIC_SENTRY_DSN": "https://7b08f203b22e854aebad0021deb4786f@o4511432712650752.ingest.de.sentry.io/4511461329207376",
         "SENTRY_AUTH_TOKEN": "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",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
-      }
+      },
+      "node": "20.19.0"
     },
     "production": {
       "android": {
         "image": "sdk-53",
-        "buildType": "app-bundle"
+        "buildType": "app-bundle",
+        "resourceClass": "medium"
       },
       "ios": {
         "image": "sdk-53"
@@ -78,7 +83,8 @@
         "EXPO_PUBLIC_SENTRY_DSN": "https://7b08f203b22e854aebad0021deb4786f@o4511432712650752.ingest.de.sentry.io/4511461329207376",
         "SENTRY_AUTH_TOKEN": "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",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
-      }
+      },
+      "node": "20.19.0"
     }
   },
   "submit": {

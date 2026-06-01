@@ -27,7 +27,25 @@
       [
         "expo-build-properties",
         {
-          "android": {}
+          "android": {
+            "newArchEnabled": true,
+            "kotlinVersion": "1.9.25",
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "minSdkVersion": 24,
+            "extraMavenRepos": [],
+            "gradleProperties": {
+              "org.gradle.jvmargs": "-Xmx4096m -XX:MaxMetaspaceSize=1024m",
+              "org.gradle.daemon": "true",
+              "org.gradle.parallel": "true",
+              "org.gradle.configureondemand": "true",
+              "android.useAndroidX": "true",
+              "android.enableJetifier": "true"
+            }
+          },
+          "ios": {
+            "newArchEnabled": true
+          }
         }
       ],
       [
