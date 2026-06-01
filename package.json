@@ -50,7 +50,8 @@
     "@types/react-dom": "^19.0.10",
     "@playwright/test": "^1.50.0",
     "@types/supertest": "^6.0.0",
-    "@types/express": "^5.0.0"
+    "@types/express": "^5.0.0",
+    "@babel/plugin-transform-unicode-escapes": "^7.25.0"
   },
   "overrides": {
     "follow-redirects": "^1.15.9",
