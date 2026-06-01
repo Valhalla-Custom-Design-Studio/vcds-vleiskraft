@@ -4,7 +4,7 @@ import { pool } from "../db/pool";
 
 const router = Router();
 
-// GET /api/stockvel/groups — my groups
+// GET /api/stockvel/groups  -  my groups
 router.get("/groups", requireAuth, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
@@ -22,7 +22,7 @@ router.get("/groups", requireAuth, async (req: Request, res: Response) => {
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-// POST /api/stockvel/groups — create group
+// POST /api/stockvel/groups  -  create group
 router.post("/groups", requireAuth, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;

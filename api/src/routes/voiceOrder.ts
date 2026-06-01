@@ -67,7 +67,7 @@ function parseTranscript(text: string): { items: Array<{ name: string; qty: numb
     'lam': 'Lam (Lamb)', 'lamb': 'Lamb',
     'vark': 'Varkvleis (Pork)', 'pork': 'Pork',
     'hoender': 'Hoender (Chicken)', 'chicken': 'Chicken',
-    'biltong': 'Biltong', 'droëwors': 'Droëwors',
+    'biltong': 'Biltong', 'droewors': 'Droewors',
     'tjop': 'Tjops (Chops)', 'chops': 'Chops',
     'steak': 'Steak', 'biefstuk': 'Biefstuk (Steak)',
     'mince': 'Mince', 'maalvleis': 'Maalvleis (Mince)',

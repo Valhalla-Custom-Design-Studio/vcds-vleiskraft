@@ -4,7 +4,7 @@ import { pool } from "../db/pool";
 
 const router = Router();
 
-// GET /api/campaigns — active campaigns for user's butchery
+// GET /api/campaigns  -  active campaigns for user's butchery
 router.get("/", requireAuth, async (req: Request, res: Response) => {
   try {
     const butcheryId = (req as any).user.butchery_id;
@@ -17,7 +17,7 @@ router.get("/", requireAuth, async (req: Request, res: Response) => {
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-// POST /api/campaigns — create campaign (butchery admin)
+// POST /api/campaigns  -  create campaign (butchery admin)
 router.post("/", requireAuth, async (req: Request, res: Response) => {
   try {
     const butcheryId = (req as any).user.butchery_id;
@@ -34,7 +34,7 @@ router.post("/", requireAuth, async (req: Request, res: Response) => {
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-// PATCH /api/campaigns/:id — update
+// PATCH /api/campaigns/:id  -  update
 router.patch("/:id", requireAuth, async (req: Request, res: Response) => {
   try {
     const butcheryId = (req as any).user.butchery_id;

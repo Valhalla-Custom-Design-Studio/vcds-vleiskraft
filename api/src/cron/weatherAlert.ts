@@ -1,7 +1,7 @@
 /**
  * Cron Job 1: Braai Weather Alert
- * Every 3 hours — checks OWM for all users with push tokens + location
- * Sends push if braai conditions are perfect (temp > 22°C, wind < 20km/h, no rain)
+ * Every 3 hours  -  checks OWM for all users with push tokens + location
+ * Sends push if braai conditions are perfect (temp > 22 degreesC, wind < 20km/h, no rain)
  */
 import { pool } from '../db/pool';
 import { Expo } from 'expo-server-sdk';
@@ -44,7 +44,7 @@ export async function runWeatherAlert(): Promise<void> {
       );
       const weather = await res.json();
       const temp = weather.main?.temp ?? 0;
-      const windSpeed = (weather.wind?.speed ?? 0) * 3.6; // m/s → km/h
+      const windSpeed = (weather.wind?.speed ?? 0) * 3.6; // m/s -> km/h
       const rain = weather.rain?.['1h'] ?? 0;
       const condition = weather.weather?.[0]?.main ?? '';
 
@@ -54,10 +54,10 @@ export async function runWeatherAlert(): Promise<void> {
         const isAf = user.preferred_locale === 'af';
         messages.push({
           to: user.push_token,
-          title: isAf ? '🔥 Perfekte Braai Weer!' : '🔥 Perfect Braai Weather!',
+          title: isAf ? '\u1F525 Perfekte Braai Weer!' : '\u1F525 Perfect Braai Weather!',
           body: isAf
-            ? `${Math.round(temp)}°C, wind ${Math.round(windSpeed)}km/h — Ideaal vir 'n braai!`
-            : `${Math.round(temp)}°C, wind ${Math.round(windSpeed)}km/h — Perfect for a braai!`,
+            ? `${Math.round(temp)} degreesC, wind ${Math.round(windSpeed)}km/h  -  Ideaal vir 'n braai!`
+            : `${Math.round(temp)} degreesC, wind ${Math.round(windSpeed)}km/h  -  Perfect for a braai!`,
           data: { type: 'weather_alert', temp, windSpeed },
           sound: 'default',
         });

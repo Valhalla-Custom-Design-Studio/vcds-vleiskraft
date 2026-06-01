@@ -9,7 +9,7 @@ export interface AppError extends Error {
 export const errorHandler = (err: AppError, req: Request, res: Response, _next: NextFunction): void => {
   const statusCode = err.statusCode || 500;
   const message = err.isOperational ? err.message : 'Internal server error';
-  console.error(`[ERROR] ${statusCode} — ${err.message}`, { stack: err.stack, path: req.path });
+  console.error(`[ERROR] ${statusCode}  -  ${err.message}`, { stack: err.stack, path: req.path });
   // Capture non-operational (unexpected) errors to Sentry
   if (!err.isOperational) {
     Sentry.captureException(err, { extra: { path: req.path, method: req.method } });

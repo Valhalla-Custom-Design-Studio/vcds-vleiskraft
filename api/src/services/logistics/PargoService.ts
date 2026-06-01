@@ -1,5 +1,5 @@
 /**
- * Pargo API — SA pickup point logistics
+ * Pargo API  -  SA pickup point logistics
  * 3000+ pickup points across SA (Checkers, PEP, etc.)
  * Free sandbox, production: per-parcel pricing
  */

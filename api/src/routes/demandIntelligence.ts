@@ -1,5 +1,5 @@
 /**
- * SA Meat Demand Intelligence API — Tier 1 Data Moat
+ * SA Meat Demand Intelligence API  -  Tier 1 Data Moat
  */
 import { Router, Request, Response } from "express";
 import { requireAuth } from "../middleware/auth";

@@ -1,8 +1,8 @@
 /**
- * Vleis-to-Fork™ — World-first SA meat traceability
- * QR scan → farm origin, animal ID, slaughter date, cold chain, carbon footprint
+ * Vleis-to-Fork(TM)  -  World-first SA meat traceability
+ * QR scan -> farm origin, animal ID, slaughter date, cold chain, carbon footprint
  * Blockchain: Polygon ID (free, decentralized)
- * PATENT PENDING — VCDS™ IP Asset
+ * PATENT PENDING  -  VCDS(TM) IP Asset
  */
 
 export interface MeatTrace {
@@ -46,7 +46,7 @@ export async function lookupTrace(qrCode: string): Promise<MeatTrace | null> {
   return null;
 }
 
-// Polygon ID — record trace hash on-chain (free)
+// Polygon ID  -  record trace hash on-chain (free)
 async function recordOnPolygon(qrCode: string, data: any): Promise<string> {
   const POLYGON_RPC = process.env.POLYGON_RPC_URL || "https://polygon-rpc.com";
   // In production: use ethers.js to write hash to smart contract
@@ -64,7 +64,7 @@ export function calculateCarbonFootprint(breed: string, ageMonths: number, feedT
   return Math.round(base * multiplier * (ageMonths / 24));
 }
 
-// ── Legacy-compatible wrappers (route-facing) ─────────────────────────────
+// -- Legacy-compatible wrappers (route-facing) -----------------------------
 import crypto from "crypto";
 
 export interface VleisToForkRecord {
@@ -93,7 +93,7 @@ export function generateQRPayload(
     ...record,
     qr_code,
     blockchain_hash,
-    ip_watermark: "VCDS™ Vleis-to-Fork™ — Patent Pending",
+    ip_watermark: "VCDS(TM) Vleis-to-Fork(TM)  -  Patent Pending",
   };
 }
 

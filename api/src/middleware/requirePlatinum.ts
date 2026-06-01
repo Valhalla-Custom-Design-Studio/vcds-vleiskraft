@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
 /**
- * requirePlatinum middleware — VleisKraft™ B2B tier gate.
- * Platinum tier: R15,000/month — full API access, white-label, priority support.
+ * requirePlatinum middleware  -  VleisKraft(TM) B2B tier gate.
+ * Platinum tier: R15,000/month  -  full API access, white-label, priority support.
  * Delegates to requireTier('platinum') for consistency.
  */
 export function requirePlatinum(req: Request, res: Response, next: NextFunction): void {

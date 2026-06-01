@@ -7,8 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import Joi from 'joi';
 import { pool } from '../db/pool';
 
-// WAVE 2: Migrate to NestJS + Prisma — tracked in KAN backlog
-// Logic ported from nodejs_space/src/auth/auth.service.ts (NestJS → Express)
+// WAVE 2: Migrate to NestJS + Prisma  -  tracked in KAN backlog
+// Logic ported from nodejs_space/src/auth/auth.service.ts (NestJS -> Express)
 
 export const authRouter = Router();
 
@@ -46,7 +46,7 @@ function formatUser(user: any, butchery?: any) {
   };
 }
 
-// ─── POST /register ───────────────────────────────────────────────────────────
+// --- POST /register -----------------------------------------------------------
 authRouter.post('/register', async (req: Request, res: Response) => {
   const { error, value } = registerSchema.validate(req.body);
   if (error) {
@@ -66,7 +66,7 @@ authRouter.post('/register', async (req: Request, res: Response) => {
     let role = 'USER';
 
     if (value.accountType === 'butchery') {
-      // ── Butchery owner: create new butchery record ──
+      // -- Butchery owner: create new butchery record --
       if (!value.butcheryName?.trim()) {
         res.status(400).json({ success: false, message: 'Slaghuisnaam benodig / Butchery name required' });
         return;
@@ -83,11 +83,11 @@ authRouter.post('/register', async (req: Request, res: Response) => {
       butcheryId = butcheryResult.rows[0].id;
       role = 'ADMIN';
     } else if (butcheryId) {
-      // ── Consumer: validate provided butchery ──
+      // -- Consumer: validate provided butchery --
       const bCheck = await pool.query('SELECT id FROM butcheries WHERE id = $1 AND is_active = true', [butcheryId]);
       if (!bCheck.rows.length) butcheryId = null;
     } else {
-      // ── Consumer: link to first available butchery ──
+      // -- Consumer: link to first available butchery --
       const defaultButchery = await pool.query('SELECT id FROM butcheries WHERE is_active = true ORDER BY created_at ASC LIMIT 1');
       if (defaultButchery.rows.length) butcheryId = defaultButchery.rows[0].id;
     }
@@ -124,7 +124,7 @@ authRouter.post('/register', async (req: Request, res: Response) => {
   }
 });
 
-// ─── POST /login ──────────────────────────────────────────────────────────────
+// --- POST /login --------------------------------------------------------------
 authRouter.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -144,7 +144,7 @@ authRouter.post('/login', async (req: Request, res: Response) => {
       return;
     }
 
-    // ── Butchery subscription gate (ported from NestJS auth.service.ts) ──
+    // -- Butchery subscription gate (ported from NestJS auth.service.ts) --
     let butcheryRow = null;
     if (user.butchery_id) {
       const br = await pool.query('SELECT * FROM butcheries WHERE id = $1', [user.butchery_id]);
@@ -172,7 +172,7 @@ authRouter.post('/login', async (req: Request, res: Response) => {
   }
 });
 
-// ─── GET /me ──────────────────────────────────────────────────────────────────
+// --- GET /me ------------------------------------------------------------------
 authRouter.get('/me', async (req: Request, res: Response) => {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
@@ -209,7 +209,7 @@ authRouter.post('/forgot-password', async (req: Request, res: Response) => {
     const expires = new Date(Date.now() + 3600000);
     await pool.query('UPDATE users SET reset_token=$1,reset_token_expires=$2 WHERE id=$3', [resetToken, expires, rows[0].id]);
     if (process.env.NODE_ENV !== 'development') {
-      await sendPasswordResetEmail(email.toLowerCase(), resetToken, 'VleisKraft™');
+      await sendPasswordResetEmail(email.toLowerCase(), resetToken, 'VleisKraft(TM)');
     }
     res.json({ success: true, message: 'If that email exists, a reset link was sent', debug_token: process.env.NODE_ENV === 'development' ? resetToken : undefined });
   } catch(e) { res.status(500).json({ success: false, message: 'Failed' }); }

@@ -1,9 +1,9 @@
 /**
- * Stockvel Finance Layer — Tier 5 Fintech Moat
- * VCDS™ IP Asset | Underbanked SA communities
+ * Stockvel Finance Layer  -  Tier 5 Fintech Moat
+ * VCDS(TM) IP Asset | Underbanked SA communities
  * Stockvel groups save, earn interest, bulk order automatically on payout
  * Partner: Peach Payments / Lula
- * VCDS™ earns % on every transaction + bulk order commission
+ * VCDS(TM) earns % on every transaction + bulk order commission
  */
 import { pool } from "../db/pool";
 import Anthropic from "@anthropic-ai/sdk";
@@ -54,7 +54,7 @@ export async function calculateStockvelPayout(groupId: string): Promise<Stockvel
   const totalWithInterest = totalSaved + interestEarned;
   const memberShare = totalWithInterest / memberCount;
 
-  // If auto bulk order enabled, 80% goes to VleisKraft™ bulk order
+  // If auto bulk order enabled, 80% goes to VleisKraft(TM) bulk order
   const bulkOrderValue = g.auto_bulk_order ? totalWithInterest * 0.8 : 0;
   const cashPayout = totalWithInterest - bulkOrderValue;
 

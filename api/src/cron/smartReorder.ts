@@ -1,6 +1,6 @@
 /**
  * Cron Job 2: Smart Reorder Nudge
- * Daily at 09:00 SAST — checks order history, nudges users who haven't ordered in 14+ days
+ * Daily at 09:00 SAST  -  checks order history, nudges users who haven't ordered in 14+ days
  */
 import { pool } from '../db/pool';
 import { Expo } from 'expo-server-sdk';
@@ -49,7 +49,7 @@ export async function runSmartReorder(): Promise<void> {
     if (Expo.isExpoPushToken(row.push_token)) {
       messages.push({
         to: row.push_token,
-        title: isAf ? '🥩 Tyd om te herbestel!' : '🥩 Time to reorder!',
+        title: isAf ? '\u1F969 Tyd om te herbestel!' : '\u1F969 Time to reorder!',
         body: isAf
           ? `Jy het ${row.days_since} dae gelede ${product} bestel. Bestel weer?`
           : `You ordered ${product} ${row.days_since} days ago. Ready to reorder?`,

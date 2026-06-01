@@ -1,5 +1,5 @@
 /**
- * VleisKraft™ WhatsApp Commerce Webhook
+ * VleisKraft(TM) WhatsApp Commerce Webhook
  * Tier 4+5: Zero-app butchery ordering for township markets
  */
 import { Router, Request, Response } from "express";
@@ -36,11 +36,11 @@ router.post("/webhook", async (req: Request, res: Response) => {
 
     // Handle confirm/cancel
     if (text.toUpperCase() === "BEVESTIG" || text.toUpperCase() === "CONFIRM") {
-      await sendWhatsAppReply(from, "✅ Bestelling bevestig! / Order confirmed! PayFast betaalskakels word gestuur. / payment link being sent. 🥩");
+      await sendWhatsAppReply(from, "[OK] Bestelling bevestig! / Order confirmed! PayFast betaalskakels word gestuur. / payment link being sent. \u1F969");
       return;
     }
     if (text.toUpperCase() === "KANSELLEER" || text.toUpperCase() === "CANCEL") {
-      await sendWhatsAppReply(from, "❌ Bestelling gekanselleer. / Order cancelled. Stuur enige tyd \'n nuwe bestelling! / Send a new order anytime!");
+      await sendWhatsAppReply(from, "[X] Bestelling gekanselleer. / Order cancelled. Stuur enige tyd \'n nuwe bestelling! / Send a new order anytime!");
       return;
     }
 
@@ -49,7 +49,7 @@ router.post("/webhook", async (req: Request, res: Response) => {
     const parsed = await parseWhatsAppOrder(text, butcheryId);
 
     if (parsed.confidence > 0.6 && parsed.items.length > 0) {
-      const confirmation = await formatOrderConfirmation(parsed, "VleisKraft™ Winkel", parsed.language);
+      const confirmation = await formatOrderConfirmation(parsed, "VleisKraft(TM) Winkel", parsed.language);
       await sendWhatsAppReply(from, confirmation);
     } else {
       await sendWhatsAppReply(from, getMenuMessage());
@@ -69,7 +69,7 @@ async function sendWhatsAppReply(to: string, message: string) {
 }
 
 function getMenuMessage(): string {
-  return `🥩 *Welkom by VleisKraft™!*
+  return `\u1F969 *Welkom by VleisKraft(TM)!*
 
 Stuur jou bestelling in Afrikaans of Engels:
 "Ek wil 2kg rump en 1kg boerewors bestel"
@@ -77,10 +77,10 @@ Stuur jou bestelling in Afrikaans of Engels:
 _Send your order in Afrikaans or English:_
 _"I want 2kg rump and 1kg boerewors"_
 
-📦 Aflewering via Pargo (Checkers, PEP)
-💳 Betaal via PayFast
+\u1F4E6 Aflewering via Pargo (Checkers, PEP)
+\u1F4B3 Betaal via PayFast
 
-_VleisKraft™ — Die Slim Slaghuis App™_`;
+_VleisKraft(TM)  -  Die Slim Slaghuis App(TM)_`;
 }
 
 export default router;

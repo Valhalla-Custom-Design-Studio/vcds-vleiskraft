@@ -1,6 +1,6 @@
 /**
  * Cron Job 4: Dynamic Pricing Engine
- * Every 6 hours — adjusts Platinum butchery product prices based on demand + stock
+ * Every 6 hours  -  adjusts Platinum butchery product prices based on demand + stock
  */
 import { pool } from '../db/pool';
 
@@ -37,11 +37,11 @@ export async function runDynamicPricing(): Promise<void> {
   for (const row of rows) {
     let newPrice = row.current_price;
 
-    // High demand + low stock → increase up to 15%
+    // High demand + low stock -> increase up to 15%
     if (row.orders_last_6h > 10 && row.stock_qty < 5) {
       newPrice = Math.min(row.current_price * 1.15, row.current_price * 1.15);
     }
-    // Low demand + high stock → discount up to 10%
+    // Low demand + high stock -> discount up to 10%
     else if (row.orders_last_6h === 0 && row.stock_qty > 50) {
       newPrice = Math.max(row.current_price * 0.90, row.current_price * 0.90);
     }

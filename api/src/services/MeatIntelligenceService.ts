@@ -1,8 +1,8 @@
 /**
- * SA Meat Demand Intelligence Network — Tier 1 Data Moat
- * VCDS™ IP Asset | Compounds daily — cannot be bought
+ * SA Meat Demand Intelligence Network  -  Tier 1 Data Moat
+ * VCDS(TM) IP Asset | Compounds daily  -  cannot be bought
  * Combines: order history + SAFEX cattle prices + weather + payday cycles
- * → Predict braai demand 2 weeks out
+ * -> Predict braai demand 2 weeks out
  * B2B API potential: Shoprite, Pick n Pay, Spar
  */
 import { pool } from "../db/pool";
@@ -113,9 +113,9 @@ export async function generateDemandForecast(butcheryId?: string): Promise<MeatI
     reorder_recommendations: [
       { product: "Boerewors 1kg", quantity: 50, reason: "Weekend demand + payday window incoming" },
       { product: "Braai chops (pork)", quantity: 30, reason: "School holiday boost predicted" },
-      { product: "Mince 500g", quantity: 40, reason: "Weekday staple — consistent demand" },
+      { product: "Mince 500g", quantity: 40, reason: "Weekday staple  -  consistent demand" },
     ],
     market_insights: (aiInsight.content[0] as any).text,
-    safex_signal: "SAFEX cattle futures integration pending — connect via /api/admin/safex to enable live pricing signals",
+    safex_signal: "SAFEX cattle futures integration pending  -  connect via /api/admin/safex to enable live pricing signals",
   };
 }

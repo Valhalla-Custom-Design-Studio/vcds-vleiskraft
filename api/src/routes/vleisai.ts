@@ -7,26 +7,26 @@ import { pool } from '../db/pool';
 const router = Router();
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-// ─── VleisAI™ System Prompt ───────────────────────────────────────────────────
+// --- VleisAI(TM) System Prompt ---------------------------------------------------
 // RULES: Afrikaans-only, no external links, structured JSON response, real product IDs only
-// Migrated from nodejs_space/src/vleisai/vleisai.controller.ts (NestJS → Express)
-// WAVE 2: Migrate to NestJS + Prisma — tracked in KAN backlog
-const buildSystemPrompt = (catalogue: string) => `Jy is VleisAI™, 'n vriendelike Afrikaanse slaghuisassistent. Jy help kliënte met vleiskeuses, braai-wenke, resepte en bestellings.
+// Migrated from nodejs_space/src/vleisai/vleisai.controller.ts (NestJS -> Express)
+// WAVE 2: Migrate to NestJS + Prisma  -  tracked in KAN backlog
+const buildSystemPrompt = (catalogue: string) => `Jy is VleisAI(TM), 'n vriendelike Afrikaanse slaghuisassistent. Jy help kliente met vleiskeuses, braai-wenke, resepte en bestellings.
 
-REËLS (MOET VOLG):
-1. Antwoord ALTYD in SUIWER AFRIKAANS — geen Engels gemeng nie.
-2. Moenie eksterne webskakels, URL's of webadresse gee nie — dit werk nie in die app nie.
+RE\u00CBLS (MOET VOLG):
+1. Antwoord ALTYD in SUIWER AFRIKAANS  -  geen Engels gemeng nie.
+2. Moenie eksterne webskakels, URL's of webadresse gee nie  -  dit werk nie in die app nie.
 3. As jy produkte aanbeveel, gebruik SLEGS produkte uit die katalogus hieronder.
 4. Wees vriendelik, prakties en bondig.
-5. Vir braai-aanbevelings: gee kooktye, temperature en wenke — geen skakels nie.
+5. Vir braai-aanbevelings: gee kooktye, temperature en wenke  -  geen skakels nie.
 
 SUID-AFRIKAANSE VLEISKENNIS:
 - Vleissnitte: Filet, Lendestuk (Sirloin), Boud (Rump), Riboog (Ribeye), Borsvel (Brisket), Nek (Chuck), Skenkel (Shin), Beestertjie (Oxtail)
 - SA Beesgradering: A-graad (<2 snijtande), AB (2-4), B (4-6), C (6-8). A-graad 15-25% premie
-- Tradisionele resepte: biltong, boerewors, droëwors, potjiekos, braai, kerrie, skilpadjies, sosaties
+- Tradisionele resepte: biltong, boerewors, droewors, potjiekos, braai, kerrie, skilpadjies, sosaties
 - Boerewors (Reg R1283): min 90% vleis, maks 10% vet, koljander, naeltjies, neutmuskaat, piment. Geen vulstowwe
-- Braai: hardehout kole, lamskotelette 3-4 min per kant, boerewors medium hitte, hoender indirek 45 min, steak 2-3 min per kant vir medium-skaars by 57°C
-- Vleisberging: Vars bees 0-4°C vir 3-5 dae. Gevries -18°C vir 6-12 maande
+- Braai: hardehout kole, lamskotelette 3-4 min per kant, boerewors medium hitte, hoender indirek 45 min, steak 2-3 min per kant vir medium-skaars by 57 degreesC
+- Vleisberging: Vars bees 0-4 degreesC vir 3-5 dae. Gevries -18 degreesC vir 6-12 maande
 - Huidige SA pryse (2026): Filet R280-320/kg, Sirloin R180-220/kg, Boud R140-170/kg, Lamrak R200-240/kg, Varkpens R80-100/kg
 
 HUIDIGE KATALOGUS:
@@ -35,9 +35,9 @@ ${catalogue || 'Geen produkte beskikbaar nie.'}
 Antwoord ALTYD met hierdie JSON formaat:
 {"reply": "jou Afrikaanse antwoord hier", "suggestedProducts": [{"id": "produk-id", "nameAf": "Afrikaanse naam", "nameEn": "English name", "price": 0}]}
 
-As geen produkte relevant is nie, gebruik 'n leë array: "suggestedProducts": []';
+As geen produkte relevant is nie, gebruik 'n lee array: "suggestedProducts": []';
 
-// ─── POST /chat ───────────────────────────────────────────────────────────────
+// --- POST /chat ---------------------------------------------------------------
 router.post('/chat', authenticate, async (req: Request, res: Response) => {
   try {
     const { message, history = [] } = req.body;
@@ -58,10 +58,10 @@ router.post('/chat', authenticate, async (req: Request, res: Response) => {
         params
       );
       catalogue = products.rows
-        .map((p: any) => `- ${p.name_af ?? p.name_en} (${p.name_en}) — R${p.price_zar}/${p.unit ?? 'kg'}`)
+        .map((p: any) => `- ${p.name_af ?? p.name_en} (${p.name_en})  -  R${p.price_zar}/${p.unit ?? 'kg'}`)
         .join('\n');
     } catch {
-      // Non-fatal — continue without catalogue
+      // Non-fatal  -  continue without catalogue
     }
 
     // Build conversation history (last 10 turns)
@@ -104,7 +104,7 @@ router.post('/chat', authenticate, async (req: Request, res: Response) => {
         [userId, butcheryId, 'assistant', reply]
       );
     } catch {
-      // Non-fatal — chat history is best-effort
+      // Non-fatal  -  chat history is best-effort
     }
 
     // Datamoat: log for SA Meat LLM training dataset
@@ -128,7 +128,7 @@ router.post('/chat', authenticate, async (req: Request, res: Response) => {
   }
 });
 
-// ─── GET /history ─────────────────────────────────────────────────────────────
+// --- GET /history -------------------------------------------------------------
 router.get('/history', authenticate, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
@@ -146,10 +146,10 @@ router.get('/history', authenticate, async (req: Request, res: Response) => {
   }
 });
 
-// ─── GET /status ──────────────────────────────────────────────────────────────
+// --- GET /status --------------------------------------------------------------
 router.get('/status', (_req: Request, res: Response) => {
   res.json({
-    service: 'VleisAI™',
+    service: 'VleisAI(TM)',
     status: 'online',
     version: '4.0.0',
     model: 'claude-sonnet-4-5',

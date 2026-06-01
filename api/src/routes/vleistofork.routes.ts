@@ -5,7 +5,7 @@ const router = Router();
 
 /**
  * POST /api/vleistofork/generate
- * Generate a Vleis-to-Fork™ QR traceability record
+ * Generate a Vleis-to-Fork(TM) QR traceability record
  */
 router.post("/generate", async (req: Request, res: Response) => {
   try {
@@ -28,7 +28,7 @@ router.post("/generate", async (req: Request, res: Response) => {
 router.post("/verify", (req: Request, res: Response) => {
   const { record } = req.body;
   const valid = verifyBlockchainHash(record);
-  return res.json({ success: true, valid, message: valid ? "Record integrity verified ✅" : "Record tampered ❌" });
+  return res.json({ success: true, valid, message: valid ? "Record integrity verified [OK]" : "Record tampered [X]" });
 });
 
 /**

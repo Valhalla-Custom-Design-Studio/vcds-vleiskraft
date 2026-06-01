@@ -13,14 +13,14 @@ const transporter = nodemailer.createTransport({
 export async function sendPasswordResetEmail(
   to: string,
   resetToken: string,
-  appName: string = 'VleisKraft™'
+  appName: string = 'VleisKraft(TM)'
 ): Promise<void> {
   const resetUrl = `${process.env.APP_URL || 'https://vleiskraft.vcds.co.za'}/reset-password?token=${resetToken}`;
 
   await transporter.sendMail({
     from: `"${appName}" <${process.env.SMTP_USER}>`,
     to,
-    subject: `${appName} — Password Reset Request`,
+    subject: `${appName}  -  Password Reset Request`,
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;">
         <h2 style="color:#7F1D1D;">${appName}</h2>
@@ -31,7 +31,7 @@ export async function sendPasswordResetEmail(
         <p style="margin-top:24px;color:#666;font-size:13px;">
           This link expires in 1 hour. If you did not request a reset, ignore this email.
         </p>
-        <p style="color:#999;font-size:11px;">VCDS Holdings · Heidelberg, Gauteng, South Africa</p>
+        <p style="color:#999;font-size:11px;">VCDS Holdings . Heidelberg, Gauteng, South Africa</p>
       </div>
     `,
     text: `Reset your ${appName} password: ${resetUrl}\n\nThis link expires in 1 hour.`,

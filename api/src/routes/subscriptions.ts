@@ -5,7 +5,7 @@ import { pool } from '../db/pool';
 
 const router = Router();
 
-// GET /api/subscriptions/plans — returns bilingual plan list
+// GET /api/subscriptions/plans  -  returns bilingual plan list
 router.get('/plans', (req: Request, res: Response) => {
   const lang = (req.query.lang as string) || 'en';
   const plans = PLANS.map((p) => ({
@@ -20,7 +20,7 @@ router.get('/plans', (req: Request, res: Response) => {
   res.json({ plans });
 });
 
-// POST /api/subscriptions/upgrade — generate PayFast payment URL
+// POST /api/subscriptions/upgrade  -  generate PayFast payment URL
 router.post('/upgrade', requireAuth, (req: Request, res: Response) => {
   const user = (req as any).user;
   const { planId } = req.body;
@@ -50,7 +50,7 @@ router.get('/cancel', (_req: Request, res: Response) => {
   res.json({ message: 'Betaling gekanselleer / Payment cancelled', status: 'cancelled' });
 });
 
-// POST /api/subscriptions/webhook — PayFast ITN
+// POST /api/subscriptions/webhook  -  PayFast ITN
 router.post('/webhook', async (req: Request, res: Response) => {
   const params = req.body as Record<string, string>;
   if (!validateWebhookSignature(params)) {

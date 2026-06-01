@@ -2,7 +2,7 @@ import { pool } from "../db/pool";
 
 /**
  * TIER 1 DATA MOAT: Log every butchery order for demand prediction
- * Aggregated → SA meat demand oracle (SAFEX-level intelligence)
+ * Aggregated -> SA meat demand oracle (SAFEX-level intelligence)
  */
 export async function logOrderEvent(data: {
   butcheryId: string;
@@ -27,7 +27,7 @@ export async function logOrderEvent(data: {
 
 /**
  * TIER 1 DATA MOAT: Log dynamic price changes
- * Aggregated → SA meat price elasticity model
+ * Aggregated -> SA meat price elasticity model
  */
 export async function logPriceChange(butcheryId: string, productId: string, oldPrice: number, newPrice: number, reason: string) {
   try {
