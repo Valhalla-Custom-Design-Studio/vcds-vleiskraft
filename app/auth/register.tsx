@@ -488,7 +488,7 @@ export default function RegisterScreen() {
 
           <TouchableOpacity onPress={() => router.push('/auth/login')} style={s.loginLink}>
             <Text style={s.loginLinkText}>
-              {lang === 'af' ? 'Het jy reeds \'n rekening? ' : 'Already have an account? '}
+              {lang === 'af' ? `Het jy reeds \'n rekening? ` : 'Already have an account? '}
               <Text style={{ color: GOLD }}>{lang === 'af' ? 'Teken in' : 'Log in'}</Text>
             </Text>
           </TouchableOpacity>
