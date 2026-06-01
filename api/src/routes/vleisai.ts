@@ -58,7 +58,7 @@ router.post('/chat', authenticate, async (req: Request, res: Response) => {
         params
       );
       catalogue = products.rows
-        .map((p: any) => `- ${p.name_af ?? p.name_en} (${p.name_en}) — R${p.price_zar}/${p.unit ?? 'kg'}`)
+        .map((p: any) => `- ${p.name_af ?? p.name_en} (${p.name_en}) - R${p.price_zar}/${p.unit ?? 'kg'}`)
         .join('\n');
     } catch {
       // Non-fatal — continue without catalogue
