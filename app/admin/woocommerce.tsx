@@ -56,7 +56,7 @@ export default function WooCommerceScreen() {
         '✅ ' + t('importSuccess', language),
         type === 'products'
           ? `${data.imported} products imported.
-${t('productsReplaced', language)}`
+${t('productsReplaced', language)}
           : `${data.imported} ${type} imported.`
       );
     } catch (e: any) {
