@@ -27,7 +27,8 @@
         "EXPO_PUBLIC_INTERNAL_TOKEN": "9d1664e4dda6bb2",
         "EXPO_PUBLIC_PAYFAST_API_URL": "https://www.payfast.co.za",
         "EXPO_PUBLIC_POSTHOG_KEY": "phc_w8M2RMQe86ghfbEgYUu4TWhgxZyL9EHDvPVLJBUcoxHC",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://7b08f203b22e854aebad0021deb4786f@o4511432712650752.ingest.de.sentry.io/4511461329207376"
+        "EXPO_PUBLIC_SENTRY_DSN": "https://7b08f203b22e854aebad0021deb4786f@o4511432712650752.ingest.de.sentry.io/4511461329207376",
+        "SENTRY_URL": "https://de.sentry.io/"
       }
     },
     "preview": {
@@ -51,7 +52,8 @@
         "EXPO_PUBLIC_INTERNAL_TOKEN": "9d1664e4dda6bb2",
         "EXPO_PUBLIC_PAYFAST_API_URL": "https://www.payfast.co.za",
         "EXPO_PUBLIC_POSTHOG_KEY": "phc_w8M2RMQe86ghfbEgYUu4TWhgxZyL9EHDvPVLJBUcoxHC",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://7b08f203b22e854aebad0021deb4786f@o4511432712650752.ingest.de.sentry.io/4511461329207376"
+        "EXPO_PUBLIC_SENTRY_DSN": "https://7b08f203b22e854aebad0021deb4786f@o4511432712650752.ingest.de.sentry.io/4511461329207376",
+        "SENTRY_URL": "https://de.sentry.io/"
       }
     },
     "production": {
@@ -74,7 +76,8 @@
         "EXPO_PUBLIC_INTERNAL_TOKEN": "9d1664e4dda6bb2",
         "EXPO_PUBLIC_PAYFAST_API_URL": "https://www.payfast.co.za",
         "EXPO_PUBLIC_POSTHOG_KEY": "phc_w8M2RMQe86ghfbEgYUu4TWhgxZyL9EHDvPVLJBUcoxHC",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://7b08f203b22e854aebad0021deb4786f@o4511432712650752.ingest.de.sentry.io/4511461329207376"
+        "EXPO_PUBLIC_SENTRY_DSN": "https://7b08f203b22e854aebad0021deb4786f@o4511432712650752.ingest.de.sentry.io/4511461329207376",
+        "SENTRY_URL": "https://de.sentry.io/"
       }
     }
   },
