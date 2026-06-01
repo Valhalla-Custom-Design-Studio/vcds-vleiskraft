@@ -1,8 +1,8 @@
-# cache-bust: 20260601184505
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json tsconfig.json ./
 RUN npm install
+ARG CACHE_BUST=20260601190353
 COPY src ./src
 RUN node_modules/.bin/tsc
 
