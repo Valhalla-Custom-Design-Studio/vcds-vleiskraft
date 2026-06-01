@@ -18,7 +18,7 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Handle 401 globally — clear token and let _layout redirect
+// Handle 401 globally  -  clear token and let _layout redirect
 api.interceptors.response.use(
   (res) => res,
   async (err) => {

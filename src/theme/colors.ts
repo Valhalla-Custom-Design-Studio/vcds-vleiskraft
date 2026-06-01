@@ -16,7 +16,7 @@ export const Colors = {
   black: "#000000",
 };
 
-// ─── Platinum Design System Additions ───────────────────────
+// --- Platinum Design System Additions -----------------------
 export const Shadow = {
   sm: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 4, elevation: 3 },
   md: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, elevation: 6 },

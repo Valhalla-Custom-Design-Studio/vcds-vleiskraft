@@ -1,5 +1,5 @@
 /**
- * VCDS™ CSRF Guard — Double-Submit Cookie pattern
+ * VCDS(TM) CSRF Guard  -  Double-Submit Cookie pattern
  * Protects PWA/web endpoints. JWT Bearer tokens (mobile) are CSRF-immune.
  */
 import { Injectable, NestMiddleware } from "@nestjs/common";

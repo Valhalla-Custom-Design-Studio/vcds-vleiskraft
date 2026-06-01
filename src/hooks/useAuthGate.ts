@@ -7,7 +7,7 @@ const BG = '#0A0A0A';
 const GOLD = '#C9A84C';
 
 /**
- * VleisKraft™ Auth Gate
+ * VleisKraft(TM) Auth Gate
  * - No token → /auth/login
  * - Consumer, no active sub → /paywall/consumer
  * - Butcher, plan=free → /(tabs) (freemium access)
@@ -35,7 +35,7 @@ export function useAuthGate() {
             return;
           }
         }
-        // Butchers (free or paid) get access — plan gates features inside the app
+        // Butchers (free or paid) get access  -  plan gates features inside the app
         setChecked(true);
       } catch {
         router.replace('/auth/login');

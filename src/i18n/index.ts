@@ -5,7 +5,7 @@ import af from "./af.json";
 export type Lang = "en" | "af";
 const translations: Record<Lang, any> = { en, af };
 
-// ─── Global lang state (simple module-level for now) ─────────────────────────
+// --- Global lang state (simple module-level for now) -------------------------
 let _lang: Lang = "en";
 const _listeners: Set<() => void> = new Set();
 
@@ -18,7 +18,7 @@ export function getGlobalLang(): Lang {
   return _lang;
 }
 
-// ─── Hook ────────────────────────────────────────────────────────────────────
+// --- Hook --------------------------------------------------------------------
 export function useI18n() {
   const [lang, setLang] = useState<Lang>(_lang);
 
@@ -38,7 +38,7 @@ export function useI18n() {
   return { t, lang, toggleLang };
 }
 
-// ─── Standalone t() for class components / non-hook contexts ─────────────────
+// --- Standalone t() for class components / non-hook contexts -----------------
 export function t(key: string, lang?: Lang): string {
   const l = lang ?? _lang;
   const parts = key.split(".");
@@ -47,7 +47,7 @@ export function t(key: string, lang?: Lang): string {
   return typeof val === "string" ? val : key;
 }
 
-// ─── Legacy compat: flat key lookup (for src/locales and locales usage) ───────
+// --- Legacy compat: flat key lookup (for src/locales and locales usage) -------
 export function tFlat(key: string, lang?: Lang): string {
   const l = lang ?? _lang;
   // Try nested first, then flat search across all sections

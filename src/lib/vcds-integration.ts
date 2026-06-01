@@ -1,11 +1,11 @@
 /**
- * VCDS™ Cross-App Integration Layer
- * VleisKraft™ ↔ Fitness & Fuel™
+ * VCDS(TM) Cross-App Integration Layer
+ * VleisKraft(TM) ↔ Fitness & Fuel(TM)
  * KAN-3: Integration Pass
  */
 
 export const INTEGRATION_CONFIG = {
-  // Shared user identity — same VCDS account works in both apps
+  // Shared user identity  -  same VCDS account works in both apps
   SHARED_AUTH: true,
 
   // F&F pulls SA food nutrition data from VleisKraft database
@@ -14,7 +14,7 @@ export const INTEGRATION_CONFIG = {
   // VleisKraft pushes meat pack deals to F&F macro tracker
   VLEISKRAFT_DEALS_FEED: true,
 
-  // Shared PayFast subscription — one subscription unlocks both apps
+  // Shared PayFast subscription  -  one subscription unlocks both apps
   SHARED_SUBSCRIPTION_TIER: ['pro', 'platinum'],
 
   // Deep link: F&F → VleisKraft product page

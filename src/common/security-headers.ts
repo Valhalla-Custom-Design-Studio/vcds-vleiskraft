@@ -1,5 +1,5 @@
 /**
- * VCDS™ Security Headers — applied via Helmet in main.ts
+ * VCDS(TM) Security Headers  -  applied via Helmet in main.ts
  * Content-Security-Policy, HSTS, X-Frame-Options, etc.
  */
 export const helmetOptions = {

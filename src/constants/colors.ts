@@ -1,4 +1,4 @@
-// Auto-generated barrel — re-exports from src/theme + design tokens
+// Auto-generated barrel  -  re-exports from src/theme + design tokens
 export { Colors } from '../theme/colors';
 
 export const Spacing = {

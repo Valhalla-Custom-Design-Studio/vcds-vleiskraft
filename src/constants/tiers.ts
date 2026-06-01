@@ -1,5 +1,5 @@
-// VleisKraft™ Subscription Tiers
-// Consumers: FREE forever — no tier, no gate, no paywall
+// VleisKraft(TM) Subscription Tiers
+// Consumers: FREE forever  -  no tier, no gate, no paywall
 // Butchers: 5-tier B2B model
 
 export type ConsumerTier = 'consumer'; // always free
@@ -25,15 +25,15 @@ export const BUTCHER_TIERS = {
     color: '#555555',
     features_en: [
       'List up to 10 products',
-      'Basic storefront on VleisKraft™',
+      'Basic storefront on VleisKraft(TM)',
       'Customer enquiries',
-      'VleisKraft™ directory listing',
+      'VleisKraft(TM) directory listing',
     ],
     features_af: [
       'Lys tot 10 produkte',
-      'Basiese winkelfront op VleisKraft™',
+      'Basiese winkelfront op VleisKraft(TM)',
       'Kliënte-navrae',
-      'VleisKraft™ gidsinskrywing',
+      'VleisKraft(TM) gidsinskrywing',
     ],
   },
   starter: {
@@ -71,7 +71,7 @@ export const BUTCHER_TIERS = {
     popular: true,
     features_en: [
       'Unlimited products',
-      'VleisAI™ demand forecasting',
+      'VleisAI(TM) demand forecasting',
       'Campaign & promotions manager',
       'Stockvel group management',
       'Advanced analytics',
@@ -79,7 +79,7 @@ export const BUTCHER_TIERS = {
     ],
     features_af: [
       'Onbeperkte produkte',
-      'VleisAI™ vraagvoorspelling',
+      'VleisAI(TM) vraagvoorspelling',
       'Veldtog- en promosiebestuurder',
       'Stockvel-groepbestuur',
       'Gevorderde analitiek',

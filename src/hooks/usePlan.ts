@@ -66,7 +66,7 @@ export function usePlan() {
       enterprise: lang === 'af' ? 'Onderneming' : 'Enterprise',
     };
     Alert.alert(
-      'VleisKraft™',
+      'VleisKraft(TM)',
       lang === 'af'
         ? `Hierdie funksie vereis die ${planNames[required]}-pakket of hoër. Gradeer op om toegang te kry.`
         : `This feature requires the ${planNames[required]} plan or higher. Upgrade to access.`,
