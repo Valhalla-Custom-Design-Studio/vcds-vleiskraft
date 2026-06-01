@@ -1,7 +1,7 @@
 /**
- * Ubidots IoT API — Cold chain temperature monitoring
+ * Ubidots IoT API  -  Cold chain temperature monitoring
  * Free tier: 3 devices, 4000 dots/day
- * Use case: Meat transport temp logging for Vleis-to-Fork™
+ * Use case: Meat transport temp logging for Vleis-to-Fork(TM)
  */
 
 const UBIDOTS_TOKEN = process.env.UBIDOTS_TOKEN || "";

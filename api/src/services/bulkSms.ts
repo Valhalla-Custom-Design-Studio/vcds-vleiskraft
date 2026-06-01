@@ -32,34 +32,34 @@ async function sendSms(payload: SmsPayload): Promise<void> {
 export async function sendOrderConfirmation(phone: string, orderRef: string, total: string): Promise<void> {
   await sendSms({
     to: phone,
-    body: `VleisKraft™ Bestelling Bevestig! Ref: ${orderRef} | Totaal: R${total}. Ons sal jou kontak wanneer jou bestelling gereed is. Dankie!`,
+    body: `VleisKraft(TM) Bestelling Bevestig! Ref: ${orderRef} | Totaal: R${total}. Ons sal jou kontak wanneer jou bestelling gereed is. Dankie!`,
   });
 }
 
 export async function sendOrderReady(phone: string, orderRef: string): Promise<void> {
   await sendSms({
     to: phone,
-    body: `VleisKraft™: Jou bestelling ${orderRef} is gereed vir afhaal / aflewering is onderweg. Geniet jou vleis!`,
+    body: `VleisKraft(TM): Jou bestelling ${orderRef} is gereed vir afhaal / aflewering is onderweg. Geniet jou vleis!`,
   });
 }
 
 export async function sendLayByReminder(phone: string, amount: string, dueDate: string): Promise<void> {
   await sendSms({
     to: phone,
-    body: `VleisKraft™ Lay-By: Jou volgende paaiement van R${amount} is verskuldig op ${dueDate}. Kontak ons by jou slagter.`,
+    body: `VleisKraft(TM) Lay-By: Jou volgende paaiement van R${amount} is verskuldig op ${dueDate}. Kontak ons by jou slagter.`,
   });
 }
 
 export async function sendStockvelPayout(phone: string, amount: string): Promise<void> {
   await sendSms({
     to: phone,
-    body: `VleisKraft™ Stockvel: Jou uitbetaling van R${amount} is verwerk. Geniet jou vleis!`,
+    body: `VleisKraft(TM) Stockvel: Jou uitbetaling van R${amount} is verwerk. Geniet jou vleis!`,
   });
 }
 
 export async function sendSmartReorderAlert(phone: string, product: string): Promise<void> {
   await sendSms({
     to: phone,
-    body: `VleisKraft™: Tyd om ${product} te herbestel! Tik hier om te bestel: vleiskraft://reorder`,
+    body: `VleisKraft(TM): Tyd om ${product} te herbestel! Tik hier om te bestel: vleiskraft://reorder`,
   });
 }

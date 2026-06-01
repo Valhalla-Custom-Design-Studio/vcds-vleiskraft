@@ -34,7 +34,7 @@ router.post("/bookings", requireAuth, async (req: Request, res: Response) => {
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-// PATCH /api/spitbraai/bookings/:id — update status
+// PATCH /api/spitbraai/bookings/:id  -  update status
 router.patch("/bookings/:id", requireAuth, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;

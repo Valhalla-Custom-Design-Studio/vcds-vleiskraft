@@ -9,7 +9,7 @@ export async function runMigrations() {
     const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
     await client.query(schema);
 
-    // 2. Apply bilingual seed (ON CONFLICT DO UPDATE — always up to date)
+    // 2. Apply bilingual seed (ON CONFLICT DO UPDATE  -  always up to date)
     const seed = fs.readFileSync(path.join(__dirname, 'seed.sql'), 'utf8');
     await client.query(seed);
   } catch (err) {

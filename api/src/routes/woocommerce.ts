@@ -54,7 +54,7 @@ async function fetchWooCategories(storeUrl: string, consumerKey: string, consume
   return res.json();
 }
 
-// GET /api/woocommerce/test — test connection
+// GET /api/woocommerce/test  -  test connection
 router.get('/test', requireAuth, requirePlatinum, async (req: Request, res: Response) => {
   const { storeUrl, consumerKey, consumerSecret } = req.query as Record<string, string>;
   try {
@@ -70,7 +70,7 @@ router.get('/test', requireAuth, requirePlatinum, async (req: Request, res: Resp
   }
 });
 
-// POST /api/woocommerce/import — FULL IMPORT: replaces all products, prices, categories, images
+// POST /api/woocommerce/import  -  FULL IMPORT: replaces all products, prices, categories, images
 router.post('/import', requireAuth, requirePlatinum, async (req: Request, res: Response) => {
   const { storeUrl, consumerKey, consumerSecret, butcheryId } = req.body;
   if (!storeUrl || !consumerKey || !consumerSecret) {
@@ -123,7 +123,7 @@ router.post('/import', requireAuth, requirePlatinum, async (req: Request, res: R
   }
 });
 
-// GET /api/woocommerce/status — import status
+// GET /api/woocommerce/status  -  import status
 router.get('/status', requireAuth, requirePlatinum, (req: Request, res: Response) => {
   res.json({
     lastImport: null,

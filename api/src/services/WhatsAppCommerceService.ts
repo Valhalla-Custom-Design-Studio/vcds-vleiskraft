@@ -1,9 +1,9 @@
 /**
- * VleisKraft™ WhatsApp Commerce — Tier 4+5 Market Moat
+ * VleisKraft(TM) WhatsApp Commerce  -  Tier 4+5 Market Moat
  * Every butchery gets AI-powered WhatsApp ordering
  * "Ek wil 2kg rump bestel" → AI processes → PayFast link → Pargo pickup booked
  * Zero app install. Wins townships and rural markets.
- * VCDS™ IP Asset
+ * VCDS(TM) IP Asset
  */
 import Anthropic from "@anthropic-ai/sdk";
 import { pool } from "../db/pool";
@@ -52,9 +52,9 @@ export async function formatOrderConfirmation(order: ParsedOrder, butcheryName: 
   const itemsList = order.items.map(i => `• ${i.quantity}${i.unit} ${i.product}: R${i.estimated_price.toFixed(2)}`).join("\n");
 
   if (lang === "af") {
-    return `🥩 *${butcheryName} via VleisKraft™*\n\n*Jou bestelling:*\n${itemsList}\n\n*Totaal: ~R${order.total_estimated.toFixed(2)}*\n\nTik *BEVESTIG* om te betaal of *KANSELLEER* om te stop.\n_Betaal via PayFast. Pargo afhaalpunt beskikbaar._`;
+    return `🥩 *${butcheryName} via VleisKraft(TM)*\n\n*Jou bestelling:*\n${itemsList}\n\n*Totaal: ~R${order.total_estimated.toFixed(2)}*\n\nTik *BEVESTIG* om te betaal of *KANSELLEER* om te stop.\n_Betaal via PayFast. Pargo afhaalpunt beskikbaar._`;
   }
-  return `🥩 *${butcheryName} via VleisKraft™*\n\n*Your order:*\n${itemsList}\n\n*Total: ~R${order.total_estimated.toFixed(2)}*\n\nReply *CONFIRM* to pay or *CANCEL* to stop.\n_Pay via PayFast. Pargo pickup available._`;
+  return `🥩 *${butcheryName} via VleisKraft(TM)*\n\n*Your order:*\n${itemsList}\n\n*Total: ~R${order.total_estimated.toFixed(2)}*\n\nReply *CONFIRM* to pay or *CANCEL* to stop.\n_Pay via PayFast. Pargo pickup available._`;
 }
 
 /**
@@ -110,7 +110,7 @@ export async function persistWhatsAppOrder(
       [orderId, customerPhone, JSON.stringify(order.items), order.total_estimated, butcheryId]
     );
   } catch {
-    // Table may not exist yet — non-fatal
+    // Table may not exist yet  -  non-fatal
   }
   return orderId;
 }

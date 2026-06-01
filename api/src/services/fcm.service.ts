@@ -45,8 +45,8 @@ export async function sendSOSToFamily(
     familyTokens.map(token =>
       sendPushNotification(
         null, token,
-        '🚨 SOS Alert — ' + elderName,
-        'Emergency: ' + sosType + (location ? ' — Tap to view location' : ''),
+        '🚨 SOS Alert  -  ' + elderName,
+        'Emergency: ' + sosType + (location ? '  -  Tap to view location' : ''),
         location ? { lat: String(location.lat), lng: String(location.lng), type: sosType } : { type: sosType }
       )
     )

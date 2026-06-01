@@ -32,7 +32,7 @@ export interface PayFastPaymentData {
 }
 
 /**
- * generateSignature — HMAC-MD5 signature for PayFast
+ * generateSignature  -  HMAC-MD5 signature for PayFast
  */
 export const generateSignature = (data: Record<string, string>, passphrase: string): string => {
   const sorted = Object.keys(data)
@@ -45,7 +45,7 @@ export const generateSignature = (data: Record<string, string>, passphrase: stri
 };
 
 /**
- * buildPaymentUrl — Returns the full PayFast hosted payment URL
+ * buildPaymentUrl  -  Returns the full PayFast hosted payment URL
  */
 export const buildPaymentUrl = (paymentData: PayFastPaymentData): string => {
   const data: Record<string, string> = {
@@ -76,7 +76,7 @@ export const buildPaymentUrl = (paymentData: PayFastPaymentData): string => {
 };
 
 /**
- * validateITN — Validate PayFast Instant Transaction Notification
+ * validateITN  -  Validate PayFast Instant Transaction Notification
  * Call this in your /api/payments/notify endpoint
  */
 export const validateITN = async (itnData: Record<string, string>): Promise<boolean> => {

@@ -1,6 +1,6 @@
 /**
  * Cron Job 3: Sentiment Digest
- * Daily at 06:00 SAST — aggregates VleisAI chat sentiment, sends digest to butchery admins
+ * Daily at 06:00 SAST  -  aggregates VleisAI chat sentiment, sends digest to butchery admins
  */
 import { pool } from '../db/pool';
 import { Expo } from 'expo-server-sdk';
@@ -65,7 +65,7 @@ export async function runSentimentDigest(): Promise<void> {
 
     messages.push({
       to: row.push_token,
-      title: isAf ? `📊 ${row.butchery_name} — Daaglikse Oorsig` : `📊 ${row.butchery_name} — Daily Digest`,
+      title: isAf ? `📊 ${row.butchery_name}  -  Daaglikse Oorsig` : `📊 ${row.butchery_name}  -  Daily Digest`,
       body: isAf
         ? `${row.total_queries} VleisAI vrae gister. Sentiment: ${score}% positief.`
         : `${row.total_queries} VleisAI queries yesterday. Sentiment: ${score}% positive.`,

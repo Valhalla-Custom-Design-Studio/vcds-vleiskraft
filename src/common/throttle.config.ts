@@ -1,5 +1,5 @@
 /**
- * VCDS™ Rate Limit Config
+ * VCDS(TM) Rate Limit Config
  * Auth endpoints: 5 requests/minute (brute force protection)
  * General API: 100 requests/minute
  */

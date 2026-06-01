@@ -1,6 +1,6 @@
 /**
  * Cron Job 5: Demand Predictions
- * Daily at 02:00 SAST — calculates 7-day demand forecast per product per butchery
+ * Daily at 02:00 SAST  -  calculates 7-day demand forecast per product per butchery
  * Uses 30-day rolling average with day-of-week weighting
  */
 import { pool } from '../db/pool';

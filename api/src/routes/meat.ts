@@ -25,7 +25,7 @@ router.get('/catalogue', authenticate, async (req: Request, res: Response) => {
   } catch (err) { res.status(500).json({ error: 'Failed to fetch catalogue' }); }
 });
 
-// POST /meat/catalogue — add product (supplier)
+// POST /meat/catalogue  -  add product (supplier)
 router.post('/catalogue', authenticate, async (req: Request, res: Response) => {
   try {
     const uid = (req as any).user.id;
@@ -43,7 +43,7 @@ router.post('/catalogue', authenticate, async (req: Request, res: Response) => {
   } catch { res.status(500).json({ error: 'Failed to add product' }); }
 });
 
-// GET /meat/catalogue/:id — with traceability
+// GET /meat/catalogue/:id  -  with traceability
 router.get('/catalogue/:id', authenticate, async (req: Request, res: Response) => {
   try {
     const product = await pool.query('SELECT * FROM meat_products WHERE id=$1', [req.params.id]);
@@ -53,7 +53,7 @@ router.get('/catalogue/:id', authenticate, async (req: Request, res: Response) =
   } catch { res.status(500).json({ error: 'Failed' }); }
 });
 
-// GET /meat/cuts — cuts database
+// GET /meat/cuts  -  cuts database
 router.get('/cuts', authenticate, async (_req: Request, res: Response) => {
   const cuts = {
     beef: ['Ribeye','Sirloin','Fillet','Rump','T-Bone','Brisket','Chuck','Short Rib','Oxtail','Shin','Topside','Silverside'],
@@ -91,7 +91,7 @@ router.get('/suppliers', authenticate, async (_req: Request, res: Response) => {
   } catch { res.status(500).json({ error: 'Failed' }); }
 });
 
-// POST /meat/traceability — add trace record
+// POST /meat/traceability  -  add trace record
 router.post('/traceability', authenticate, async (req: Request, res: Response) => {
   try {
     const { product_id, animal_tag, farm_name, farm_location, slaughter_date, abattoir_name, abattoir_reg, vet_cert_number, cold_chain_temp } = req.body;

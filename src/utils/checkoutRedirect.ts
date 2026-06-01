@@ -1,4 +1,4 @@
-// Checkout redirect helper — KAN-32
+// Checkout redirect helper  -  KAN-32
 // Opens PayFast payment URL in browser after order creation
 
 import { Linking } from 'react-native';

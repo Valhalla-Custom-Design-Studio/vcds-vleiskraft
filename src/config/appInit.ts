@@ -1,5 +1,5 @@
 /**
- * App initialisation — called once on startup
+ * App initialisation  -  called once on startup
  * Wires Sentry error tracking + PostHog analytics
  */
 import { initSentry } from '../services/sentry';

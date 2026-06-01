@@ -1,6 +1,6 @@
 /**
  * Cloudflare R2 image upload service
- * Uses presigned URLs from the API — never exposes R2 credentials to the client
+ * Uses presigned URLs from the API  -  never exposes R2 credentials to the client
  */
 
 const API_BASE = process.env.EXPO_PUBLIC_API_URL || 'https://vleiskraft-api.onrender.com';

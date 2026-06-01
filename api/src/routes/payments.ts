@@ -29,7 +29,7 @@ function verifyItnSignature(body: Record<string, string>, passphrase: string): b
   return expected === signature;
 }
 
-// Checkout — generate PayFast redirect URL
+// Checkout  -  generate PayFast redirect URL
 router.post("/checkout", authenticate, async (req: Request, res: Response) => {
   try {
     const { amount, item_name, email, first_name, last_name, subscription_type } = req.body;
@@ -69,7 +69,7 @@ router.post("/checkout", authenticate, async (req: Request, res: Response) => {
   }
 });
 
-// ITN (Instant Transaction Notification) — PayFast webhook
+// ITN (Instant Transaction Notification)  -  PayFast webhook
 router.post("/itn", async (req: Request, res: Response) => {
   try {
     const body = req.body as Record<string, string>;

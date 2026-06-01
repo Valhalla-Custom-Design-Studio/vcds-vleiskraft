@@ -1,6 +1,6 @@
 /**
  * Cron Job 4: Dynamic Pricing Engine
- * Every 6 hours — adjusts Platinum butchery product prices based on demand + stock
+ * Every 6 hours  -  adjusts Platinum butchery product prices based on demand + stock
  */
 import { pool } from '../db/pool';
 

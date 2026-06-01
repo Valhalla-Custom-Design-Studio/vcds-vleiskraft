@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Joi from 'joi';
 import { pool } from '../db/pool';
 
-// WAVE 2: Migrate to NestJS + Prisma — tracked in KAN backlog
+// WAVE 2: Migrate to NestJS + Prisma  -  tracked in KAN backlog
 // Logic ported from nodejs_space/src/auth/auth.service.ts (NestJS → Express)
 
 export const authRouter = Router();
@@ -209,7 +209,7 @@ authRouter.post('/forgot-password', async (req: Request, res: Response) => {
     const expires = new Date(Date.now() + 3600000);
     await pool.query('UPDATE users SET reset_token=$1,reset_token_expires=$2 WHERE id=$3', [resetToken, expires, rows[0].id]);
     if (process.env.NODE_ENV !== 'development') {
-      await sendPasswordResetEmail(email.toLowerCase(), resetToken, 'VleisKraft™');
+      await sendPasswordResetEmail(email.toLowerCase(), resetToken, 'VleisKraft(TM)');
     }
     res.json({ success: true, message: 'If that email exists, a reset link was sent', debug_token: process.env.NODE_ENV === 'development' ? resetToken : undefined });
   } catch(e) { res.status(500).json({ success: false, message: 'Failed' }); }

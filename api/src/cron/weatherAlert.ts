@@ -1,6 +1,6 @@
 /**
  * Cron Job 1: Braai Weather Alert
- * Every 3 hours — checks OWM for all users with push tokens + location
+ * Every 3 hours  -  checks OWM for all users with push tokens + location
  * Sends push if braai conditions are perfect (temp > 22°C, wind < 20km/h, no rain)
  */
 import { pool } from '../db/pool';
@@ -56,8 +56,8 @@ export async function runWeatherAlert(): Promise<void> {
           to: user.push_token,
           title: isAf ? '🔥 Perfekte Braai Weer!' : '🔥 Perfect Braai Weather!',
           body: isAf
-            ? `${Math.round(temp)}°C, wind ${Math.round(windSpeed)}km/h — Ideaal vir 'n braai!`
-            : `${Math.round(temp)}°C, wind ${Math.round(windSpeed)}km/h — Perfect for a braai!`,
+            ? `${Math.round(temp)}°C, wind ${Math.round(windSpeed)}km/h  -  Ideaal vir 'n braai!`
+            : `${Math.round(temp)}°C, wind ${Math.round(windSpeed)}km/h  -  Perfect for a braai!`,
           data: { type: 'weather_alert', temp, windSpeed },
           sound: 'default',
         });

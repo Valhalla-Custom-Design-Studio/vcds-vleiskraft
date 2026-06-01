@@ -1,6 +1,6 @@
 /**
  * Cron Job 2: Smart Reorder Nudge
- * Daily at 09:00 SAST — checks order history, nudges users who haven't ordered in 14+ days
+ * Daily at 09:00 SAST  -  checks order history, nudges users who haven't ordered in 14+ days
  */
 import { pool } from '../db/pool';
 import { Expo } from 'expo-server-sdk';

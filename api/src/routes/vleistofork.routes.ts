@@ -5,7 +5,7 @@ const router = Router();
 
 /**
  * POST /api/vleistofork/generate
- * Generate a Vleis-to-Fork™ QR traceability record
+ * Generate a Vleis-to-Fork(TM) QR traceability record
  */
 router.post("/generate", async (req: Request, res: Response) => {
   try {

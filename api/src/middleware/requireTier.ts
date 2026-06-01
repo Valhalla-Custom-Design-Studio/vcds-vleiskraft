@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
  * Tier hierarchy: consumer < starter < pro < business < enterprise
  * Bilingual EN/AF tier names supported.
  *
- * RULE: consumer accounts have full access to all features — no gating applies.
+ * RULE: consumer accounts have full access to all features  -  no gating applies.
  */
 const TIER_RANK: Record<string, number> = {
   consumer: 0,
@@ -25,7 +25,7 @@ export function requireTier(minTier: string) {
 
     const userTier = user.tier?.toLowerCase() ?? '';
 
-    // Consumers always pass — no feature gating for consumer accounts
+    // Consumers always pass  -  no feature gating for consumer accounts
     if (userTier === 'consumer') return next();
 
     const userRank = TIER_RANK[userTier] ?? -1;

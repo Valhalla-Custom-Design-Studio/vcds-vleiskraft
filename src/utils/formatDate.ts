@@ -6,7 +6,7 @@ export type SupportedLocale = 'en' | 'af';
 const LOCALES = { en: enZA, af: afLocale };
 
 /**
- * formatDate — Format a date in SA format (DD/MM/YYYY)
+ * formatDate  -  Format a date in SA format (DD/MM/YYYY)
  * @param date - ISO string or Date object
  * @param locale - 'en' or 'af'
  * @param pattern - date-fns format pattern (default: dd/MM/yyyy)
@@ -22,14 +22,14 @@ export const formatDate = (
 };
 
 /**
- * formatDateTime — DD/MM/YYYY HH:mm
+ * formatDateTime  -  DD/MM/YYYY HH:mm
  */
 export const formatDateTime = (date: string | Date, locale: SupportedLocale = 'en'): string => {
   return formatDate(date, locale, 'dd/MM/yyyy HH:mm');
 };
 
 /**
- * formatRelative — "2 days ago", "in 3 hours" etc.
+ * formatRelative  -  "2 days ago", "in 3 hours" etc.
  */
 export const formatRelativeDate = (date: string | Date, locale: SupportedLocale = 'en'): string => {
   const { formatDistanceToNow } = require('date-fns');

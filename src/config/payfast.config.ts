@@ -1,4 +1,4 @@
-// PayFast Config — VleisKraft™
+// PayFast Config  -  VleisKraft(TM)
 // KAN-31: LIVE endpoint. KAN-32: APP_ORIGIN from env.
 
 export const PAYFAST_CONFIG = {

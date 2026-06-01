@@ -6,7 +6,7 @@ const router = Router();
 
 /**
  * GET /api/butcheries
- * List butcheries — optionally filtered by province or city
+ * List butcheries  -  optionally filtered by province or city
  * Used during signup and profile update
  */
 router.get('/', async (req: Request, res: Response) => {

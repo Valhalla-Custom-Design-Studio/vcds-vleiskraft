@@ -1,5 +1,5 @@
 /**
- * VleisKraft™ WhatsApp Commerce Webhook
+ * VleisKraft(TM) WhatsApp Commerce Webhook
  * Tier 4+5: Zero-app butchery ordering for township markets
  */
 import { Router, Request, Response } from "express";
@@ -49,7 +49,7 @@ router.post("/webhook", async (req: Request, res: Response) => {
     const parsed = await parseWhatsAppOrder(text, butcheryId);
 
     if (parsed.confidence > 0.6 && parsed.items.length > 0) {
-      const confirmation = await formatOrderConfirmation(parsed, "VleisKraft™ Winkel", parsed.language);
+      const confirmation = await formatOrderConfirmation(parsed, "VleisKraft(TM) Winkel", parsed.language);
       await sendWhatsAppReply(from, confirmation);
     } else {
       await sendWhatsAppReply(from, getMenuMessage());
@@ -69,7 +69,7 @@ async function sendWhatsAppReply(to: string, message: string) {
 }
 
 function getMenuMessage(): string {
-  return `🥩 *Welkom by VleisKraft™!*
+  return `🥩 *Welkom by VleisKraft(TM)!*
 
 Stuur jou bestelling in Afrikaans of Engels:
 "Ek wil 2kg rump en 1kg boerewors bestel"
@@ -80,7 +80,7 @@ _"I want 2kg rump and 1kg boerewors"_
 📦 Aflewering via Pargo (Checkers, PEP)
 💳 Betaal via PayFast
 
-_VleisKraft™ — Die Slim Slaghuis App™_`;
+_VleisKraft(TM)  -  Die Slim Slaghuis App(TM)_`;
 }
 
 export default router;

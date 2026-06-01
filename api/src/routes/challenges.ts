@@ -39,7 +39,7 @@ router.post("/:id/enter", requireAuth, async (req: Request, res: Response) => {
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-// GET /api/challenges/:id/entries — leaderboard
+// GET /api/challenges/:id/entries  -  leaderboard
 router.get("/:id/entries", requireAuth, async (req: Request, res: Response) => {
   try {
     const { rows } = await pool.query(

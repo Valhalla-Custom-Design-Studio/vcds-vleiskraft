@@ -1,9 +1,9 @@
 /**
- * formatZAR — Format a number as South African Rand (ZAR)
- * Returns "—" for zero, null, or undefined prices (out-of-stock / unpriced items)
+ * formatZAR  -  Format a number as South African Rand (ZAR)
+ * Returns " - " for zero, null, or undefined prices (out-of-stock / unpriced items)
  */
 export const formatZAR = (amount: number | null | undefined, inCents = false): string => {
-  if (amount === null || amount === undefined || amount === 0) return '—';
+  if (amount === null || amount === undefined || amount === 0) return ' - ';
   const value = inCents ? amount / 100 : amount;
   return new Intl.NumberFormat('en-ZA', {
     style: 'currency',
@@ -14,14 +14,14 @@ export const formatZAR = (amount: number | null | undefined, inCents = false): s
 };
 
 /**
- * formatZARRange — Format a price range e.g. "R99 – R499/month"
+ * formatZARRange  -  Format a price range e.g. "R99  -  R499/month"
  */
 export const formatZARRange = (min: number, max: number, period = 'month'): string => {
-  return `${formatZAR(min)} – ${formatZAR(max)}/${period}`;
+  return `${formatZAR(min)}  -  ${formatZAR(max)}/${period}`;
 };
 
 /**
- * formatZARAccessible — Returns screen-reader-friendly string
+ * formatZARAccessible  -  Returns screen-reader-friendly string
  */
 export const formatZARAccessible = (amount: number): string => {
   if (!amount) return 'prys nie beskikbaar nie';
@@ -29,7 +29,7 @@ export const formatZARAccessible = (amount: number): string => {
 };
 
 /**
- * isPriced — Returns true if a product has a valid, non-zero price
+ * isPriced  -  Returns true if a product has a valid, non-zero price
  */
 export const isPriced = (amount: number | null | undefined): boolean => {
   return amount !== null && amount !== undefined && amount > 0;
