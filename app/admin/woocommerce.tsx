@@ -67,7 +67,7 @@ ${t('productsReplaced', language)}
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <Text style={styles.title}>🛒 {t('woocommerce', language)}</Text>
+        <Text style={styles.title}>\u{1F6D2} {t('woocommerce', language)}</Text>
         <Text style={styles.sub}>Sinkroniseer jou WooCommerce winkel</Text>
       </View>
 
@@ -94,7 +94,7 @@ ${t('productsReplaced', language)}
 
       {/* Credentials */}
       <GlassCard style={styles.card}>
-        <Text style={styles.cardTitle}>🔑 Credentials</Text>
+        <Text style={styles.cardTitle}>\u{1F511} Credentials</Text>
         <TextInput style={styles.input} placeholder={t('wooUrl', language)} placeholderTextColor={Colors.textSecondary} value={url} onChangeText={setUrl} autoCapitalize="none" />
         <TextInput style={styles.input} placeholder={t('wooKey', language)} placeholderTextColor={Colors.textSecondary} value={key} onChangeText={setKey} autoCapitalize="none" />
         <TextInput style={styles.input} placeholder={t('wooSecret', language)} placeholderTextColor={Colors.textSecondary} value={secret} onChangeText={setSecret} secureTextEntry />
@@ -104,8 +104,8 @@ ${t('productsReplaced', language)}
       {/* Import Actions */}
       {status?.connected && (
         <GlassCard style={styles.card}>
-          <Text style={styles.cardTitle}>📥 Import Data</Text>
-          <Text style={styles.importNote}>⚠️ {t('productsReplaced', language)}</Text>
+          <Text style={styles.cardTitle}>\u{1F4E5} Import Data</Text>
+          <Text style={styles.importNote}>\u26A0\uFE0F {t('productsReplaced', language)}</Text>
 
           {(['products', 'customers', 'orders'] as const).map(type => (
             <TouchableOpacity
@@ -124,7 +124,7 @@ ${t('productsReplaced', language)}
                 </Text>
                 {importResult[type] && (
                   <Text style={styles.importResult}>
-                    ✅ {importResult[type].imported} imported, {importResult[type].skipped ?? 0} skipped
+                    \u2705 {importResult[type].imported} imported, {importResult[type].skipped ?? 0} skipped
                   </Text>
                 )}
               </View>

@@ -72,7 +72,7 @@ export default function SubscriptionScreen() {
             </Text>
             {plan.trial_days > 0 && (
               <Text style={s.trial}>
-                {lang === "af" ? `✨ ${plan.trial_days} dae gratis proeftydperk` : `✨ ${plan.trial_days}-day free trial`}
+                {lang === "af" ? `\u2728 ${plan.trial_days} dae gratis proeftydperk` : `\u2728 ${plan.trial_days}-day free trial`}
               </Text>
             )}
             <Text style={s.branchInfo}>
@@ -81,7 +81,7 @@ export default function SubscriptionScreen() {
                 : `Branches: ${plan.max_branches === 99 ? "Unlimited" : plan.max_branches}`}
             </Text>
             {features.map((f) => (
-              <Text key={f} style={s.feature}>✓ {f}</Text>
+              <Text key={f} style={s.feature}>\u2713 {f}</Text>
             ))}
             <TouchableOpacity
               style={[s.btn, { backgroundColor: isFree ? "#333" : color }]}

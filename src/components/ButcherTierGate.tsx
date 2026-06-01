@@ -36,7 +36,7 @@ export default function ButcherTierGate({
       </Text>
       <TouchableOpacity style={s.btn} onPress={() => router.push('/paywall/butcher-plans')}>
         <Text style={s.btnText}>
-          {lang === 'af' ? `Opgradeer — ${price}` : `Upgrade — ${price}`}
+          {lang === 'af' ? `Opgradeer \u2014 ${price}` : `Upgrade \u2014 ${price}`}
         </Text>
       </TouchableOpacity>
     </View>

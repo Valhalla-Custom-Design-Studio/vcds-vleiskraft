@@ -38,7 +38,7 @@ export function ButcherPaywallGate({ required, currentTier, featureName, childre
     <View style={styles.wrapper}>
       <LinearGradient colors={['rgba(0,0,0,0.88)', 'rgba(0,0,0,0.96)']} style={styles.overlay}>
         <Ionicons name="lock-closed" size={32} color={GOLD} />
-        <Text style={styles.title}>{featureName ? `${featureName} — ` : ''}{label} Funksie</Text>
+        <Text style={styles.title}>{featureName ? `${featureName} \u2014 ` : ''}{label} Funksie</Text>
         <Text style={styles.sub}>Gradeer op na {label} om toegang te kry tot hierdie funksie.</Text>
         <TouchableOpacity style={styles.btn} onPress={() => router.push('/paywall/butcher-plans' as any)}>
           <Text style={styles.btnText}>Gradeer Op →</Text>
