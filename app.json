@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "VleisKraft™",
+    "name": "VleisKraft\u2122",
     "slug": "vcds-vleiskraft",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -27,9 +27,7 @@
       [
         "expo-build-properties",
         {
-          "android": {
-            "kotlinVersion": "1.9.25"
-          }
+          "android": {}
         }
       ],
       [
