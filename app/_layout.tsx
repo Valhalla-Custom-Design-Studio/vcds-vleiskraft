@@ -9,11 +9,11 @@ const GOLD = '#C9A84C';
 const BG = '#0A0A0A';
 
 export default function RootLayout() {
-  const [splashDone, setSplashDone] = React.useState(false);
-  if (!splashDone) return <AnimatedSplash onFinish={() => setSplashDone(true)} />;
+  const [splashDone, setSplashDone] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    if (!splashDone) return;
     async function gate() {
       try {
         const token = await AsyncStorage.getItem('token');
@@ -38,7 +38,9 @@ export default function RootLayout() {
       }
     }
     gate();
-  }, []);
+  }, [splashDone]);
+
+  if (!splashDone) return <AnimatedSplash onFinish={() => setSplashDone(true)} />;
 
   if (!ready) {
     return (
