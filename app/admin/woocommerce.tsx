@@ -105,7 +105,7 @@ ${t('productsReplaced', language)}
       {status?.connected && (
         <GlassCard style={styles.card}>
           <Text style={styles.cardTitle}>\u{1F4E5} Import Data</Text>
-          <Text style={styles.importNote}>\u26A0\uFE0F {t('productsReplaced', language)}</Text>
+          <Text style={styles.importNote}>\u26A0 {t('productsReplaced', language)}</Text>
 
           {(['products', 'customers', 'orders'] as const).map(type => (
             <TouchableOpacity
