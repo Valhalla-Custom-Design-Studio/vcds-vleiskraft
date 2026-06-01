@@ -31,7 +31,7 @@
         "SENTRY_AUTH_TOKEN": "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",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       },
-      "node": "20.19.0"
+      "node": "20.19.4"
     },
     "preview": {
       "distribution": "internal",
@@ -58,7 +58,7 @@
         "SENTRY_AUTH_TOKEN": "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",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       },
-      "node": "20.19.0"
+      "node": "20.19.4"
     },
     "production": {
       "android": {
@@ -84,7 +84,7 @@
         "SENTRY_AUTH_TOKEN": "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",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       },
-      "node": "20.19.0"
+      "node": "20.19.4"
     }
   },
   "submit": {
