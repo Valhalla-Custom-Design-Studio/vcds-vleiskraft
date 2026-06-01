@@ -65,7 +65,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(requestLogger);
 
-// ─── Routes ─────────────────────────────────────
+// --- Routes -------------------------------------
 app.use("/api/auth", authRoutes);
 app.use("/api/health", healthRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);

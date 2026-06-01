@@ -7,7 +7,7 @@ import { pool } from '../db/pool';
 const router = Router();
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-// ─── VleisAI(TM) System Prompt ───────────────────────────────────────────────────
+// --- VleisAI(TM) System Prompt ---------------------------------------------------
 // RULES: Afrikaans-only, no external links, structured JSON response, real product IDs only
 // Migrated from nodejs_space/src/vleisai/vleisai.controller.ts (NestJS → Express)
 // WAVE 2: Migrate to NestJS + Prisma  -  tracked in KAN backlog
@@ -37,7 +37,7 @@ Antwoord ALTYD met hierdie JSON formaat:
 
 As geen produkte relevant is nie, gebruik 'n leë array: "suggestedProducts": []';
 
-// ─── POST /chat ───────────────────────────────────────────────────────────────
+// --- POST /chat ---------------------------------------------------------------
 router.post('/chat', authenticate, async (req: Request, res: Response) => {
   try {
     const { message, history = [] } = req.body;
@@ -128,7 +128,7 @@ router.post('/chat', authenticate, async (req: Request, res: Response) => {
   }
 });
 
-// ─── GET /history ─────────────────────────────────────────────────────────────
+// --- GET /history -------------------------------------------------------------
 router.get('/history', authenticate, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.id;
@@ -146,7 +146,7 @@ router.get('/history', authenticate, async (req: Request, res: Response) => {
   }
 });
 
-// ─── GET /status ──────────────────────────────────────────────────────────────
+// --- GET /status --------------------------------------------------------------
 router.get('/status', (_req: Request, res: Response) => {
   res.json({
     service: 'VleisAI(TM)',

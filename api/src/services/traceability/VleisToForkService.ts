@@ -64,7 +64,7 @@ export function calculateCarbonFootprint(breed: string, ageMonths: number, feedT
   return Math.round(base * multiplier * (ageMonths / 24));
 }
 
-// ── Legacy-compatible wrappers (route-facing) ─────────────────────────────
+// -- Legacy-compatible wrappers (route-facing) -----------------------------
 import crypto from "crypto";
 
 export interface VleisToForkRecord {
