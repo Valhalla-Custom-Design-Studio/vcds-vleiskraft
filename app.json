@@ -29,18 +29,18 @@
         {
           "android": {
             "newArchEnabled": true,
-            "kotlinVersion": "1.9.25",
+            "kotlinVersion": "2.0.21",
             "compileSdkVersion": 35,
             "targetSdkVersion": 35,
             "minSdkVersion": 24,
-            "extraMavenRepos": [],
             "gradleProperties": {
-              "org.gradle.jvmargs": "-Xmx4096m -XX:MaxMetaspaceSize=1024m",
+              "org.gradle.jvmargs": "-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError",
               "org.gradle.daemon": "true",
               "org.gradle.parallel": "true",
               "org.gradle.configureondemand": "true",
               "android.useAndroidX": "true",
-              "android.enableJetifier": "true"
+              "android.enableJetifier": "false",
+              "EXPO_USE_COMMUNITY_AUTOLINKING": "1"
             }
           },
           "ios": {
