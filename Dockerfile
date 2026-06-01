@@ -1,8 +1,9 @@
-# cache-bust: 20260601185450
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY api/package*.json api/tsconfig.json ./
 RUN npm install
+# force-rebuild: 20260601190112
+ARG CACHE_BUST=20260601190112
 COPY api/src ./src
 RUN node_modules/.bin/tsc
 
