@@ -48,8 +48,7 @@
               "android.enableJetifier": "false",
               "EXPO_USE_COMMUNITY_AUTOLINKING": "1",
               "kotlinVersion": "2.0.21"
-            },
-            "extraBuildGradleContent": "ext {\n    kotlinVersion = \"2.0.21\"\n}\n"
+            }
           },
           "ios": {
             "newArchEnabled": true
