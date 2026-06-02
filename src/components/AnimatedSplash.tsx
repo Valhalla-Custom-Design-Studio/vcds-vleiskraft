@@ -20,7 +20,8 @@ export default function AnimatedSplash({ onFinish }: AnimatedSplashProps) {
   const fadeOut = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    SplashScreen.hideAsync();
+    // Hide native splash AFTER our JS splash is ready to show
+    SplashScreen.hideAsync().catch(() => {});
 
     // Fade + scale in
     Animated.parallel([
@@ -36,19 +37,19 @@ export default function AnimatedSplash({ onFinish }: AnimatedSplashProps) {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      // Hold for animation duration then fade out
+      // Hold then fade out
       setTimeout(() => {
         Animated.timing(fadeOut, {
           toValue: 0,
           duration: 500,
           useNativeDriver: true,
         }).start(() => onFinish());
-      }, 4200);
+      }, 2800);
     });
   }, []);
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeOut, backgroundColor: '#0D0000' }]}>
+    <Animated.View style={[styles.container, { opacity: fadeOut }]}>
       <Animated.View
         style={{
           opacity: fadeAnim,
@@ -58,9 +59,10 @@ export default function AnimatedSplash({ onFinish }: AnimatedSplashProps) {
         }}
       >
         <Image
-          source={require('../../assets/splash-animated.webp')}
+          source={require('../../assets/splash.png')}
           style={styles.splash}
           resizeMode="cover"
+          fadeDuration={0}
         />
       </Animated.View>
     </Animated.View>
@@ -70,6 +72,7 @@ export default function AnimatedSplash({ onFinish }: AnimatedSplashProps) {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#0D0000',
     zIndex: 9999,
     alignItems: 'center',
     justifyContent: 'center',
