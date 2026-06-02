@@ -3,16 +3,11 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * Custom Expo config plugin to fix Gradle 8.13 kotlinVersion resolution.
- * 
- * Problem: expo-build-properties sets kotlinVersion in gradle.properties but
- * Gradle 8.13 does not expose gradle.properties values as ext properties in
- * the dependencies{} block. The generated root build.gradle references
- * $kotlinVersion in the Kotlin classpath dependency, causing:
- * "Could not get unknown property 'kotlinVersion'"
- * 
- * Fix: Prepend ext { kotlinVersion = "..." } to the root build.gradle BEFORE
- * the dependencies block so it's available as a project ext property.
+ * Fix for Expo SDK 53 + Gradle 8.13: kotlinVersion not available in dependencies block.
+ * See: https://github.com/expo/expo/issues/36461
+ *
+ * The generated build.gradle is missing kotlinVersion in the buildscript ext{} block.
+ * This plugin patches it in after prebuild generates the file.
  */
 const withKotlinVersionFix = (config, { kotlinVersion = '2.0.21' } = {}) => {
   return withDangerousMod(config, [
@@ -24,25 +19,54 @@ const withKotlinVersionFix = (config, { kotlinVersion = '2.0.21' } = {}) => {
       );
 
       if (!fs.existsSync(buildGradlePath)) {
-        console.warn('[withKotlinVersionFix] build.gradle not found, skipping.');
+        console.warn('[withKotlinVersionFix] build.gradle not found at:', buildGradlePath);
         return config;
       }
 
       let contents = fs.readFileSync(buildGradlePath, 'utf8');
 
-      const extBlock = `ext {\n    kotlinVersion = "${kotlinVersion}"\n}\n\n`;
-      const marker = '// @generated begin withKotlinVersionFix';
-
-      // Idempotent: don't apply twice
-      if (contents.includes(marker)) {
+      // Idempotent check
+      if (contents.includes('// @generated withKotlinVersionFix')) {
+        console.log('[withKotlinVersionFix] Already applied, skipping.');
         return config;
       }
 
-      // Prepend ext block at the very top (before buildscript or allprojects)
-      contents = `${marker}\n${extBlock}// @generated end withKotlinVersionFix\n` + contents;
+      const kotlinLine = `    kotlinVersion = findProperty('android.kotlinVersion') ?: '${kotlinVersion}'`;
+      const marker = '// @generated withKotlinVersionFix';
 
+      // Strategy 1: Insert into existing buildscript { ext { ... } } block
+      // Match the ext block inside buildscript
+      const extBlockRegex = /(buildscript\s*\{[^}]*ext\s*\{)([^}]*?)(\})/s;
+      if (extBlockRegex.test(contents)) {
+        contents = contents.replace(extBlockRegex, (match, open, body, close) => {
+          // Only add if not already present
+          if (body.includes('kotlinVersion')) {
+            return match;
+          }
+          return `${open}${body}${kotlinLine}\n${close}`;
+        });
+        contents = `${marker}\n` + contents;
+        fs.writeFileSync(buildGradlePath, contents);
+        console.log('[withKotlinVersionFix] Inserted kotlinVersion into existing ext{} block.');
+        return config;
+      }
+
+      // Strategy 2: Insert ext{} block inside buildscript{}
+      const buildscriptRegex = /(buildscript\s*\{)/;
+      if (buildscriptRegex.test(contents)) {
+        const extBlock = `\n    ext {\n${kotlinLine}\n    }\n`;
+        contents = contents.replace(buildscriptRegex, `$1${extBlock}`);
+        contents = `${marker}\n` + contents;
+        fs.writeFileSync(buildGradlePath, contents);
+        console.log('[withKotlinVersionFix] Added ext{} block inside buildscript{}.');
+        return config;
+      }
+
+      // Strategy 3: Prepend entire buildscript with ext block at top of file
+      const fullBlock = `${marker}\nbuildscript {\n    ext {\n${kotlinLine}\n    }\n}\n\n`;
+      contents = fullBlock + contents;
       fs.writeFileSync(buildGradlePath, contents);
-      console.log('[withKotlinVersionFix] Prepended ext { kotlinVersion } to build.gradle');
+      console.log('[withKotlinVersionFix] Prepended buildscript ext{} block at top of file.');
 
       return config;
     },
