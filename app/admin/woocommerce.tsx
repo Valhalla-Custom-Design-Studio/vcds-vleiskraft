@@ -66,7 +66,7 @@ export default function WooCommerceScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <Text style={styles.title}>\u{1F6D2} {t('woocommerce', language)}</Text>
+        <Text style={styles.title}>🛒 {t('woocommerce', language)}</Text>
         <Text style={styles.sub}>Sinkroniseer jou WooCommerce winkel</Text>
       </View>
 
