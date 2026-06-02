@@ -8,8 +8,11 @@ import AnimatedSplash from '../src/components/AnimatedSplash';
 const GOLD = '#C9A84C';
 const BG = '#0A0A0A';
 
+// Module-level flag — survives re-mounts caused by router.replace()
+let splashHasPlayed = false;
+
 export default function RootLayout() {
-  const [splashDone, setSplashDone] = useState(false);
+  const [splashDone, setSplashDone] = useState(splashHasPlayed);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -30,7 +33,6 @@ export default function RootLayout() {
           setReady(true);
           return;
         }
-        // Butchers (any plan) get tab access — features gated inside
         setReady(true);
       } catch {
         router.replace('/auth/login');
@@ -40,7 +42,16 @@ export default function RootLayout() {
     gate();
   }, [splashDone]);
 
-  if (!splashDone) return <AnimatedSplash onFinish={() => setSplashDone(true)} />;
+  if (!splashDone) {
+    return (
+      <AnimatedSplash
+        onFinish={() => {
+          splashHasPlayed = true;
+          setSplashDone(true);
+        }}
+      />
+    );
+  }
 
   if (!ready) {
     return (
