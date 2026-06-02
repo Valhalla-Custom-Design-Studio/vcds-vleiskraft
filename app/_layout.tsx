@@ -8,35 +8,42 @@ import AnimatedSplash from '../src/components/AnimatedSplash';
 const GOLD = '#C9A84C';
 const BG = '#0A0A0A';
 
-// Module-level flag — survives re-mounts caused by router.replace()
+// Module-level flags — persist for the lifetime of the JS bundle (production APK)
 let splashHasPlayed = false;
+let authGateComplete = false;
 
 export default function RootLayout() {
   const [splashDone, setSplashDone] = useState(splashHasPlayed);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(authGateComplete);
 
   useEffect(() => {
     if (!splashDone) return;
+    if (authGateComplete) {
+      setReady(true);
+      return;
+    }
     async function gate() {
       try {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
+          authGateComplete = true;
           router.replace('/auth/login');
-          setReady(true);
-          return;
+          return; // Do NOT setReady — let the login screen render
         }
         const userType = await AsyncStorage.getItem('userType');
         const plan = await AsyncStorage.getItem('plan');
 
         if (userType === 'consumer' && plan !== 'consumer_premium') {
+          authGateComplete = true;
           router.replace('/paywall/consumer');
-          setReady(true);
-          return;
+          return; // Do NOT setReady — let the paywall screen render
         }
+
+        authGateComplete = true;
         setReady(true);
       } catch {
+        authGateComplete = true;
         router.replace('/auth/login');
-        setReady(true);
       }
     }
     gate();
@@ -93,6 +100,8 @@ export default function RootLayout() {
       <Stack.Screen name="order/[orderId]" />
       <Stack.Screen name="order-confirmation/[orderId]" />
       <Stack.Screen name="delivery-tracking/[orderId]" />
+      <Stack.Screen name="emergency-contacts/index" />
+      <Stack.Screen name="academy/[id]" />
     </Stack>
   );
 }
