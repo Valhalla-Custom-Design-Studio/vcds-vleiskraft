@@ -93,7 +93,7 @@ export default function WooCommerceScreen() {
 
       {/* Credentials */}
       <GlassCard style={styles.card}>
-        <Text style={styles.cardTitle}>\u{1F511} Credentials</Text>
+        <Text style={styles.cardTitle}>🔑 Credentials</Text>
         <TextInput style={styles.input} placeholder={t('wooUrl', language)} placeholderTextColor={Colors.textSecondary} value={url} onChangeText={setUrl} autoCapitalize="none" />
         <TextInput style={styles.input} placeholder={t('wooKey', language)} placeholderTextColor={Colors.textSecondary} value={key} onChangeText={setKey} autoCapitalize="none" />
         <TextInput style={styles.input} placeholder={t('wooSecret', language)} placeholderTextColor={Colors.textSecondary} value={secret} onChangeText={setSecret} secureTextEntry />
@@ -103,7 +103,7 @@ export default function WooCommerceScreen() {
       {/* Import Actions */}
       {status?.connected && (
         <GlassCard style={styles.card}>
-          <Text style={styles.cardTitle}>\u{1F4E5} Import Data</Text>
+          <Text style={styles.cardTitle}>📥 Import Data</Text>
           <Text style={styles.importNote}>\u26A0 {t('productsReplaced', language)}</Text>
 
           {(['products', 'customers', 'orders'] as const).map(type => (
