@@ -77,7 +77,7 @@ export default function SubscriptionScreen() {
             )}
             <Text style={s.branchInfo}>
               {lang === "af"
-                ? `Takke: ${plan.max_branches === 99 ? "Onbeperk" : plan.max_branches}
+                ? `Takke: ${plan.max_branches === 99 ? "Onbeperk" : plan.max_branches}`
                 : `Branches: ${plan.max_branches === 99 ? "Unlimited" : plan.max_branches}`}
             </Text>
             {features.map((f) => (
